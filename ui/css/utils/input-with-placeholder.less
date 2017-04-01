@@ -1,0 +1,23 @@
+@import (reference) "../components/placeholder";
+
+.input-with-placeholder() {
+  &::-webkit-input-placeholder {
+    .placeholder();
+    opacity: 1;
+  }
+
+  &:-moz-placeholder { /* Firefox 18- */
+    .placeholder();
+    opacity: 1;
+  }
+
+  &::-moz-placeholder {  /* Firefox 19+ */
+    .placeholder();
+    opacity: 1;
+  }
+
+  &:-ms-input-placeholder {
+    .placeholder();
+    opacity: 1;
+  }
+}

@@ -1,0 +1,6 @@
+node_modules
+npm-debug.log
+
+/www/dist
+/crypthub.sublime-workspace
+/ui/css/fonts/*.zip
