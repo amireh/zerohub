@@ -51,8 +51,8 @@ export default ActionProvider(Spaces, {
 
       return PageHub.request({
         url: `/api/users/${userId}/spaces`
-      }).then(response => {
-        container.setState({ spaces: response.responseJSON.spaces })
+      }).then(payload => {
+        container.setState({ spaces: payload.spaces })
       }, error => {
         console.error('request failed:', error)
         container.setState({ spaceLoadError: true })

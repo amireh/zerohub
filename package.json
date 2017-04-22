@@ -21,6 +21,7 @@
     "codemirror": "5.25.0",
     "cornflux": "1.0.2",
     "electron": "1.6.2",
+    "invariant": "2.2.2",
     "keytar": "3.0.2",
     "normalize.css": "6.0.0",
     "purecss": "0.6.2",
@@ -29,6 +30,9 @@
     "react-dom": "15.4.2",
     "react-router-dom": "4.0.0",
     "react-schema": "2.0.0",
+    "react-textarea-autosize": "4.0.5",
+    "react-toggle": "3.0.1",
+    "react-transclusion": "1.2.0",
     "request": "2.81.0"
   },
   "devDependencies": {
@@ -41,6 +45,7 @@
     "connect-pushstate": "1.1.0",
     "css-loader": "0.28.0",
     "electron-devtools-installer": "2.1.0",
+    "electron-rebuild": "1.5.7",
     "eslint": "3.18.0",
     "eslint-plugin-react": "6.10.3",
     "file-loader": "0.11.0",

@@ -1,11 +1,16 @@
 import React, { PropTypes } from 'react';
 import { ActionProvider } from 'cornflux';
 import { Route } from 'react-router-dom';
-import * as PageHub from 'services/PageHub';
 import Link from 'components/Link';
 import Icon from 'components/Icon';
 import SpaceBrowser from './SpaceBrowser';
+import PassPhraseModal from './PassPhraseModal';
 import Page from './Page';
+import OutletProvider from 'components/OutletProvider';
+import Outlet from 'components/Outlet';
+import { withQuery } from 'utils/routing';
+import classSet from 'classnames';
+import * as Actions from './actions';
 
 const BackToLibraryButton = React.createClass({
   render() {
@@ -26,18 +31,47 @@ const Space = React.createClass({
   getInitialState() {
     return {
       space: null,
+      spaces: [],
+      pages: [],
+      folders: [],
+      decryptedContents: {},
+      decryptedDigests: {},
+      passPhrase: null,
       loadingSpace: false,
       spaceLoadError: null,
+      // savingPage: false,
+      pagesBeingSaved: {},
+      pagesBeingDecrypted: {},
+      pageSavingErrors: {},
+      pageDecryptionErrors: {},
+      // pageSaveError: false,
+      retrievingPassPhrase: false,
+      passPhraseRetrievalError: false,
     };
   },
 
   componentDidMount() {
     const { config } = this.context;
 
+    this.context.dispatch('FETCH_SPACES', {
+      userId: config.userId,
+    });
+
     this.context.dispatch('FETCH_SPACE', {
       userId: config.userId,
       spaceId: this.props.params.id
     });
+  },
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      const { config } = this.context;
+
+      this.context.dispatch('FETCH_SPACE', {
+        userId: config.userId,
+        spaceId: nextProps.params.id,
+      });
+    }
   },
 
   render() {
@@ -58,52 +92,63 @@ const Space = React.createClass({
 
   renderSpace(space) {
     return (
-      <div className="pure-g space">
-        <div className="pure-u-1-4 space__sidebar-container">
-          <header className="space__title">
-            <Link to={`/spaces/${space.id}`}>{space.title}</Link>
-          </header>
+      <OutletProvider names={[ 'SPACE_DRAWER' ]}>
+        <div
+          className={classSet("pure-g space", {
+            'space--with-drawer': this.props.query.drawer === '1'
+          })}
+        >
+          {this.state.showingGeneratedPassPhrase && (
+            <PassPhraseModal passPhrase={this.state.passPhrase} />
+          )}
 
-          <SpaceBrowser
-            space={space}
-            match={this.props.match}
-          />
+          <div className="pure-u-1-1 space__sidebar-container">
+            <SpaceBrowser
+              space={space}
+              spaces={this.state.spaces}
+              folders={this.state.folders}
+              pages={this.state.pages}
+              match={this.props.match}
+            />
+          </div>
 
-          <BackToLibraryButton />
+          <div className="pure-u-1-1 space__content-container">
+            <Route
+              exact
+              path={`${this.props.match.url}/pages/:id`}
+              render={withQuery(({ match, query }) => {
+                const { params } = match;
+                const pageId = params.id;
+
+                return (
+                  <Page
+                    query={query}
+                    params={match.params}
+                    space={this.state.space}
+                    page={this.state.pages.filter(x => x.id === params.id)[0]}
+                    decryptedContent={this.state.decryptedContents[pageId] || null}
+                    decryptedDigest={this.state.decryptedDigests[pageId] || null}
+                    passPhrase={this.state.passPhrase}
+                    isSaving={!!this.state.pagesBeingSaved[pageId]}
+                    isRetrievingPassPhrase={this.state.retrievingPassPhrase}
+                    isDecrypting={!!this.state.pagesBeingDecrypted[pageId]}
+                    hasSavingError={!!this.state.pageSavingErrors[pageId]}
+                    hasDecryptionError={!!this.state.pageDecryptionErrors[pageId]}
+                  />
+                );
+              })}
+            />
+          </div>
+
+          <Outlet name="SPACE_DRAWER" onChange={this.trackDrawer}>
+            <div className="space__drawer-container" />
+          </Outlet>
         </div>
-
-        <div className="pure-u-3-4 space__content-container">
-          <Route
-            exact
-            path={`${this.props.match.url}/pages/:id`}
-            render={({ match }) => {
-              const { params } = match;
-              return <Page page={space.pages.filter(x => x.id === params.id)[0]} />
-            }}
-          />
-        </div>
-      </div>
+      </OutletProvider>
     )
   }
 });
 
 export default ActionProvider(Space, {
-  actions: {
-    FETCH_SPACE(container, { userId, spaceId }) {
-      container.setState({ loadingSpace: true });
-
-      return PageHub.request({
-        url: `/api/users/${userId}/spaces/${spaceId}`
-      }).then(response => {
-        container.setState({ space: response.responseJSON.spaces[0] })
-      }, error => {
-        console.error('request failed:', error)
-        container.setState({ spaceLoadError: true })
-      }).then(() => {
-        container.setState({ loadingSpace: false });
-      })
-
-      // return Promise.resolve();
-    }
-  }
+  actions: Actions
 });

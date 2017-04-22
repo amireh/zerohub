@@ -1,10 +1,14 @@
 const path = require('path');
+const webpack = require('webpack');
 const root = path.resolve(__dirname);
 
 module.exports = {
   devtool: process.env.NODE_ENV === 'production' ? null : 'eval',
 
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+    })
   ],
 
   entry: [

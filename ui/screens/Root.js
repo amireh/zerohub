@@ -2,10 +2,11 @@ import React, { PropTypes } from 'react';
 import { HashRouter, Route, memoryHistory, Switch } from 'react-router-dom';
 import { ActionProvider } from 'cornflux';
 import queryString from 'query-string';
-import Home from '../screens/Home';
-import NotFound from '../screens/NotFound';
-import Spaces from '../screens/Spaces';
-import Space from '../screens/Space';
+import Home from './Home';
+import NotFound from './NotFound';
+import Spaces from './Spaces';
+import Space from './Space';
+import { withQueryFor } from 'utils/routing';
 
 const APP_ENV = electronRequire('electron').remote.getGlobal('APP_ENV');
 
@@ -16,11 +17,7 @@ const RootWithRoutes = React.createClass({
 
   getChildContext() {
     return {
-      config: {
-        apiHost: APP_ENV.API_HOST,
-        apiToken: APP_ENV.API_TOKEN,
-        userId: APP_ENV.API_USER_ID,
-      }
+      config: this.getConfig()
     }
   },
 
@@ -57,6 +54,14 @@ const RootWithRoutes = React.createClass({
         </Switch>
       </HashRouter>
     )
+  },
+
+  getConfig() {
+    return {
+      apiHost: APP_ENV.API_HOST,
+      apiToken: APP_ENV.API_TOKEN,
+      userId: APP_ENV.API_USER_ID,
+    };
   }
 })
 
@@ -98,16 +103,3 @@ export default ActionProvider(RootWithRoutes, {
     }
   }
 });
-
-const withQueryFor = Component => withQuery(({ location, match, query }) => (
-  <Component
-    match={match}
-    params={match.params}
-    query={query}
-    location={location}
-  />
-));
-
-const withQuery = fn => ({ location, match }) => (
-  fn({ location, match, query: queryString.parse(location.search) })
-);

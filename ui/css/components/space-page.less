@@ -1,9 +1,63 @@
 .space-page {
-  &__title {
+  &__header {
+    background: #white;
+    // line-height: 2rem;
+    height: 4rem;
+    position: relative;
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+  }
 
+  &__title {
+    margin: 0;
+    font-size: 1.5em;
+  }
+
+  &__header-actions {
+    position: absolute;
+    right: 1rem;
+    top: 0;
+    height: inherit;
+    z-index: 1;
+
+    .icon-button {
+      line-height: 4rem;
+      padding: 0;
+      margin: 0;
+    }
+  }
+
+  &__content {
+    padding: 1em;
   }
 
   .CodeMirror {
     height: auto;
+  }
+}
+
+.space-page-drawer {
+  .form-toggle-label {
+    .react-toggle {
+      position: absolute;
+      right: 0;
+      line-height: inherit;
+      vertical-align: middle;
+    }
+  }
+
+  &__header {
+    font-weight: bold;
+    line-height: 2rem;
+    height: 4rem;
+    background: #eee;
+    border: 1px solid #ddd;
+    border-left: none;
+    padding: 1em;
+  }
+
+  &__content {
+    position: relative;
+    margin: 1rem;
   }
 }

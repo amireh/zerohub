@@ -1,68 +1,107 @@
-import React from 'react';
-import CodeMirror from 'codemirror';
-import 'codemirror/addon/fold/foldcode';
-import 'codemirror/addon/fold/foldgutter';
-import 'codemirror/addon/fold/brace-fold';
-import 'codemirror/addon/fold/markdown-fold';
-import 'codemirror/addon/dialog/dialog';
-import 'codemirror/addon/search/searchcursor';
-import 'codemirror/addon/search/search';
-import 'codemirror/addon/selection/active-line';
-import 'codemirror/addon/display/rulers';
-import 'codemirror/keymap/emacs';
-import 'codemirror/keymap/sublime';
-import 'codemirror/keymap/vim';
-import 'codemirror/mode/markdown/markdown';
-import 'codemirror/mode/gfm/gfm';
-import 'codemirror/mode/lua/lua';
-import 'codemirror/mode/htmlembedded/htmlembedded';
-import 'codemirror/mode/htmlmixed/htmlmixed';
-import 'codemirror/mode/xml/xml';
-import 'codemirror/mode/shell/shell';
-import 'codemirror/mode/ruby/ruby';
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/mode/clike/clike';
-import 'codemirror/mode/coffeescript/coffeescript';
-import 'codemirror/mode/css/css';
-import 'codemirror/mode/diff/diff';
-import 'codemirror/mode/erlang/erlang';
-import 'codemirror/mode/go/go';
-import 'codemirror/mode/http/http';
-import 'codemirror/mode/nginx/nginx';
-import 'codemirror/mode/perl/perl';
-import 'codemirror/mode/php/php';
-import 'codemirror/mode/puppet/puppet';
-import 'codemirror/mode/python/python';
-import 'codemirror/mode/sass/sass';
-import 'codemirror/mode/sql/sql';
-import 'codemirror/mode/yaml/yaml';
-
-const CODE_MIRROR_ALIASES = {
-  'shell': [ 'bash', 'sh' ]
-};
-
-Object.keys(CODE_MIRROR_ALIASES).filter(mode => CodeMirror.modes[mode]).forEach(mode => {
-  CODE_MIRROR_ALIASES[mode].forEach(alias => {
-    if (!CodeMirror.modes[alias]) {
-      CodeMirror.defineMode(alias, CodeMirror.modes[mode]);
-    }
-  });
-});
+import React, { PropTypes } from 'react';
+import CodeMirror from 'CodeMirror';
+import { ActionEmitter } from 'cornflux';
+import { Button } from 'components/Native';
+import Icon from 'components/Icon';
+import WarningMessage from 'components/WarningMessage';
+import OutletOccupant from 'components/OutletOccupant';
+import PageDrawer from './PageDrawer';
 
 const Page = React.createClass({
+  propTypes: {
+    page: PropTypes.shape({
+      id: PropTypes.string,
+      content: PropTypes.string,
+      encrypted: PropTypes.bool,
+      folder_id: PropTypes.string,
+      title: PropTypes.string,
+    }).isRequired,
+
+    decryptedContent: PropTypes.string,
+    decryptedDigest: PropTypes.string,
+    passPhrase: PropTypes.object,
+
+    dispatch: PropTypes.func.isRequired,
+
+    space: PropTypes.shape({
+      id: PropTypes.string,
+    }),
+
+    query: PropTypes.shape({
+      drawer: PropTypes.oneOf([ '1', null ]),
+      'page-settings': PropTypes.oneOf([ '1', null ]),
+    }).isRequired,
+
+    isSaving: PropTypes.bool,
+    isDecrypting: PropTypes.bool,
+    isRetrievingPassPhrase: PropTypes.bool,
+
+    hasSavingError: PropTypes.bool,
+    hasDecryptionError: PropTypes.bool,
+  },
+
   componentDidMount() {
     this.editor = this.createEditor({ node: this.refs.editorNode });
-    this.editor.setValue(this.props.page.content)
+    this.editor.setValue(this.props.page.content);
+    this.editor.on('changes', this.emitChangeOfContent);
+
+    if (this.props.page.encrypted) {
+      this.props.dispatch('RETRIEVE_PASS_PHRASE', { spaceId: this.props.space.id });
+    }
   },
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.page !== this.props.page) {
+    if (nextProps.page.id !== this.props.page.id && !nextProps.page.encrypted) {
+      this.editor.off('changes', this.emitChangeOfContent);
       this.editor.setValue(nextProps.page.content);
       this.editor.clearHistory();
+      this.editor.on('changes', this.emitChangeOfContent);
+    }
+    else if (nextProps.page.id !== this.props.page.id && nextProps.page.encrypted && nextProps.decryptedContent) {
+      this.editor.off('changes', this.emitChangeOfContent);
+      this.editor.setValue(nextProps.decryptedContent);
+      this.editor.clearHistory();
+      this.editor.on('changes', this.emitChangeOfContent);
+    }
+    else if (nextProps.page.encrypted && !nextProps.decryptedContent) {
+      this.editor.off('changes', this.emitChangeOfContent);
+      this.editor.setValue('');
+      this.editor.clearHistory();
+    }
+    else if (nextProps.page.encrypted && !this.props.decryptedContent && nextProps.decryptedContent) {
+      this.editor.off('changes', this.emitChangeOfContent);
+      this.editor.setValue(nextProps.decryptedContent);
+      this.editor.clearHistory();
+      this.editor.on('changes', this.emitChangeOfContent);
+    }
+
+    if (
+      nextProps.page.encrypted &&
+      !nextProps.passPhrase &&
+      !nextProps.isRetrievingPassPhrase
+    ) {
+      this.props.dispatch('RETRIEVE_PASS_PHRASE', {
+        spaceId: this.props.space.id
+      });
+    }
+
+    if (
+      nextProps.page.encrypted &&
+      nextProps.passPhrase &&
+      !nextProps.decryptedContent &&
+      !nextProps.isDecrypting &&
+      !nextProps.hasDecryptionError
+    ) {
+      this.props.dispatch('DECRYPT_PAGE', {
+        pageId: nextProps.page.id,
+        passPhrase: nextProps.passPhrase,
+        content: nextProps.page.content,
+      })
     }
   },
 
   componentWillUnmount() {
+    this.editor.off('changes', this.emitChangeOfContent);
     this.editor.toTextArea();
     this.editor = null;
   },
@@ -70,12 +109,91 @@ const Page = React.createClass({
   render() {
     return (
       <div className="space-page">
-        <h1 className="space-page__title">{this.props.page.title}</h1>
+        <div className="space-page__header">
+          <h1 className="space-page__title">
+            {this.props.page.title}
+            {this.props.isSaving && (
+              <span> <em>Saving...</em></span>
+            )}
+          </h1>
 
-        <textarea ref="editorNode" />
+          <div className="space-page__header-actions">
+            <Button hint="icon" onClick={this.toggleDrawer}>
+              <Icon sizeHint="display" className="icon-more_vert" />
+            </Button>
+
+            {false && (
+              <div className="inline-block">
+                <Button onClick={this.toggleSettingsMenu} hint="icon">
+                  <Icon className="icon-settings" />
+                </Button>
+
+                {this.props.query['page-settings'] === '1' && (
+                  this.renderSettingsMenu()
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="space-page__content">
+          {this.props.hasDecryptionError && (
+            <WarningMessage>
+              Page content is marked as encrypted but failed to be decrypted using
+              the pass-phrase assigned to this space. This could either mean that
+              the page encrypted using a different pass-phrase, or that there is
+              an internal error.
+            </WarningMessage>
+          )}
+
+          {this.requiresContentEncryption() && (
+            <WarningMessage>
+              This page is stored in plain-text format although you have requested
+              it to be encrypted. <Button hint="link" onClick={this.encryptPage}>Click here</Button>
+              {' '}
+              to apply the cipher.
+            </WarningMessage>
+          )}
+
+          <textarea ref="editorNode" />
+        </div>
+
+        {this.props.query.drawer === '1' && (
+          <OutletOccupant name="SPACE_DRAWER">
+            <PageDrawer
+              space={this.props.space}
+              page={this.props.page}
+              decryptedContent={this.props.decryptedContent}
+              passPhrase={this.props.passPhrase}
+              isRetrievingPassPhrase={this.props.isRetrievingPassPhrase}
+            />
+          </OutletOccupant>
+        )}
       </div>
     );
   },
+
+  // renderSettingsMenu() {
+  //   return (
+  //     <ul className="page-settings-menu">
+  //       <li>
+  //         {this.props.page.encrypted ? (
+  //           <Button hint="icon" onClick={this.removePageEncryption}>
+  //             <Icon className="icon-no_encryption" />
+  //             {' '}
+  //             Stop encrypting this page
+  //           </Button>
+  //         ) : (
+  //           <Button hint="icon" onClick={this.encryptPage}>
+  //             <Icon className="icon-enhanced_encryption" />
+  //             {' '}
+  //             Encrypt this page
+  //           </Button>
+  //         )}
+  //       </li>
+  //     </ul>
+  //   )
+  // },
 
   createEditor({ node }) {
     const RULER = 80;
@@ -97,18 +215,81 @@ const Page = React.createClass({
       rulers: [ RULER ],
       keyMap: "sublime",
       viewportMargin: Infinity,
-      // onKeyEvent: function(editor,e) {
-      //   if (editor_disabled) {
-      //     e.preventDefault();
-      //     e.stopPropagation();
-      //     return true;
-      //   } else {
-      //     return false;
-      //   }
-      // }
     })
+  },
 
-  }
+  emitChangeOfContent(instance/*, changes*/) {
+    console.debug('updating page content...');
+
+    this.props.dispatch('UPDATE_PAGE_CONTENT', {
+      pageId: this.props.page.id,
+      folderId: this.props.page.folder_id,
+      content: instance.doc.getValue()
+    })
+  },
+
+  toggleDrawer() {
+    this.props.dispatch('UPDATE_QUERY', {
+      drawer: this.props.query.drawer === '1' ? null : '1'
+    })
+  },
+
+  toggleSettingsMenu() {
+    this.props.dispatch('UPDATE_QUERY', {
+      'page-settings': this.props.query['page-settings'] === '1' ? null : '1'
+    })
+  },
+
+  encryptPage() {
+    if (!this.props.passPhrase) {
+      console.warn('Unable to encrypt page; no pass-phrase available!');
+      return;
+    }
+
+    this.props.dispatch('ENCRYPT_PAGE', {
+      pageId: this.props.page.id,
+      folderId: this.props.page.folder_id,
+      content: this.props.page.content,
+      passPhrase: this.props.passPhrase.value,
+    })
+  },
+
+  requiresContentEncryption() {
+    const { page } = this.props;
+
+    return (
+      page.encrypted &&
+      (!page.digest || page.digest !== this.props.decryptedDigest)
+    )
+  },
+
+  syncContentWithCodeMirror(props) {
+    const { editor } = this;
+    let nextContent;
+
+    if (props.page.encrypted && !props.decryptedContent) {
+      nextContent = '';
+    }
+    else if (props.page.encrypted && props.decryptedContent) {
+      nextContent = props.decryptedContent;
+    }
+    else {
+      nextContent = props.page.content;
+    }
+
+
+  },
+
+  // validateIntegrity({ folderId, pageId }) {
+  //   this.props.dispatch('VALIDATE_PAGE_INTEGRITY', {
+  //     pageId: this.props.page.id,
+  //     folderId: this.props.page.folder_id,
+  //     content: this.props.page.content,
+  //     passPhrase: this.props.passPhrase.value,
+  //   })
+  // },
 });
 
-export default Page;
+export default ActionEmitter(Page, {
+  actions: [ 'UPDATE_PAGE_CONTENT', 'UPDATE_QUERY' ]
+});

@@ -4,14 +4,23 @@ const API_HOST = process.env.API_HOST || 'http://localhost:3000';
 
 export function request(params) {
   return new Promise(function(resolve, reject) {
-    nodeRequest(Object.assign({}, params, {
-      url: `${API_HOST}${params.url}`,
+    const requestOptions = Object.assign({}, params, {
+      baseUrl: API_HOST,
+      method: params.method || 'GET',
+      body: params.body ? JSON.stringify(params.body) : undefined,
       headers: Object.assign({}, params.headers, {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': `Basic ${APP_ENV.API_TOKEN}`
+        'Authorization': `Basic ${APP_ENV.API_TOKEN}`,
+        'X-0-Hub': '1'
       })
-    }), (error, response) => {
+    });
+
+    nodeRequest(requestOptions, (error, response, payload) => {
+      if (process.env.NODE_ENV === 'development') {
+        console.debug('PH Request: %s', `[${requestOptions.method}] ${requestOptions.url}`, error, response);
+      }
+
       if (error) {
         reject(error);
       }
@@ -19,7 +28,7 @@ export function request(params) {
         reject(reduceResponse(response));
       }
       else {
-        resolve(reduceResponse(response));
+        resolve(reduceResponse(response).responseJSON);
       }
     });
   });
@@ -30,7 +39,10 @@ function reduceResponse(response) {
     meta: response.toJSON(),
     statusCode: response.statusCode,
     responseText: response.body,
-    responseJSON: /application\/json/.test(response.headers['content-type']) ? JSON.parse(response.body) : null,
+    responseJSON: /application\/json/.test(response.headers['content-type']) ?
+      JSON.parse(response.body) :
+      null
+    ,
     responseHeaders: response.headers,
     toString() {
       return response.body;
