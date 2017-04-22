@@ -258,8 +258,7 @@ const Page = React.createClass({
     const { page } = this.props;
 
     return (
-      page.encrypted &&
-      (!page.digest || page.digest !== this.props.decryptedDigest)
+      page.encrypted && !page.digest
     )
   },
 

@@ -52,7 +52,7 @@ export function retrievePassPhrase({ spaceId }) {
         ipcRenderer.removeListener(RESPONSE_CHANNEL, listener);
       }
 
-      console.debug('response received from core!', RESPONSE_CHANNEL, message)
+      console.log('response received from core!', RESPONSE_CHANNEL, message)
 
       if (message.error) {
         reject(message.error);
