@@ -6,6 +6,9 @@ import Icon from 'components/Icon';
 import WarningMessage from 'components/WarningMessage';
 import OutletOccupant from 'components/OutletOccupant';
 import PageDrawer from './PageDrawer';
+import * as ErrorCodes from './ErrorCodes';
+import LoadingIndicator from './LoadingIndicator';
+import ErrorMessage from 'components/ErrorMessage';
 
 const Page = React.createClass({
   propTypes: {
@@ -15,7 +18,7 @@ const Page = React.createClass({
       encrypted: PropTypes.bool,
       folder_id: PropTypes.string,
       title: PropTypes.string,
-    }).isRequired,
+    }),
 
     decryptedContent: PropTypes.string,
     decryptedDigest: PropTypes.string,
@@ -38,75 +41,96 @@ const Page = React.createClass({
 
     hasSavingError: PropTypes.bool,
     hasDecryptionError: PropTypes.bool,
+
+    loadError: PropTypes.oneOf([
+      ErrorCodes.MISSING_PASS_PHRASE_ERROR,
+      ErrorCodes.PAGE_CIPHER_ERROR,
+      ErrorCodes.PAGE_DIGEST_MISMATCH_ERROR,
+      ErrorCodes.PAGE_FETCH_ERROR,
+    ]),
   },
 
   componentDidMount() {
-    this.editor = this.createEditor({ node: this.refs.editorNode });
-    this.editor.setValue(this.props.page.content);
-    this.editor.on('changes', this.emitChangeOfContent);
-
-    if (this.props.page.encrypted) {
-      this.props.dispatch('RETRIEVE_PASS_PHRASE', { spaceId: this.props.space.id });
-    }
+    // if (this.props.page.encrypted) {
+    //   this.props.dispatch('RETRIEVE_PASS_PHRASE', { spaceId: this.props.space.id });
+    // }
   },
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.page.id !== this.props.page.id && !nextProps.page.encrypted) {
-      this.editor.off('changes', this.emitChangeOfContent);
-      this.editor.setValue(nextProps.page.content);
-      this.editor.clearHistory();
-      this.editor.on('changes', this.emitChangeOfContent);
-    }
-    else if (nextProps.page.id !== this.props.page.id && nextProps.page.encrypted && nextProps.decryptedContent) {
-      this.editor.off('changes', this.emitChangeOfContent);
-      this.editor.setValue(nextProps.decryptedContent);
-      this.editor.clearHistory();
-      this.editor.on('changes', this.emitChangeOfContent);
-    }
-    else if (nextProps.page.encrypted && !nextProps.decryptedContent) {
-      this.editor.off('changes', this.emitChangeOfContent);
-      this.editor.setValue('');
-      this.editor.clearHistory();
-    }
-    else if (nextProps.page.encrypted && !this.props.decryptedContent && nextProps.decryptedContent) {
-      this.editor.off('changes', this.emitChangeOfContent);
-      this.editor.setValue(nextProps.decryptedContent);
-      this.editor.clearHistory();
-      this.editor.on('changes', this.emitChangeOfContent);
-    }
+    // if (nextProps.page.id !== this.props.page.id && !nextProps.page.encrypted) {
+    //   this.editor.off('changes', this.emitChangeOfContent);
+    //   this.editor.setValue(nextProps.page.content);
+    //   this.editor.clearHistory();
+    //   this.editor.on('changes', this.emitChangeOfContent);
+    // }
+    // else if (nextProps.page.id !== this.props.page.id && nextProps.page.encrypted && nextProps.decryptedContent) {
+    //   this.editor.off('changes', this.emitChangeOfContent);
+    //   this.editor.setValue(nextProps.decryptedContent);
+    //   this.editor.clearHistory();
+    //   this.editor.on('changes', this.emitChangeOfContent);
+    // }
+    // else if (nextProps.page.encrypted && !nextProps.decryptedContent) {
+    //   this.editor.off('changes', this.emitChangeOfContent);
+    //   this.editor.setValue('');
+    //   this.editor.clearHistory();
+    // }
+    // else if (nextProps.page.encrypted && !this.props.decryptedContent && nextProps.decryptedContent) {
+    //   this.editor.off('changes', this.emitChangeOfContent);
+    //   this.editor.setValue(nextProps.decryptedContent);
+    //   this.editor.clearHistory();
+    //   this.editor.on('changes', this.emitChangeOfContent);
+    // }
 
-    if (
-      nextProps.page.encrypted &&
-      !nextProps.passPhrase &&
-      !nextProps.isRetrievingPassPhrase
-    ) {
-      this.props.dispatch('RETRIEVE_PASS_PHRASE', {
-        spaceId: this.props.space.id
-      });
-    }
+    // if (
+    //   nextProps.page.encrypted &&
+    //   !nextProps.passPhrase &&
+    //   !nextProps.isRetrievingPassPhrase
+    // ) {
+    //   this.props.dispatch('RETRIEVE_PASS_PHRASE', {
+    //     spaceId: this.props.space.id
+    //   });
+    // }
 
-    if (
-      nextProps.page.encrypted &&
-      nextProps.passPhrase &&
-      !nextProps.decryptedContent &&
-      !nextProps.isDecrypting &&
-      !nextProps.hasDecryptionError
-    ) {
-      this.props.dispatch('DECRYPT_PAGE', {
-        pageId: nextProps.page.id,
-        passPhrase: nextProps.passPhrase,
-        content: nextProps.page.content,
-      })
-    }
+    // if (
+    //   nextProps.page.encrypted &&
+    //   nextProps.passPhrase &&
+    //   !nextProps.decryptedContent &&
+    //   !nextProps.isDecrypting &&
+    //   !nextProps.hasDecryptionError
+    // ) {
+    //   this.props.dispatch('DECRYPT_PAGE', {
+    //     pageId: nextProps.page.id,
+    //     passPhrase: nextProps.passPhrase,
+    //     content: nextProps.page.content,
+    //   })
+    // }
   },
 
   componentWillUnmount() {
-    this.editor.off('changes', this.emitChangeOfContent);
-    this.editor.toTextArea();
-    this.editor = null;
+    if (this.editor) {
+      this.editor.off('changes', this.emitChangeOfContent);
+      this.editor.toTextArea();
+      this.editor = null;
+    }
   },
 
   render() {
+    if (this.props.loading) {
+      return (
+        <LoadingIndicator />
+      )
+    }
+    else if (this.props.loadError) {
+      return (
+        <ErrorMessage>
+          {this.renderLoadError(this.props.loadError)}
+        </ErrorMessage>
+      )
+    }
+    else if (!this.props.page) {
+      return null;
+    }
+
     return (
       <div className="space-page">
         <div className="space-page__header">
@@ -155,7 +179,7 @@ const Page = React.createClass({
             </WarningMessage>
           )}
 
-          <textarea ref="editorNode" />
+          <textarea ref={this.createEditor} />
         </div>
 
         {this.props.query.drawer === '1' && (
@@ -171,6 +195,35 @@ const Page = React.createClass({
         )}
       </div>
     );
+  },
+
+  renderLoadError(error) {
+    switch (error) {
+      case ErrorCodes.PAGE_FETCH_ERROR:
+        return <p>{I18n.t('Sorry! We were unable to load the page.')}</p>
+      break;
+
+      case ErrorCodes.PAGE_CIPHER_ERROR:
+        return <p>{I18n.t(
+          `Dang! It seems this page was encrypted using a different pass-phrase ` +
+          `than the one you've supplied.`
+        )}</p>
+      break;
+
+      case ErrorCodes.PAGE_DIGEST_MISMATCH_ERROR:
+        return <p>{I18n.t(
+          `Whoop! We've encountered a likely internal error while decrypting ` +
+          `this page's contents.`
+        )}</p>
+      break;
+
+      case ErrorCodes.MISSING_PASS_PHRASE_ERROR:
+        return <p>{I18n.t(
+          `Sorry! This page is encrypted but you have not supplied any ` +
+          `pass-phrase to decrypt it with.`
+        )}</p>
+      break;
+    }
   },
 
   // renderSettingsMenu() {
@@ -195,10 +248,10 @@ const Page = React.createClass({
   //   )
   // },
 
-  createEditor({ node }) {
+  createEditor(node) {
     const RULER = 80;
 
-    return CodeMirror.fromTextArea(node, {
+    this.editor = CodeMirror.fromTextArea(node, {
       mode: "gfm",
       lineNumbers: false,
       matchBrackets: true,
@@ -216,6 +269,11 @@ const Page = React.createClass({
       keyMap: "sublime",
       viewportMargin: Infinity,
     })
+
+    this.editor = this.createEditor({ node: this.refs.editorNode });
+    this.editor.setValue(this.props.page.content);
+    this.editor.on('changes', this.emitChangeOfContent);
+
   },
 
   emitChangeOfContent(instance/*, changes*/) {

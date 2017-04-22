@@ -7,6 +7,7 @@
 
   "plugins": [ "react" ],
 
+  "parser": "babel-eslint",
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 6,
@@ -30,6 +31,7 @@
 
   "globals": {
     "Promise": false,
-    "electronRequire": false
+    "electronRequire": false,
+    "I18n": false
   }
 }

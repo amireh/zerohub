@@ -1,26 +1,17 @@
 import React, { PropTypes } from 'react';
 import { ActionProvider } from 'cornflux';
 import { Route } from 'react-router-dom';
-import Link from 'components/Link';
-import Icon from 'components/Icon';
+// import Link from 'components/Link';
+// import Icon from 'components/Icon';
 import SpaceBrowser from './SpaceBrowser';
 import PassPhraseModal from './PassPhraseModal';
-import Page from './Page';
+// import Page from './Page';
 import OutletProvider from 'components/OutletProvider';
 import Outlet from 'components/Outlet';
 import { withQuery } from 'utils/routing';
 import classSet from 'classnames';
 import * as Actions from './actions';
-
-const BackToLibraryButton = React.createClass({
-  render() {
-    return (
-      <div className="book__back-to-library" {...this.props}>
-        <Link to="/spaces"><Icon className="icon-arrow_back" /> Back to Library</Link>
-      </div>
-    );
-  }
-});
+import PageRouteHandler from 'screens/Page';
 
 const Space = React.createClass({
   contextTypes: {
@@ -120,22 +111,24 @@ const Space = React.createClass({
                 const { params } = match;
                 const pageId = params.id;
 
-                return (
-                  <Page
-                    query={query}
-                    params={match.params}
-                    space={this.state.space}
-                    page={this.state.pages.filter(x => x.id === params.id)[0]}
-                    decryptedContent={this.state.decryptedContents[pageId] || null}
-                    decryptedDigest={this.state.decryptedDigests[pageId] || null}
-                    passPhrase={this.state.passPhrase}
-                    isSaving={!!this.state.pagesBeingSaved[pageId]}
-                    isRetrievingPassPhrase={this.state.retrievingPassPhrase}
-                    isDecrypting={!!this.state.pagesBeingDecrypted[pageId]}
-                    hasSavingError={!!this.state.pageSavingErrors[pageId]}
-                    hasDecryptionError={!!this.state.pageDecryptionErrors[pageId]}
-                  />
-                );
+                return <PageRouteHandler params={{ pageId }} query={query} />;
+
+                // return (
+                //   <Page
+                //     query={query}
+                //     params={match.params}
+                //     space={this.state.space}
+                //     page={this.state.pages.filter(x => x.id === params.id)[0]}
+                //     decryptedContent={this.state.decryptedContents[pageId] || null}
+                //     decryptedDigest={this.state.decryptedDigests[pageId] || null}
+                //     passPhrase={this.state.passPhrase}
+                //     isSaving={!!this.state.pagesBeingSaved[pageId]}
+                //     isRetrievingPassPhrase={this.state.retrievingPassPhrase}
+                //     isDecrypting={!!this.state.pagesBeingDecrypted[pageId]}
+                //     hasSavingError={!!this.state.pageSavingErrors[pageId]}
+                //     hasDecryptionError={!!this.state.pageDecryptionErrors[pageId]}
+                //   />
+                // );
               })}
             />
           </div>

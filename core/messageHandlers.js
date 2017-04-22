@@ -73,16 +73,28 @@ const Handlers = {
   },
 
   CALCULATE_DIGEST(event, message) {
-    console.info('ipcMain: received message CALCULATE_DIGEST!!!');
+    const { text } = message.data;
+    const hmac = crypto.createHash('sha256');
 
-    const { passPhrase, plainText } = message.data;
-    const hmac = crypto.createHmac('sha256', passPhrase);
-
-    hmac.update(plainText);
+    hmac.update(text);
 
     const digest = hmac.digest('hex');
 
     event.sender.send('CALCULATE_DIGEST_RC', {
+      id: message.id,
+      data: digest
+    });
+  },
+
+  CALCULATE_SECRET_DIGEST(event, message) {
+    const { passPhrase, text } = message.data;
+    const hmac = crypto.createHmac('sha256', passPhrase);
+
+    hmac.update(text);
+
+    const digest = hmac.digest('hex');
+
+    event.sender.send('CALCULATE_SECRET_DIGEST_RC', {
       id: message.id,
       data: digest
     });

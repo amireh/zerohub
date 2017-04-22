@@ -1,9 +1,11 @@
+import createStubbableFunction from 'utils/createStubbableFunction';
+
 const nodeRequest = electronRequire('request');
 const APP_ENV = electronRequire('electron').remote.getGlobal('APP_ENV');
 const API_HOST = process.env.API_HOST || 'http://localhost:3000';
 
 // TODO: do request in background
-export function request(params) {
+export const request = createStubbableFunction(function request(params) {
   return new Promise(function(resolve, reject) {
     const requestOptions = Object.assign({}, params, {
       baseUrl: API_HOST,
@@ -33,7 +35,7 @@ export function request(params) {
       }
     });
   });
-}
+});
 
 function reduceResponse(response) {
   return {

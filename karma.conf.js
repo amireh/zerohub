@@ -16,16 +16,23 @@ module.exports = function (config) {
       terminal: true,
     },
     browserDisconnectTolerance: 0,
-    browserNoActivityTimeout: 2000,
+    browserNoActivityTimeout: 1000,
     concurrency: 1,
     customLaunchers: {
       VisibleElectron: {
         base: 'Electron',
         flags: [
           '--show',
-          `--entry=${path.resolve(__dirname, 'ui/index--test-core-entry.js')}`,
-          '--enable-logging'
+          // '--enable-logging',
         ],
+        devTools: true,
+        entry: path.resolve(__dirname, 'ui/index--test-core-entry.js'),
+        // browserWindowOptions: {
+        //   webPreferences: {
+        //     webSecurity: false,
+        //     allowRunningInsecureContent: true,
+        //   }
+        // }
       }
     },
 
@@ -53,16 +60,16 @@ module.exports = function (config) {
       'ui/index--test-entry.js': [ 'webpack', 'sourcemap' ],
     },
 
-    reporters: [ 'spec' ],
+    reporters: [ 'dots' ],
 
     webpack: require('./webpack/test.js'),
 
     client: {
       captureConsole: true,
-      clearContext: true,
+      clearContext: false,
       useIframe: false,
-      runInParent: true,
-      loadScriptsViaRequire: true,
+      runInParent: false,
+      loadScriptsViaRequire: false,
     },
 
     webpackServer: {

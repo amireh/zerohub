@@ -33,7 +33,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        loaders: [ 'babel-loader?presets[]=es2015&presets[]=react' ],
+        loaders: [ 'babel-loader' ],
         include: [
           path.join(root, 'ui'),
           path.join(root, 'node_modules/cornflux/src'),
