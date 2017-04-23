@@ -50,7 +50,7 @@ export default ActionProvider(Spaces, {
       container.setState({ loadingSpaces: true });
 
       return PageHub.request({
-        url: `/api/users/${userId}/spaces`
+        url: `/api/v2/spaces`
       }).then(payload => {
         container.setState({ spaces: payload.spaces })
       }, error => {

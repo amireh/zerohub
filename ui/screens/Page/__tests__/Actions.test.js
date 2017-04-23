@@ -36,7 +36,7 @@ describe('Screens::Page::Actions', function() {
     it('retrieves the page', function(done) {
       request.stub(function(params) {
         assert.include(params, {
-          url: '/api/pages/page1'
+          url: '/api/v2/pages/page1'
         })
 
         done();
@@ -55,7 +55,7 @@ describe('Screens::Page::Actions', function() {
 
       request.stub(function(params) {
         assert.include(params, {
-          url: '/api/pages/page1'
+          url: '/api/v2/pages/page1'
         })
 
         return Promise.resolve({ pages: [ page ] })

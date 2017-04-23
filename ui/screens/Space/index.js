@@ -116,7 +116,7 @@ const Space = React.createClass({
                     space={space}
                     params={{ pageId }}
                     query={query}
-                    pageTitle={space.pages.filter(x => x.id === pageId)[0].title}
+                    pageTitle={this.state.pages.filter(x => x.id === pageId)[0].title}
                   />
                 );
 

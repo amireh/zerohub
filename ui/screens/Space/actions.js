@@ -1,12 +1,11 @@
-import debounce from 'utils/debounce';
-import * as PageHub from 'services/PageHub';
+import { request } from 'services/PageHub';
 import * as CoreDelegate from 'services/CoreDelegate';
 
-export function FETCH_SPACES(container, { userId }) {
+export function FETCH_SPACES(container, {}) {
   container.setState({ loadingSpaces: true });
 
-  return PageHub.request({
-    url: `/api/users/${userId}/spaces`
+  return request({
+    url: `/api/v2/spaces`
   }).then(payload => {
     container.setState({ spaces: payload.spaces })
   }, error => {
@@ -19,28 +18,30 @@ export function FETCH_SPACES(container, { userId }) {
   // return Promise.resolve();
 }
 
-export function FETCH_SPACE(container, { userId, spaceId }) {
+export function FETCH_SPACE(container, { spaceId }) {
   container.setState({ loadingSpace: true });
 
-  return PageHub.request({
-    url: `/api/users/${userId}/spaces/${spaceId}`
-  }).then(payload => {
+  return Promise.all([
+    request({ url: `/api/v2/spaces/${spaceId}` }),
+    request({ url: `/api/spaces/${spaceId}/folders` }),
+    request({ url: `/api/v2/pages?space_id=${spaceId}` }),
+  ]).then(payloads => {
     container.setState({
-      space: payload.spaces[0],
-      folders: payload.spaces[0].folders,
-      pages: payload.spaces[0].pages,
+      loadingSpace: false,
+      space: payloads[0].spaces[0],
+      folders: payloads[1].folders,
+      pages: payloads[2].pages,
     })
-  }, error => {
-    console.error('request failed:', error)
-    container.setState({ spaceLoadError: true })
-  }).then(() => {
-    container.setState({ loadingSpace: false });
-  })
+  }).catch(error => {
+    container.setState({ loadingSpace: false, spaceLoadError: true })
+
+    throw error;
+  });
 }
 
 // export function SET_PAGE_ENCRYPTION_STATUS(container, { folderId, pageId, encrypted }) {
-//   return PageHub.request({
-//     url: `/api/folders/${folderId}/pages/${pageId}`,
+//   return request({
+//     url: `/api/v2/folders/${folderId}/pages/${pageId}`,
 //     method: 'PATCH',
 //     body: {
 //       page: {
@@ -66,8 +67,8 @@ export function FETCH_SPACE(container, { userId, spaceId }) {
 //     passPhrase: passPhrase,
 //     plainText: content
 //   }).then(({ value, digest }) => {
-//     return PageHub.request({
-//       url: `/api/folders/${folderId}/pages/${pageId}`,
+//     return request({
+//       url: `/api/v2/folders/${folderId}/pages/${pageId}`,
 //       method: 'PATCH',
 //       body: {
 //         page: {

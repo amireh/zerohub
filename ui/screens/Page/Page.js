@@ -52,7 +52,7 @@ const Page = React.createClass({
   },
 
   componentWillMount() {
-    this.emitChangeOfContent = debounce(this._emitChangeOfContent.bind(null), 250, (args) => {
+    this.emitChangeOfContent = debounce(this._emitChangeOfContent, 250, (args) => {
       return JSON.stringify([ args.folderId, args.pageId ]);
     });
   },

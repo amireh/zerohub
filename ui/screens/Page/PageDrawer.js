@@ -11,7 +11,7 @@ const PageDrawer = React.createClass({
     return (
       <div className="pure-u-1-1 space-page-drawer">
         <header className="space-page-drawer__header">
-          About this page
+          Page Settings
         </header>
 
         <div className="space-page-drawer__content">
@@ -23,6 +23,7 @@ const PageDrawer = React.createClass({
             <Toggle
               checked={this.props.page.encrypted === true}
               onChange={this.setPageEncryptionStatus}
+              disabled={!this.props.passPhrase}
             />
           </label>
 

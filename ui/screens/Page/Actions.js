@@ -9,7 +9,7 @@ import * as ErrorCodes from './ErrorCodes';
 export function FETCH_PAGE(container, { passPhrase, pageId }) {
   container.setState({ loading: true, loadError: null, page: null });
 
-  return request({ url: `/api/pages/${pageId}` }).then(payload => {
+  return request({ url: `/api/v2/pages/${pageId}` }).then(payload => {
     return payload.pages[0];
   }, () => {
     return Promise.reject(ErrorCodes.PAGE_FETCH_ERROR);
@@ -47,7 +47,7 @@ export function UPDATE_PAGE_CONTENT(container, { pageId, content }) {
   });
 
   return request({
-    url: `/api/pages/${pageId}`,
+    url: `/api/v2/pages/${pageId}`,
     method: 'PATCH',
     body: {
       page: {
@@ -73,7 +73,7 @@ export function UPDATE_PAGE_CONTENT(container, { pageId, content }) {
 export function SET_PAGE_ENCRYPTION_STATUS(container, { folderId, pageId, encrypted }) {
   return Promise.reject(new Error('Not Implemented'))
   // return request({
-  //   url: `/api/pages/${pageId}`,
+  //   url: `/api/v2/pages/${pageId}`,
   //   method: 'PATCH',
   //   body: {
   //     page: {

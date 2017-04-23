@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { drill } from 'react-drill';
 
 export default reactSuite;
 
@@ -17,15 +18,14 @@ function reactSuite(mochaSuite, Type, initialProps) {
     subject = render(evaluate(initialProps));
 
     rs.subject = subject;
+    rs.component = subject;
+    rs.scope = drill(subject);
   });
 
   mochaSuite.afterEach(function() {
-    if (window.location.search.match(/inspect/)) {
-      window.subject = subject;
-      window.container = container;
-
-      return;
-    }
+    rs.scope = null;
+    rs.component = null;
+    rs.subject = null;
 
     ReactDOM.unmountComponentAtNode(container);
     container.remove();

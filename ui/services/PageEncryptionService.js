@@ -32,7 +32,7 @@ export async function encryptPage({ passPhrase }, page) {
   // update page
 
   const withEncryptedContent = await request({
-    url: `/api/folders/${page.folder_id}/pages/${page.id}`,
+    url: `/api/v2/pages/${page.id}`,
     method: 'PATCH',
     body: {
       page: {
