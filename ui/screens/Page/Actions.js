@@ -40,6 +40,60 @@ export function FETCH_PAGE(container, { passPhrase, pageId }) {
   });
 }
 
+export function UPDATE_PAGE_CONTENT(container, { pageId, content }) {
+  container.setState({
+    saving: true,
+    saveError: null,
+  });
+
+  return request({
+    url: `/api/pages/${pageId}`,
+    method: 'PATCH',
+    body: {
+      page: {
+        content
+      }
+    }
+  }).then(payload => {
+    container.setState({
+      saving: false,
+      saveError: null,
+      page: payload.pages[0]
+    })
+  }, error => {
+    console.error('unable to save page:', error);
+
+    container.setState({
+      saving: false,
+      saveError: true,
+    });
+  })
+}
+
+export function SET_PAGE_ENCRYPTION_STATUS(container, { folderId, pageId, encrypted }) {
+  return Promise.reject(new Error('Not Implemented'))
+  // return request({
+  //   url: `/api/pages/${pageId}`,
+  //   method: 'PATCH',
+  //   body: {
+  //     page: {
+  //       encrypted
+  //     }
+  //   }
+  // }).then(payload => {
+  //   container.setState({
+  //     pages: container.state.pages.map(page => {
+  //       if (page.id === pageId) {
+  //         return payload.pages[0];
+  //       }
+  //       else {
+  //         return page;
+  //       }
+  //     })
+  //   })
+  // });
+}
+
 async function decryptPage(container, { passPhrase, page }) {
   if (!passPhrase) {
     return Promise.reject(ErrorCodes.MISSING_PASS_PHRASE_ERROR);
@@ -58,76 +112,4 @@ async function decryptPage(container, { passPhrase, page }) {
   catch (e) {
     return Promise.reject(ErrorCodes.PAGE_CIPHER_ERROR);
   }
-}
-
-export const UPDATE_PAGE_CONTENT = debounce((container, { pageId, content }) => {
-  container.setState({
-    pagesBeingSaved: Object.assign({}, container.state.pagesBeingSaved, { [pageId]: true })
-  });
-
-  return request({
-    url: `/api/folders/${folderId}/pages/${pageId}`,
-    method: 'PATCH',
-    body: {
-      page: {
-        content
-      }
-    }
-  }).then(payload => {
-    container.setState({
-      pagesBeingSaved: Object.assign({}, container.state.pagesBeingSaved, { [pageId]: false }),
-
-      pages: container.state.pages.map(page => {
-        if (page.id === pageId) {
-          return payload.pages[0];
-        }
-        else {
-          return page;
-        }
-      })
-    })
-  }, error => {
-    console.error('unable to save page:', error);
-
-    container.setState({
-      pageSavingErrors: Object.assign({}, container.state.pageSavingErrors, { [pageId]: true }),
-      pagesBeingSaved: Object.assign({}, container.state.pagesBeingSaved, { [pageId]: false }),
-    });
-  })
-}, 250, (args) => JSON.stringify([ args.folderId, args.pageId ]));
-
-export function RETRIEVE_PASS_PHRASE(container, { spaceId }) {
-  container.setState({ retrievingPassPhrase: true, passPhraseRetrievalError: false });
-
-  return CoreDelegate.retrievePassPhrase({ spaceId }).then(passPhrase => {
-    container.setState({
-      passPhrase: passPhrase || null,
-      retrievingPassPhrase: false,
-      passPhraseRetrievalError: false,
-    });
-  }, error => {
-    console.error('unable to generate pass phrase');
-
-    container.setState({
-      retrievingPassPhrase: false,
-      passPhraseRetrievalError: true,
-    });
-  })
-}
-
-export function GENERATE_PASS_PHRASE(container, { spaceId }) {
-  container.setState({ generatingPassPhrase: true });
-
-  return CoreDelegate.generatePassPhrase({ spaceId }).then(passPhrase => {
-    container.setState({
-      passPhrase: passPhrase || null,
-      generatingPassPhrase: false
-    });
-  }, error => {
-    console.error('unable to generate pass phrase');
-
-    container.setState({ generatingPassPhrase: false });
-
-    throw error;
-  })
 }

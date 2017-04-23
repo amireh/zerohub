@@ -9,6 +9,7 @@ import PageDrawer from './PageDrawer';
 import * as ErrorCodes from './ErrorCodes';
 import LoadingIndicator from './LoadingIndicator';
 import ErrorMessage from 'components/ErrorMessage';
+import debounce from 'utils/debounce';
 
 const Page = React.createClass({
   propTypes: {
@@ -35,7 +36,7 @@ const Page = React.createClass({
       'page-settings': PropTypes.oneOf([ '1', null ]),
     }).isRequired,
 
-    isSaving: PropTypes.bool,
+    saving: PropTypes.bool,
     isDecrypting: PropTypes.bool,
     isRetrievingPassPhrase: PropTypes.bool,
 
@@ -48,6 +49,12 @@ const Page = React.createClass({
       ErrorCodes.PAGE_DIGEST_MISMATCH_ERROR,
       ErrorCodes.PAGE_FETCH_ERROR,
     ]),
+  },
+
+  componentWillMount() {
+    this.emitChangeOfContent = debounce(this._emitChangeOfContent.bind(null), 250, (args) => {
+      return JSON.stringify([ args.folderId, args.pageId ]);
+    });
   },
 
   componentDidMount() {
@@ -119,7 +126,7 @@ const Page = React.createClass({
           <h1 className="space-page__title">
             {pageTitle}
 
-            {this.props.isSaving && (
+            {this.props.saving && (
               <span> <em>Saving...</em></span>
             )}
           </h1>
@@ -156,6 +163,7 @@ const Page = React.createClass({
               decryptedContent={this.props.decryptedContent}
               passPhrase={this.props.passPhrase}
               isRetrievingPassPhrase={this.props.isRetrievingPassPhrase}
+              onChangeOfEncryptionStatus={this.emitChangeOfEncryptionStatus}
             />
           </OutletOccupant>
         )}
@@ -293,7 +301,7 @@ const Page = React.createClass({
     }
   },
 
-  emitChangeOfContent(instance/*, changes*/) {
+  _emitChangeOfContent(instance/*, changes*/) {
     console.debug('updating page content...');
 
     this.props.dispatch('UPDATE_PAGE_CONTENT', {
@@ -350,8 +358,13 @@ const Page = React.createClass({
     else {
       nextContent = props.page.content;
     }
+  },
 
-
+  emitChangeOfEncryptionStatus(status) {
+    this.props.dispatch('SET_PAGE_ENCRYPTION_STATUS', {
+      pageId: this.props.page.id,
+      encrypted: status
+    });
   },
 
   // validateIntegrity({ folderId, pageId }) {
@@ -367,6 +380,7 @@ const Page = React.createClass({
 export default ActionEmitter(Page, {
   actions: [
     'UPDATE_PAGE_CONTENT',
-    'UPDATE_QUERY'
+    'UPDATE_QUERY',
+    'SET_PAGE_ENCRYPTION_STATUS'
   ]
 });

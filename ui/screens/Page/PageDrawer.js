@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import Toggle from 'react-toggle';
-import { ActionEmitter } from 'cornflux';
 import { Button } from 'components/Native';
 
 const PageDrawer = React.createClass({
+  propTypes: {
+    onChangeOfEncryptionStatus: PropTypes.func.isRequired,
+  },
+
   render() {
     return (
       <div className="pure-u-1-1 space-page-drawer">
@@ -64,19 +67,7 @@ const PageDrawer = React.createClass({
   },
 
   setPageEncryptionStatus(e) {
-    this.props.dispatch('SET_PAGE_ENCRYPTION_STATUS', {
-      folderId: this.props.page.folder_id,
-      pageId: this.props.page.id,
-      encrypted: e.target.checked
-    });
-
-    if (!e.target.checked && this.props.page.encrypted && this.props.decryptedContent) {
-      this.props.dispatch('UPDATE_PAGE_CONTENT', {
-        folderId: this.props.page.folder_id,
-        pageId: this.props.page.id,
-        content: this.props.decryptedContent,
-      })
-    }
+    this.props.onChangeOfEncryptionStatus(e.target.checked);
   },
 
   importPassPhrase() {
@@ -88,6 +79,4 @@ const PageDrawer = React.createClass({
   }
 });
 
-export default ActionEmitter(PageDrawer, {
-  actions: [ 'SET_PAGE_ENCRYPTION_STATUS' ]
-});
+export default PageDrawer;

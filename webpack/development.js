@@ -18,7 +18,7 @@ module.exports = {
 
   output: {
     path: path.join(root, 'www/dist'),
-    filename: 'crypthub-ui.js',
+    filename: 'zerohub-ui.js',
   },
 
   resolve: {
@@ -50,7 +50,7 @@ module.exports = {
 
       {
         test: /\.(png|woff|woff2|eot|ttf|otf|svg)(\?[a-z0-9=&.]+)?$/,
-        loader: 'url-loader?limit=100000',
+        loader: 'file-loader?limit=100000&publicPath=dist/',
         include: [
           path.join(root, 'ui/css/fonts')
         ]
