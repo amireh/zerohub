@@ -7,9 +7,12 @@ const OutletProvider = React.createClass({
   },
 
   childContextTypes: {
-    addOutletOccupant: PropTypes.func.isRequired,
-    getOutletOccupant: PropTypes.func.isRequired,
-    removeOutletOccupant: PropTypes.func.isRequired,
+    addOutletChangeListener: PropTypes.func,
+    addOutletOccupant: PropTypes.func,
+    getOutletOccupant: PropTypes.func,
+    emitOutletChange: PropTypes.func,
+    removeOutletChangeListener: PropTypes.func,
+    removeOutletOccupant: PropTypes.func,
   },
 
   getInitialState() {
@@ -24,13 +27,22 @@ const OutletProvider = React.createClass({
 
   componentWillMount() {
     this.occupants = {};
+    this.changeListeners = [];
+  },
+
+  componentWillUnmount() {
+    this.changeListeners = null;
+    this.occupants = null;
   },
 
   getChildContext() {
     return {
       addOutletOccupant: this.addOccupant,
+      addOutletChangeListener: this.addOutletChangeListener,
       getOutletOccupant: this.getOccupant,
+      emitOutletChange: this.emitChangeOfOutletState,
       removeOutletOccupant: this.removeOccupant,
+      removeOutletChangeListener: this.removeOutletChangeListener,
     }
   },
 
@@ -64,7 +76,7 @@ const OutletProvider = React.createClass({
     this.assertNameIsKnown(key);
 
     if (this.state.occupants[key]) {
-      return React.Children.only(this.state.occupants[key].props.children);
+      return (this.state.occupants[key]);
     }
     else {
       return null;
@@ -75,7 +87,24 @@ const OutletProvider = React.createClass({
     invariant(this.props.names.indexOf(key) > -1,
       `Unknown outlet "${key}"`
     );
-  }
+  },
+
+  addOutletChangeListener(listener) {
+    this.changeListeners.push(listener);
+  },
+
+  emitChangeOfOutletState(name) {
+    this.changeListeners.forEach(fn => fn(name));
+  },
+
+  removeOutletChangeListener(listener) {
+    const index = this.changeListeners.indexOf(listener);
+
+    if (index > -1) {
+      this.changeListeners.splice(index, 1);
+    }
+  },
+
 });
 
 export default OutletProvider;

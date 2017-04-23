@@ -98,7 +98,7 @@ const Page = React.createClass({
         </div>
 
         {this.props.page && this.props.query.drawer === '1' && (
-          <OutletOccupant name="SPACE_DRAWER">
+          <OutletOccupant name="SPACE_DRAWER" page={this.props.page}>
             <PageDrawer
               space={this.props.space}
               page={this.props.page}

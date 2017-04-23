@@ -51,7 +51,7 @@ export async function encryptPage({ passPhrase, page }) {
   return withEncryptedContent.pages[0];
 }
 
-export function decryptPage({ page }) {
+export async function decryptPage({ passPhrase, page }) {
   if (!page.encrypted) {
     return Promise.reject(new Error('Page is already decrypted!'));
   }
@@ -60,6 +60,17 @@ export function decryptPage({ page }) {
     lockableType: 'Page',
     lockableId: page.id,
   };
+
+  const currentDigest = await calculateDigest({ text: page.content });
+
+  let decryptedPage;
+
+  if (currentDigest !== page.digest) {
+    decryptedPage = await decryptPageContents({ passPhrase, page });
+  }
+  else {
+    decryptedPage = page;
+  }
 
   // TODO: transactionalize
 
@@ -70,7 +81,7 @@ export function decryptPage({ page }) {
       method: 'PATCH',
       body: {
         page: {
-          content: page.content,
+          content: decryptedPage.content,
           digest: null,
           encrypted: false
         }
@@ -79,7 +90,7 @@ export function decryptPage({ page }) {
   }).then(withDecryptedContent => {
     // release page lock
     return LockingService.releaseLock(lockingContext).then(() => {
-      return withDecryptedContent;
+      return withDecryptedContent.pages[0];
     });
   });
 }

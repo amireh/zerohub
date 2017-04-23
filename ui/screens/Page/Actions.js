@@ -86,7 +86,10 @@ export async function SET_PAGE_ENCRYPTION_STATUS(container, { passPhrase, page, 
 
       container.setState({
         saving: false,
-        page: encryptedPage
+        page: Object.assign({}, page, {
+          digest: encryptedPage.digest,
+          encrypted: true,
+        })
       });
     }
     // decrypting
@@ -95,7 +98,11 @@ export async function SET_PAGE_ENCRYPTION_STATUS(container, { passPhrase, page, 
 
       container.setState({
         saving: false,
-        page: decryptedPage
+        page: Object.assign({}, page, {
+          digest: null,
+          encrypted: false,
+          content: decryptedPage.content,
+        })
       });
     }
   }
@@ -108,24 +115,6 @@ export async function SET_PAGE_ENCRYPTION_STATUS(container, { passPhrase, page, 
     throw e;
   }
 }
-
-// async function encryptPage(container, { passPhrase, page }) {
-//   if (!passPhrase) {
-//     return Promise.reject(ErrorCodes.MISSING_PASS_PHRASE_ERROR);
-//   }
-
-//   try {
-//     const result = await PageEncryptionService.encryptPageContents({ passPhrase, page });
-
-//     return Object.assign({}, page, {
-//       content: result.content,
-//       digest: result.digest
-//     });
-//   }
-//   catch (e) {
-//     return Promise.reject(ErrorCodes.PAGE_CIPHER_ERROR);
-//   }
-// }
 
 async function tryToDecryptPage({ passPhrase, page }) {
   if (!passPhrase) {

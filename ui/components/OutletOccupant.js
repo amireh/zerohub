@@ -7,11 +7,16 @@ const OutletOccupant = React.createClass({
 
   contextTypes: {
     addOutletOccupant: PropTypes.func.isRequired,
+    emitOutletChange: PropTypes.func.isRequired,
     removeOutletOccupant: PropTypes.func.isRequired,
   },
 
   componentDidMount() {
     this.context.addOutletOccupant(this.props.name, this);
+  },
+
+  componentDidUpdate() {
+    this.context.emitOutletChange(this.props.name);
   },
 
   componentWillUnmount() {

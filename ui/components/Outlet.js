@@ -7,7 +7,17 @@ const Outlet = React.createClass({
   },
 
   contextTypes: {
+    addOutletChangeListener: PropTypes.func.isRequired,
     getOutletOccupant: PropTypes.func.isRequired,
+    removeOutletChangeListener: PropTypes.func.isRequired,
+  },
+
+  componentDidMount() {
+    this.context.addOutletChangeListener(this.reloadOnOccupantUpdate)
+  },
+
+  componentWillUnmount: function() {
+    this.context.removeOutletChangeListener(this.reloadOnOccupantUpdate)
   },
 
   render() {
@@ -20,8 +30,14 @@ const Outlet = React.createClass({
     const child = React.Children.only(this.props.children);
 
     return React.cloneElement(child, {
-      children: occupant
+      children: React.Children.only(occupant.props.children)
     });
+  },
+
+  reloadOnOccupantUpdate(key) {
+    if (key === this.props.name) {
+      this.forceUpdate();
+    }
   }
 });
 
