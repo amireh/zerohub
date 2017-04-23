@@ -20,9 +20,9 @@ describe('Screens::Page::PageRouteHandler', function() {
   });
 
   it('fetches the page upon load', function() {
-    assert.calledWith(suite.subject.props.dispatch, 'FETCH_PAGE', {
+    assert.calledWith(suite.subject.props.dispatch, 'FETCH_PAGE', sinon.match({
       pageId: 'page1',
-    })
+    }))
   });
 
   it('fetches the page upon navigation', function() {
@@ -32,9 +32,9 @@ describe('Screens::Page::PageRouteHandler', function() {
       }
     });
 
-    assert.calledWith(suite.subject.props.dispatch, 'FETCH_PAGE', {
+    assert.calledWith(suite.subject.props.dispatch, 'FETCH_PAGE', sinon.match({
       pageId: 'page2',
-    })
+    }))
   });
 
 });

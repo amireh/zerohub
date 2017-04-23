@@ -1,115 +1,158 @@
 import Promise from 'Promise';
-import debounce from 'utils/debounce';
-import omit from 'utils/omit';
 import { request } from 'services/PageHub';
-import * as CoreDelegate from 'services/CoreDelegate';
-import * as PageEncryptionService from 'services/PageEncryptionService';
+import {
+  encryptPage,
+  encryptPageContents,
+  decryptPage,
+  decryptPageContents,
+} from 'services/PageEncryptionService';
 import * as ErrorCodes from './ErrorCodes';
+import { partial, either, } from 'ramda';
 
 export function FETCH_PAGE(container, { passPhrase, pageId }) {
-  container.setState({ loading: true, loadError: null, page: null });
+  const parsePage = payload => payload.pages[0];
+  const emitError = errorCode => () => Promise.reject(errorCode);
+  const passIfNotEncrypted = page => !page.encrypted && page;
 
-  return request({ url: `/api/v2/pages/${pageId}` }).then(payload => {
-    return payload.pages[0];
-  }, () => {
-    return Promise.reject(ErrorCodes.PAGE_FETCH_ERROR);
-  }).then(page => {
-    if (!page.encrypted) {
-      return page;
-    }
-    else {
-      return decryptPage(container, { passPhrase, page });
-    }
-  }).then(page => {
-    console.debug('setting page:', page)
-    container.setState({
-      loading: false,
-      loadError: null,
-      page
-    });
-
-    return page;
-  }).catch(errorCode => {
-    container.setState({
-      loading: false,
-      loadError: errorCode,
-      page: null,
-    });
-
-    throw new Error(errorCode);
-  });
+  return (
+    transitionState({ loading: true, loadError: null, page: null })(container)
+    .then(
+      partial(request, [{ url: `/api/v2/pages/${pageId}` }])
+    )
+    .then(
+      parsePage,
+      emitError(ErrorCodes.PAGE_FETCH_ERROR)
+    )
+    .then(
+      either(
+        passIfNotEncrypted,
+        page => tryToDecryptPage({ passPhrase, page })
+      )
+    )
+    .then(
+      pass(page =>
+        transitionState({ loading: false, loadError: null, page })(container)
+      )
+    )
+    .catch(rethrow(errorCode => {
+      transitionState({ loading: false, loadError: errorCode, page: null })(container)
+    }))
+  );
 }
 
-export function UPDATE_PAGE_CONTENT(container, { pageId, content }) {
-  container.setState({
-    saving: true,
-    saveError: null,
-  });
-
-  return request({
+export function UPDATE_PAGE_CONTENT(container, { pageId, passPhrase, encrypted, content }) {
+  const passIfNotEncrypted = () => !encrypted && { content };
+  const savePage = pageToCommit => request({
     url: `/api/v2/pages/${pageId}`,
     method: 'PATCH',
     body: {
       page: {
-        content
+        content: pageToCommit.content,
+        digest: pageToCommit.digest,
       }
     }
-  }).then(payload => {
+  });
+
+  return (
+    transitionState({ saving: true, saveError: null, })(container)
+    .then(
+      either(
+        passIfNotEncrypted,
+        partial(encryptPageContents, [{ passPhrase, page: { content } }])
+      )
+    )
+    .then(savePage)
+    .then(
+      partial(transitionState({ saving: false, saveError: null, }), [container])
+    )
+    .catch(
+      rethrow(
+        partial(transitionState({ saving: false, saveError: true, }), [container])
+      )
+    )
+  );
+}
+
+export async function SET_PAGE_ENCRYPTION_STATUS(container, { passPhrase, page, encrypted }) {
+  if (encrypted === page.encrypted) {
+    return Promise.resolve();
+  }
+
+  container.setState({ saving: true });
+
+  try {
+    if (encrypted) {
+      const encryptedPage = await encryptPage({ passPhrase, page });
+
+      container.setState({
+        saving: false,
+        page: encryptedPage
+      });
+    }
+    // decrypting
+    else {
+      const decryptedPage = await decryptPage({ passPhrase, page });
+
+      container.setState({
+        saving: false,
+        page: decryptedPage
+      });
+    }
+  }
+  catch (e) {
     container.setState({
       saving: false,
-      saveError: null,
-      page: payload.pages[0]
+      saveError: true
     })
-  }, error => {
-    console.error('unable to save page:', error);
 
-    container.setState({
-      saving: false,
-      saveError: true,
-    });
-  })
+    throw e;
+  }
 }
 
-export function SET_PAGE_ENCRYPTION_STATUS(container, { folderId, pageId, encrypted }) {
-  return Promise.reject(new Error('Not Implemented'))
-  // return request({
-  //   url: `/api/v2/pages/${pageId}`,
-  //   method: 'PATCH',
-  //   body: {
-  //     page: {
-  //       encrypted
-  //     }
-  //   }
-  // }).then(payload => {
-  //   container.setState({
-  //     pages: container.state.pages.map(page => {
-  //       if (page.id === pageId) {
-  //         return payload.pages[0];
-  //       }
-  //       else {
-  //         return page;
-  //       }
-  //     })
-  //   })
-  // });
-}
+// async function encryptPage(container, { passPhrase, page }) {
+//   if (!passPhrase) {
+//     return Promise.reject(ErrorCodes.MISSING_PASS_PHRASE_ERROR);
+//   }
 
-async function decryptPage(container, { passPhrase, page }) {
+//   try {
+//     const result = await PageEncryptionService.encryptPageContents({ passPhrase, page });
+
+//     return Object.assign({}, page, {
+//       content: result.content,
+//       digest: result.digest
+//     });
+//   }
+//   catch (e) {
+//     return Promise.reject(ErrorCodes.PAGE_CIPHER_ERROR);
+//   }
+// }
+
+async function tryToDecryptPage({ passPhrase, page }) {
   if (!passPhrase) {
     return Promise.reject(ErrorCodes.MISSING_PASS_PHRASE_ERROR);
   }
 
   try {
-    const result = await PageEncryptionService.decryptPageContents({ passPhrase, page });
+    const result = await decryptPageContents({ passPhrase, page });
 
-    if (result.digest !== page.digest) {
+    if (page.digest && result.digest !== page.digest) {
       return Promise.reject(ErrorCodes.PAGE_DIGEST_MISMATCH_ERROR);
     }
     else {
-      return Object.assign({}, page, { content: result.value });
+      return Object.assign({}, page, { content: result.content });
     }
   }
   catch (e) {
     return Promise.reject(ErrorCodes.PAGE_CIPHER_ERROR);
   }
 }
+
+const rethrow = fn => error => { fn(error); throw error; };
+const pass = fn => value => { fn(value); return value; };
+const transitionState = partialState => container => {
+  if (container.isMounted()) {
+    container.setState(partialState);
+  }
+
+  return Promise.resolve();
+};

@@ -25,13 +25,6 @@ export function encrypt({ passPhrase, plainText }) {
   return send('ENCRYPT_TEXT', {
     plainText,
     passPhrase
-  }).then(encryptedText => {
-    return calculateDigest({ text: encryptedText }).then(encryptedTextDigest => {
-      return {
-        value: encryptedText,
-        digest: encryptedTextDigest
-      };
-    })
   });
 }
 
@@ -39,13 +32,6 @@ export function decrypt({ passPhrase, encryptedText }) {
   return send('DECRYPT_TEXT', {
     encryptedText,
     passPhrase
-  }).then(plainText => {
-    return calculateDigest({ text: plainText }).then(plainTextDigest => {
-      return {
-        value: plainText,
-        digest: plainTextDigest
-      };
-    });
   });
 }
 

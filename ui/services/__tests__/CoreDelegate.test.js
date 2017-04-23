@@ -46,8 +46,7 @@ describe('Services::CoreDelegate', function() {
 
     it('encrypts some text', function(done) {
       CoreDelegate.encrypt({ passPhrase, plainText }).then(result => {
-        assert.equal(result.value, encryptedText)
-        assert.equal(result.digest, '8bc9ed91512683feff261d67ec353cdf74404a83ea2395c049c6d8109bb8eeb9')
+        assert.equal(result, encryptedText)
         done();
       }).catch(done);
     })
@@ -57,8 +56,7 @@ describe('Services::CoreDelegate', function() {
         encryptedText: encryptedText,
         passPhrase,
       }).then(result => {
-        assert.equal(result.value, plainText)
-        assert.equal(result.digest, 'c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2')
+        assert.equal(result, plainText)
         done();
       }).catch(done);
     })

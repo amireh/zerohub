@@ -52,6 +52,8 @@ const Space = React.createClass({
       userId: config.userId,
       spaceId: this.props.params.id
     });
+
+    this.props.dispatch('RETRIEVE_PASS_PHRASE', { spaceId: this.props.params.id });
   },
 
   componentWillReceiveProps(nextProps) {
@@ -117,6 +119,8 @@ const Space = React.createClass({
                     params={{ pageId }}
                     query={query}
                     pageTitle={this.state.pages.filter(x => x.id === pageId)[0].title}
+                    passPhrase={this.state.passPhrase && this.state.passPhrase.value}
+                    isRetrievingPassPhrase={this.state.retrievingPassPhrase}
                   />
                 );
 
@@ -128,9 +132,7 @@ const Space = React.createClass({
                 //     page={this.state.pages.filter(x => x.id === params.id)[0]}
                 //     decryptedContent={this.state.decryptedContents[pageId] || null}
                 //     decryptedDigest={this.state.decryptedDigests[pageId] || null}
-                //     passPhrase={this.state.passPhrase}
                 //     isSaving={!!this.state.pagesBeingSaved[pageId]}
-                //     isRetrievingPassPhrase={this.state.retrievingPassPhrase}
                 //     isDecrypting={!!this.state.pagesBeingDecrypted[pageId]}
                 //     hasSavingError={!!this.state.pageSavingErrors[pageId]}
                 //     hasDecryptionError={!!this.state.pageDecryptionErrors[pageId]}

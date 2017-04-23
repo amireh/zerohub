@@ -37,6 +37,7 @@ const PageRouteHandler = React.createClass({
   componentDidMount() {
     this.props.dispatch('FETCH_PAGE', {
       pageId: this.props.params.pageId,
+      passPhrase: this.props.passPhrase,
     });
   },
 
@@ -44,6 +45,7 @@ const PageRouteHandler = React.createClass({
     if (nextProps.params.pageId !== this.props.params.pageId) {
       this.props.dispatch('FETCH_PAGE', {
         pageId: nextProps.params.pageId,
+        passPhrase: this.props.passPhrase,
       });
     }
   },

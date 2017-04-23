@@ -27,24 +27,22 @@ const PageDrawer = React.createClass({
             />
           </label>
 
-          {this.props.page.encrypted && (
-            this.renderEncryptionSettings()
-          )}
+          {this.renderEncryptionSettings()}
         </div>
       </div>
     );
   },
 
   renderEncryptionSettings() {
-    if (this.props.isRetrievingPassPhrase) {
-      return (
-        <p>Loading existing pass-phrase...</p>
-      );
-    }
+    // if (this.props.isRetrievingPassPhrase) {
+    //   return (
+    //     <p>Loading existing pass-phrase...</p>
+    //   );
+    // }
 
     return (
       <div>
-        {!this.props.passPhrase && this.isPageEncrypted() && (
+        {!this.props.passPhrase && (
           <div>
             <p>
               You must register an encryption pass-phrase for this space in order

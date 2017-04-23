@@ -27,7 +27,7 @@ describe('Services::PageEncryptionService', function() {
         };
       })
 
-      const nextPage = await PageEncryptionService.encryptPage({ passPhrase }, page);
+      const nextPage = await PageEncryptionService.encryptPage({ passPhrase, page });
       // TODO: wtf?
     }))
   })

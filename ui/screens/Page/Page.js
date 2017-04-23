@@ -21,9 +21,8 @@ const Page = React.createClass({
       title: PropTypes.string,
     }),
 
-    decryptedContent: PropTypes.string,
-    decryptedDigest: PropTypes.string,
-    passPhrase: PropTypes.object,
+    pageTitle: PropTypes.string,
+    passPhrase: PropTypes.string,
 
     dispatch: PropTypes.func.isRequired,
 
@@ -33,7 +32,6 @@ const Page = React.createClass({
 
     query: PropTypes.shape({
       drawer: PropTypes.oneOf([ '1', null ]),
-      'page-settings': PropTypes.oneOf([ '1', null ]),
     }).isRequired,
 
     saving: PropTypes.bool,
@@ -52,65 +50,9 @@ const Page = React.createClass({
   },
 
   componentWillMount() {
-    this.emitChangeOfContent = debounce(this._emitChangeOfContent, 250, (args) => {
+    this.emitChangeOfContent = debounce(this._emitChangeOfContent, 1000, (args) => {
       return JSON.stringify([ args.folderId, args.pageId ]);
     });
-  },
-
-  componentDidMount() {
-    // if (this.props.page.encrypted) {
-    //   this.props.dispatch('RETRIEVE_PASS_PHRASE', { spaceId: this.props.space.id });
-    // }
-  },
-
-  componentWillReceiveProps(nextProps) {
-    // if (nextProps.page.id !== this.props.page.id && !nextProps.page.encrypted) {
-    //   this.editor.off('changes', this.emitChangeOfContent);
-    //   this.editor.setValue(nextProps.page.content);
-    //   this.editor.clearHistory();
-    //   this.editor.on('changes', this.emitChangeOfContent);
-    // }
-    // else if (nextProps.page.id !== this.props.page.id && nextProps.page.encrypted && nextProps.decryptedContent) {
-    //   this.editor.off('changes', this.emitChangeOfContent);
-    //   this.editor.setValue(nextProps.decryptedContent);
-    //   this.editor.clearHistory();
-    //   this.editor.on('changes', this.emitChangeOfContent);
-    // }
-    // else if (nextProps.page.encrypted && !nextProps.decryptedContent) {
-    //   this.editor.off('changes', this.emitChangeOfContent);
-    //   this.editor.setValue('');
-    //   this.editor.clearHistory();
-    // }
-    // else if (nextProps.page.encrypted && !this.props.decryptedContent && nextProps.decryptedContent) {
-    //   this.editor.off('changes', this.emitChangeOfContent);
-    //   this.editor.setValue(nextProps.decryptedContent);
-    //   this.editor.clearHistory();
-    //   this.editor.on('changes', this.emitChangeOfContent);
-    // }
-
-    // if (
-    //   nextProps.page.encrypted &&
-    //   !nextProps.passPhrase &&
-    //   !nextProps.isRetrievingPassPhrase
-    // ) {
-    //   this.props.dispatch('RETRIEVE_PASS_PHRASE', {
-    //     spaceId: this.props.space.id
-    //   });
-    // }
-
-    // if (
-    //   nextProps.page.encrypted &&
-    //   nextProps.passPhrase &&
-    //   !nextProps.decryptedContent &&
-    //   !nextProps.isDecrypting &&
-    //   !nextProps.hasDecryptionError
-    // ) {
-    //   this.props.dispatch('DECRYPT_PAGE', {
-    //     pageId: nextProps.page.id,
-    //     passPhrase: nextProps.passPhrase,
-    //     content: nextProps.page.content,
-    //   })
-    // }
   },
 
   componentWillUnmount() {
@@ -126,8 +68,20 @@ const Page = React.createClass({
           <h1 className="space-page__title">
             {pageTitle}
 
+            {this.props.page && this.props.page.encrypted && (
+              <Icon
+                sizeHint="display"
+                className="icon-lock_outline"
+                style={{
+                  display: 'inline-block',
+                  verticalAlign: 'middle',
+                  margin: '-0.25rem 0 0 0.25rem'
+                }}
+              />
+            )}
+
             {this.props.saving && (
-              <span> <em>Saving...</em></span>
+              <span> <em>{I18n.t('Saving...')}</em></span>
             )}
           </h1>
 
@@ -135,18 +89,6 @@ const Page = React.createClass({
             <Button hint="icon" onClick={this.toggleDrawer}>
               <Icon sizeHint="display" className="icon-more_vert" />
             </Button>
-
-            {false && (
-              <div className="inline-block">
-                <Button onClick={this.toggleSettingsMenu} hint="icon">
-                  <Icon className="icon-settings" />
-                </Button>
-
-                {this.props.query['page-settings'] === '1' && (
-                  this.renderSettingsMenu()
-                )}
-              </div>
-            )}
           </div>
         </div>
 
@@ -160,7 +102,6 @@ const Page = React.createClass({
             <PageDrawer
               space={this.props.space}
               page={this.props.page}
-              decryptedContent={this.props.decryptedContent}
               passPhrase={this.props.passPhrase}
               isRetrievingPassPhrase={this.props.isRetrievingPassPhrase}
               onChangeOfEncryptionStatus={this.emitChangeOfEncryptionStatus}
@@ -187,21 +128,20 @@ const Page = React.createClass({
 
     return (
       <div>
+        {this.props.saveError && (
+          <WarningMessage>
+            {I18n.t(
+              'Oops! Something went wrong while saving the page. You ' +
+              'may want to try again later.'
+            )}
+          </WarningMessage>
+        )}
         {this.props.hasDecryptionError && (
           <WarningMessage>
             Page content is marked as encrypted but failed to be decrypted using
             the pass-phrase assigned to this space. This could either mean that
             the page encrypted using a different pass-phrase, or that there is
             an internal error.
-          </WarningMessage>
-        )}
-
-        {this.requiresContentEncryption() && (
-          <WarningMessage>
-            This page is stored in plain-text format although you have requested
-            it to be encrypted. <Button hint="link" onClick={this.encryptPage}>Click here</Button>
-            {' '}
-            to apply the cipher.
           </WarningMessage>
         )}
 
@@ -238,28 +178,6 @@ const Page = React.createClass({
       break;
     }
   },
-
-  // renderSettingsMenu() {
-  //   return (
-  //     <ul className="page-settings-menu">
-  //       <li>
-  //         {this.props.page.encrypted ? (
-  //           <Button hint="icon" onClick={this.removePageEncryption}>
-  //             <Icon className="icon-no_encryption" />
-  //             {' '}
-  //             Stop encrypting this page
-  //           </Button>
-  //         ) : (
-  //           <Button hint="icon" onClick={this.encryptPage}>
-  //             <Icon className="icon-enhanced_encryption" />
-  //             {' '}
-  //             Encrypt this page
-  //           </Button>
-  //         )}
-  //       </li>
-  //     </ul>
-  //   )
-  // },
 
   createEditor(node) {
     const RULER = 80;
@@ -306,7 +224,8 @@ const Page = React.createClass({
 
     this.props.dispatch('UPDATE_PAGE_CONTENT', {
       pageId: this.props.page.id,
-      folderId: this.props.page.folder_id,
+      encrypted: this.props.page.encrypted,
+      passPhrase: this.props.passPhrase,
       content: instance.doc.getValue()
     })
   },
@@ -317,64 +236,13 @@ const Page = React.createClass({
     })
   },
 
-  toggleSettingsMenu() {
-    this.props.dispatch('UPDATE_QUERY', {
-      'page-settings': this.props.query['page-settings'] === '1' ? null : '1'
-    })
-  },
-
-  encryptPage() {
-    if (!this.props.passPhrase) {
-      console.warn('Unable to encrypt page; no pass-phrase available!');
-      return;
-    }
-
-    this.props.dispatch('ENCRYPT_PAGE', {
-      pageId: this.props.page.id,
-      folderId: this.props.page.folder_id,
-      content: this.props.page.content,
-      passPhrase: this.props.passPhrase.value,
-    })
-  },
-
-  requiresContentEncryption() {
-    const { page } = this.props;
-
-    return (
-      page.encrypted && !page.digest
-    )
-  },
-
-  syncContentWithCodeMirror(props) {
-    const { editor } = this;
-    let nextContent;
-
-    if (props.page.encrypted && !props.decryptedContent) {
-      nextContent = '';
-    }
-    else if (props.page.encrypted && props.decryptedContent) {
-      nextContent = props.decryptedContent;
-    }
-    else {
-      nextContent = props.page.content;
-    }
-  },
-
   emitChangeOfEncryptionStatus(status) {
     this.props.dispatch('SET_PAGE_ENCRYPTION_STATUS', {
-      pageId: this.props.page.id,
+      page: this.props.page,
+      passPhrase: this.props.passPhrase,
       encrypted: status
     });
   },
-
-  // validateIntegrity({ folderId, pageId }) {
-  //   this.props.dispatch('VALIDATE_PAGE_INTEGRITY', {
-  //     pageId: this.props.page.id,
-  //     folderId: this.props.page.folder_id,
-  //     content: this.props.page.content,
-  //     passPhrase: this.props.passPhrase.value,
-  //   })
-  // },
 });
 
 export default ActionEmitter(Page, {
