@@ -1,6 +1,8 @@
 node_modules
 npm-debug.log
 
+/.env
 /www/dist
-/crypthub.sublime-workspace
+/zerohub.sublime-workspace
 /ui/css/fonts/*.zip
+/.local

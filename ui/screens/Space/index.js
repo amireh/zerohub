@@ -111,7 +111,14 @@ const Space = React.createClass({
                 const { params } = match;
                 const pageId = params.id;
 
-                return <PageRouteHandler params={{ pageId }} query={query} />;
+                return (
+                  <PageRouteHandler
+                    space={space}
+                    params={{ pageId }}
+                    query={query}
+                    pageTitle={space.pages.filter(x => x.id === pageId)[0].title}
+                  />
+                );
 
                 // return (
                 //   <Page

@@ -1,4 +1,3 @@
-require('regenerator-runtime/runtime');
 require('./polyfills');
 
 const tap = (x, fn) => fn(x);

@@ -4,7 +4,7 @@ import { assert } from 'chai';
 import sinonSuite from 'test_utils/sinonSuite';
 import wrapCornflux from 'test_utils/wrapCornflux';
 import LoadingIndicator from '../LoadingIndicator';
-import { drill } from 'react-drill';
+import { drill, m } from 'react-drill';
 import * as ErrorCodes from '../ErrorCodes';
 import ErrorMessage from 'components/ErrorMessage';
 
@@ -12,11 +12,11 @@ describe('Screens::Page::Component', function() {
   const sinon = sinonSuite(this);
   const suite = reactSuite(this, wrapCornflux(Page), () => ({
     dispatch: sinon.stub(),
-    // page: {
-    //   id: 'page1',
-    //   folder_id: 'folder1',
-    //   content: '',
-    // },
+    page: {
+      id: 'page1',
+      folder_id: 'folder1',
+      content: 'Hello World!',
+    },
     space: {
       id: 'space1',
       encrypted: false,
@@ -28,8 +28,12 @@ describe('Screens::Page::Component', function() {
     assert(suite.subject.isMounted());
   });
 
+  it('renders the editor for the initial page', function() {
+    assert(drill(suite.subject).has('textarea', m.hasText('Hello World!')))
+  });
+
   it('renders a loading indicator', function() {
-    suite.setProps({ loading: true });
+    suite.setProps({ page: null, loading: true });
     drill(suite.subject).find(LoadingIndicator);
   })
 
@@ -62,5 +66,14 @@ describe('Screens::Page::Component', function() {
         message
       );
     });
+  })
+
+  it('renders the editor', function() {
+    suite.setProps({
+      page: {
+        id: 'page1',
+        content: '# Hello World!'
+      }
+    })
   })
 });

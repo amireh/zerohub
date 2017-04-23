@@ -13,7 +13,7 @@ const PageRouteHandler = React.createClass({
 
     space: PropTypes.shape({
       id: PropTypes.string.isRequired,
-      encrypted: PropTypes.bool.isRequired,
+      encrypted: PropTypes.bool,
     }).isRequired,
 
     params: PropTypes.shape({
@@ -60,4 +60,6 @@ const PageRouteHandler = React.createClass({
 
 export default ActionProvider(PageRouteHandler, {
   actions: Actions,
+  verbose: true,
 });
+

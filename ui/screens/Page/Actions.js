@@ -1,3 +1,4 @@
+import Promise from 'Promise';
 import debounce from 'utils/debounce';
 import omit from 'utils/omit';
 import { request } from 'services/PageHub';
@@ -20,6 +21,7 @@ export function FETCH_PAGE(container, { passPhrase, pageId }) {
       return decryptPage(container, { passPhrase, page });
     }
   }).then(page => {
+    console.debug('setting page:', page)
     container.setState({
       loading: false,
       loadError: null,

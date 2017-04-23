@@ -107,35 +107,18 @@ const Page = React.createClass({
   },
 
   componentWillUnmount() {
-    if (this.editor) {
-      this.editor.off('changes', this.emitChangeOfContent);
-      this.editor.toTextArea();
-      this.editor = null;
-    }
+    this.removeEditorIfNeeded();
   },
 
   render() {
-    if (this.props.loading) {
-      return (
-        <LoadingIndicator />
-      )
-    }
-    else if (this.props.loadError) {
-      return (
-        <ErrorMessage>
-          {this.renderLoadError(this.props.loadError)}
-        </ErrorMessage>
-      )
-    }
-    else if (!this.props.page) {
-      return null;
-    }
+    const pageTitle = this.props.page && this.props.page.title || this.props.pageTitle || I18n.t('Untitled Page');
 
     return (
       <div className="space-page">
         <div className="space-page__header">
           <h1 className="space-page__title">
-            {this.props.page.title}
+            {pageTitle}
+
             {this.props.isSaving && (
               <span> <em>Saving...</em></span>
             )}
@@ -161,28 +144,11 @@ const Page = React.createClass({
         </div>
 
         <div className="space-page__content">
-          {this.props.hasDecryptionError && (
-            <WarningMessage>
-              Page content is marked as encrypted but failed to be decrypted using
-              the pass-phrase assigned to this space. This could either mean that
-              the page encrypted using a different pass-phrase, or that there is
-              an internal error.
-            </WarningMessage>
-          )}
+          {this.renderBody()}
 
-          {this.requiresContentEncryption() && (
-            <WarningMessage>
-              This page is stored in plain-text format although you have requested
-              it to be encrypted. <Button hint="link" onClick={this.encryptPage}>Click here</Button>
-              {' '}
-              to apply the cipher.
-            </WarningMessage>
-          )}
-
-          <textarea ref={this.createEditor} />
         </div>
 
-        {this.props.query.drawer === '1' && (
+        {this.props.page && this.props.query.drawer === '1' && (
           <OutletOccupant name="SPACE_DRAWER">
             <PageDrawer
               space={this.props.space}
@@ -195,6 +161,45 @@ const Page = React.createClass({
         )}
       </div>
     );
+  },
+
+  renderBody() {
+    if (this.props.loadError) {
+      return (
+        <ErrorMessage>
+          {this.renderLoadError(this.props.loadError)}
+        </ErrorMessage>
+      )
+    }
+    else if (this.props.loading || !this.props.page) {
+      return (
+        <LoadingIndicator />
+      )
+    }
+
+    return (
+      <div>
+        {this.props.hasDecryptionError && (
+          <WarningMessage>
+            Page content is marked as encrypted but failed to be decrypted using
+            the pass-phrase assigned to this space. This could either mean that
+            the page encrypted using a different pass-phrase, or that there is
+            an internal error.
+          </WarningMessage>
+        )}
+
+        {this.requiresContentEncryption() && (
+          <WarningMessage>
+            This page is stored in plain-text format although you have requested
+            it to be encrypted. <Button hint="link" onClick={this.encryptPage}>Click here</Button>
+            {' '}
+            to apply the cipher.
+          </WarningMessage>
+        )}
+
+        <textarea ref={this.createEditor} readOnly value={this.props.page.content} />
+      </div>
+    )
   },
 
   renderLoadError(error) {
@@ -251,6 +256,12 @@ const Page = React.createClass({
   createEditor(node) {
     const RULER = 80;
 
+    this.removeEditorIfNeeded();
+
+    if (!node) {
+      return;
+    }
+
     this.editor = CodeMirror.fromTextArea(node, {
       mode: "gfm",
       lineNumbers: false,
@@ -270,10 +281,16 @@ const Page = React.createClass({
       viewportMargin: Infinity,
     })
 
-    this.editor = this.createEditor({ node: this.refs.editorNode });
-    this.editor.setValue(this.props.page.content);
+    // this.editor.setValue(this.props.page.content);
     this.editor.on('changes', this.emitChangeOfContent);
+  },
 
+  removeEditorIfNeeded() {
+    if (this.editor) {
+      this.editor.off('changes', this.emitChangeOfContent);
+      this.editor.toTextArea();
+      this.editor = null;
+    }
   },
 
   emitChangeOfContent(instance/*, changes*/) {
@@ -349,7 +366,6 @@ const Page = React.createClass({
 
 export default ActionEmitter(Page, {
   actions: [
-    'FETCH_PAGE',
     'UPDATE_PAGE_CONTENT',
     'UPDATE_QUERY'
   ]
