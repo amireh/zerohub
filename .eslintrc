@@ -7,12 +7,10 @@
 
   "plugins": [ "react" ],
 
-  "parser": "babel-eslint",
   "parserOptions": {
     "ecmaVersion": 6,
     "ecmaFeatures": {
-      "jsx": true,
-      "modules": false,
+      "jsx": true
     }
   },
 

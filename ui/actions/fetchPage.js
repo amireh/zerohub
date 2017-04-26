@@ -2,8 +2,8 @@ const Promise = require('Promise');
 const { either } = require('ramda');
 const { request } = require('services/PageHub');
 const ErrorCodes = require('ErrorCodes');
-const PageEncryptionService = require('services/PageEncryptionService');
 const { rethrow, pass } = require('./asyncUtils');
+const decryptPageContents = require('./decryptPageContents');
 
 module.exports = function fetchPage({ setState }, { passPhrase, pageId }) {
   const parsePage = payload => payload.pages[0];
@@ -41,7 +41,7 @@ async function tryToDecryptPage({ passPhrase, page }) {
   }
 
   try {
-    const result = await PageEncryptionService.decryptPageContents({ passPhrase, page });
+    const result = await decryptPageContents(null, { passPhrase, page });
 
     if (page.digest && result.digest !== page.digest) {
       return Promise.reject(ErrorCodes.PAGE_DIGEST_MISMATCH_ERROR);
@@ -51,6 +51,7 @@ async function tryToDecryptPage({ passPhrase, page }) {
     }
   }
   catch (e) {
+    console.warn('unexpected error:', e)
     return Promise.reject(ErrorCodes.PAGE_CIPHER_ERROR);
   }
 }

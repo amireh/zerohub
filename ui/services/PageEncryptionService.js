@@ -1,7 +1,9 @@
-const { calculateDigest, encrypt, decrypt } = require('services/CoreDelegate');
+const { calculateDigest } = require('services/CoreDelegate');
 const Promise = require('Promise');
 const LockingService = require('services/LockingService');
 const { request } = require('services/PageHub');
+const encryptPageContents = require('actions/encryptPageContents');
+const decryptPageContents = require('actions/decryptPageContents');
 
 exports.encryptPage = async function({ passPhrase, page }) {
   if (page.encrypted) {
@@ -21,7 +23,7 @@ exports.encryptPage = async function({ passPhrase, page }) {
   // encrypt page contents
   // calculated encrypted contents digest
   const plainDigest = await calculateDigest({ text: page.content });
-  const { content: encryptedText } = await encryptPageContents({
+  const { content: encryptedText } = await encryptPageContents(null, {
     passPhrase,
     page,
   });
@@ -61,7 +63,7 @@ exports.decryptPage = async function({ passPhrase, page }) {
   let decryptedPage;
 
   if (currentDigest !== page.digest) {
-    decryptedPage = await decryptPageContents({ passPhrase, page });
+    decryptedPage = await decryptPageContents(null, { passPhrase, page });
   }
   else {
     decryptedPage = page;
@@ -89,31 +91,3 @@ exports.decryptPage = async function({ passPhrase, page }) {
     });
   });
 }
-
-async function encryptPageContents({ passPhrase, page }) {
-  const encryptedText = await encrypt({
-    passPhrase,
-    plainText: page.content
-  });
-
-  return {
-    content: encryptedText,
-    digest: await calculateDigest({ text: page.content })
-  };
-}
-
-exports.encryptPageContents = encryptPageContents;
-
-async function decryptPageContents({ passPhrase, page }) {
-  const plainText = await decrypt({
-    passPhrase,
-    encryptedText: page.content
-  });
-
-  return {
-    content: plainText,
-    digest: await calculateDigest({ text: plainText }),
-  };
-}
-
-exports.decryptPageContents = decryptPageContents;

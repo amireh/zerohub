@@ -1,5 +1,7 @@
 exports.actions = {
   acquireLock: require('./acquireLock'),
+  decryptPageContents: require('./decryptPageContents'),
+  encryptPageContents: require('./encryptPageContents'),
   fetchPage: require('./fetchPage'),
   fetchSpace: require('./fetchSpace'),
   fetchSpaces: require('./fetchSpaces'),

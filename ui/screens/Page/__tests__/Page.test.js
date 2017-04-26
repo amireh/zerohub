@@ -2,7 +2,6 @@ const Page = require('../Page');
 const reactSuite = require('test_utils/reactSuite');
 const { assert } = require('chai');
 const sinonSuite = require('test_utils/sinonSuite');
-const wrapCornflux = require('test_utils/wrapCornflux');
 const LoadingIndicator = require('../LoadingIndicator');
 const { drill, m } = require('react-drill');
 const ErrorCodes = require('ErrorCodes');
@@ -10,8 +9,7 @@ const ErrorMessage = require('components/ErrorMessage');
 
 describe('Screens::Page::Component', function() {
   const sinon = sinonSuite(this);
-  const suite = reactSuite(this, wrapCornflux(Page), () => ({
-    dispatch: sinon.stub(),
+  const suite = reactSuite(this, Page, () => ({
     page: {
       id: 'page1',
       folder_id: 'folder1',
