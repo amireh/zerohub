@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+const React = require('react');
+const { PropTypes } = React;
 
 const OutletOccupant = React.createClass({
   propTypes: {
@@ -28,4 +29,4 @@ const OutletOccupant = React.createClass({
   }
 });
 
-export default OutletOccupant;
+module.exports = OutletOccupant;

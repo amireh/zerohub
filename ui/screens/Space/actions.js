@@ -1,7 +1,7 @@
-import { request } from 'services/PageHub';
-import * as CoreDelegate from 'services/CoreDelegate';
+const { request } = require('services/PageHub');
+const CoreDelegate = require('services/CoreDelegate');
 
-export function FETCH_SPACES(container, {}) {
+exports.FETCH_SPACES = function(container, {}) {
   container.setState({ loadingSpaces: true });
 
   return request({
@@ -18,7 +18,7 @@ export function FETCH_SPACES(container, {}) {
   // return Promise.resolve();
 }
 
-export function FETCH_SPACE(container, { spaceId }) {
+exports.FETCH_SPACE = function(container, { spaceId }) {
   container.setState({ loadingSpace: true });
 
   return Promise.all([
@@ -84,7 +84,7 @@ export function FETCH_SPACE(container, { spaceId }) {
 //   })
 // }
 
-export function RETRIEVE_PASS_PHRASE(container, { spaceId }) {
+exports.RETRIEVE_PASS_PHRASE = function(container, { spaceId }) {
   container.setState({ retrievingPassPhrase: true, passPhraseRetrievalError: false });
 
   return CoreDelegate.retrievePassPhrase({ spaceId }).then(passPhrase => {
@@ -103,7 +103,7 @@ export function RETRIEVE_PASS_PHRASE(container, { spaceId }) {
   })
 }
 
-export function GENERATE_PASS_PHRASE(container, { spaceId }) {
+exports.GENERATE_PASS_PHRASE = function(container, { spaceId }) {
   container.setState({ generatingPassPhrase: true });
 
   return CoreDelegate.generatePassPhrase({ spaceId }).then(passPhrase => {

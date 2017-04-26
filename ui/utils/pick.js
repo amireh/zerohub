@@ -1,4 +1,4 @@
-export default function pick(object, keys) {
+module.exports = function pick(object, keys) {
   return keys.reduce(function(map, key) {
     map[key] = object[key];
 

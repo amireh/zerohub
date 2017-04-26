@@ -1,12 +1,13 @@
-import React, { PropTypes } from 'react';
-import { HashRouter, Route, memoryHistory, Switch } from 'react-router-dom';
-import { ActionProvider } from 'cornflux';
-import queryString from 'query-string';
-import Home from './Home';
-import NotFound from './NotFound';
-import Spaces from './Spaces';
-import Space from './Space';
-import { withQueryFor } from 'utils/routing';
+const React = require('react');
+const { HashRouter, Route, memoryHistory, Switch } = require('react-router-dom');
+const { ActionProvider } = require('cornflux');
+const queryString = require('query-string');
+const Home = require('./Home');
+const NotFound = require('./NotFound');
+const Spaces = require('./Spaces');
+const Space = require('./Space');
+const { withQueryFor } = require('utils/routing');
+const { PropTypes } = React;
 
 const APP_ENV = electronRequire('electron').remote.getGlobal('APP_ENV');
 
@@ -65,7 +66,7 @@ const RootWithRoutes = React.createClass({
   }
 })
 
-export default ActionProvider(RootWithRoutes, {
+module.exports = ActionProvider(RootWithRoutes, {
   actions: {
     UPDATE_QUERY: (container, nextQuery) => {
       const { history } = container.refs.router;

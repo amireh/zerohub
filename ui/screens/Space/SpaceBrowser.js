@@ -1,5 +1,6 @@
-import React, { PropTypes } from 'react';
-import Link from 'components/Link';
+const React = require('react');
+const Link = require('components/Link');
+const { PropTypes } = React;
 
 const SpaceBrowser = React.createClass({
   propTypes: {
@@ -83,4 +84,4 @@ const SpaceBrowser = React.createClass({
   }
 });
 
-export default SpaceBrowser;
+module.exports = SpaceBrowser;

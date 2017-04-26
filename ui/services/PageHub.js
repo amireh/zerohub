@@ -1,10 +1,10 @@
-import createStubbableFunction from 'utils/createStubbableFunction';
-import fetch from 'utils/fetch';
+const createStubbableFunction = require('utils/createStubbableFunction');
+const fetch = require('utils/fetch');
 
 const APP_ENV = electronRequire('electron').remote.getGlobal('APP_ENV');
 const API_HOST = process.env.API_HOST || 'http://localhost:3000';
 
-export const request = createStubbableFunction(function request(params) {
+exports.request = createStubbableFunction(function request(params) {
   return fetch(Object.assign({}, params, {
     url: `${API_HOST}${params.url}`,
     method: params.method || 'GET',

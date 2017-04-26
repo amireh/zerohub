@@ -1,6 +1,6 @@
-import pick from 'utils/pick';
-import createStubbableFunction from 'utils/createStubbableFunction';
-import fetch from 'isomorphic-fetch';
+const pick = require('utils/pick');
+const createStubbableFunction = require('utils/createStubbableFunction');
+const fetch = require('isomorphic-fetch');
 
 // const fetch = electronRequire('isomorphic-fetch');
 
@@ -11,7 +11,7 @@ const REQUEST_ATTRIBUTES = [
   'credentials',
 ];
 
-export default createStubbableFunction(function ajax(params) {
+module.exports = createStubbableFunction(function ajax(params) {
   return fetch(params.url, pick(params, REQUEST_ATTRIBUTES))
     .then(checkStatus, raiseConnectionError)
     .then(parseJSON)

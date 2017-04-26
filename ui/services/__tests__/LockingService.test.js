@@ -1,6 +1,6 @@
-import * as LockingService from '../LockingService';
-import { request } from 'services/PageHub';
-import { assert } from 'chai';
+const LockingService = require('../LockingService');
+const { request } = require('services/PageHub');
+const { assert } = require('chai');
 
 describe('Services::LockingService', function() {
   afterEach(function() {

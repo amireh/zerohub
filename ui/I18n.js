@@ -1,7 +1,6 @@
-import Text from 'components/Text';
+const Text = require('components/Text');
 
-export default {
-  t(string) { return string; }
+module.exports = {
+  t(string) { return string; },
+  Text,
 };
-
-export { Text };

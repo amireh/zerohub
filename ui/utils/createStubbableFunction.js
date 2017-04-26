@@ -1,4 +1,4 @@
-export default function createStubbableFunction(fn) {
+module.exports = function createStubbableFunction(fn) {
   let impl;
   let proxy = function() {
     return (impl || fn).apply(null, arguments);

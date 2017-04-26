@@ -1,4 +1,5 @@
 require('./polyfills');
+const { request } = require('services/PageHub');
 
 const tap = (x, fn) => fn(x);
 const testFiles = require.context('./', true, /\.test\.js$/);
@@ -13,6 +14,10 @@ window.addEventListener('unhandledrejection', function(data) {
 
   throw data.reason;
 });
+
+before(function() {
+  request.stub(Function.prototype);
+})
 
 tap(testFiles, context => {
   context.keys().forEach(context);

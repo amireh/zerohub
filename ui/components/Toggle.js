@@ -1,2 +1,1 @@
-import Toggle from 'react-toggle';
-export default Toggle;
+module.exports = require('react-toggle').default;

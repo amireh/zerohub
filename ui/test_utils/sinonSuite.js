@@ -1,5 +1,5 @@
-import sinon from 'sinon';
-import { assert } from 'chai';
+const sinon = require('sinon');
+const { assert } = require('chai');
 
 sinon.assert.expose(assert, { prefix: "" });
 sinon.config = {
@@ -7,7 +7,7 @@ sinon.config = {
   useFakeTimers: false,
 };
 
-export default sinonSuite;
+module.exports = sinonSuite;
 
 function sinonSuite(mochaSuite, options = {}) {
   let api = {};

@@ -1,15 +1,29 @@
-import * as Actions from '../Actions';
-import * as ErrorCodes from '../ErrorCodes';
-import * as PageEncryptionService from 'services/PageEncryptionService';
-import sinonSuite from 'test_utils/sinonSuite';
-import propagateAsyncErrors from 'utils/propagateAsyncErrors';
-import { request } from 'services/PageHub';
-import { assert } from 'chai';
+const Actions = require('../Actions');
+const ErrorCodes = require('../ErrorCodes');
+const PageEncryptionService = require('services/PageEncryptionService');
+const sinonSuite = require('test_utils/sinonSuite');
+const propagateAsyncErrors = require('utils/propagateAsyncErrors');
+const { request } = require('services/PageHub');
+const { assert } = require('chai');
 
 describe('Screens::Page::Actions', function() {
   const sinon = sinonSuite(this);
+  let container;
 
   beforeEach(function() {
+    request.stub(Function.prototype);
+
+    container = {
+      isMounted() { return true; },
+      setState(nextState) {
+        Object.assign(container.state, nextState)
+      },
+      state: {
+        page: null,
+        loading: false,
+        loadError: null,
+      },
+    };
   })
 
   afterEach(function() {
@@ -19,21 +33,6 @@ describe('Screens::Page::Actions', function() {
   describe('.FETCH_PAGE', function() {
     const subject = Actions.FETCH_PAGE;
     const passPhrase = 'speak friend and enter';
-    let container;
-
-    beforeEach(function() {
-      container = {
-        isMounted() { return true; },
-        setState(nextState) {
-          Object.assign(container.state, nextState)
-        },
-        state: {
-          page: null,
-          loading: false,
-          loadError: null,
-        },
-      }
-    })
 
     it('retrieves the page', function(done) {
       request.stub(function(params) {

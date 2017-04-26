@@ -1,5 +1,5 @@
-import { assert } from 'chai';
-import * as CoreDelegate from '../CoreDelegate';
+const { assert } = require('chai');
+const CoreDelegate = require('../CoreDelegate');
 
 describe('Services::CoreDelegate', function() {
   describe('.calculateSecretDigest', function() {

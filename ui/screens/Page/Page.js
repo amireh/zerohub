@@ -1,16 +1,16 @@
-import React, { PropTypes } from 'react';
-import CodeMirror from 'CodeMirror';
-import { ActionEmitter } from 'cornflux';
-import { Button } from 'components/Native';
-import Icon from 'components/Icon';
-import WarningMessage from 'components/WarningMessage';
-import OutletOccupant from 'components/OutletOccupant';
-import PageDrawer from './PageDrawer';
-import * as ErrorCodes from './ErrorCodes';
-import LoadingIndicator from './LoadingIndicator';
-import ErrorMessage from 'components/ErrorMessage';
-import debounce from 'utils/debounce';
-
+const React = require('react');
+const CodeMirror = require('CodeMirror');
+const { ActionEmitter } = require('cornflux');
+const { Button } = require('components/Native');
+const Icon = require('components/Icon');
+const WarningMessage = require('components/WarningMessage');
+const OutletOccupant = require('components/OutletOccupant');
+const PageDrawer = require('./PageDrawer');
+const ErrorCodes = require('./ErrorCodes');
+const LoadingIndicator = require('./LoadingIndicator');
+const ErrorMessage = require('components/ErrorMessage');
+const debounce = require('utils/debounce');
+const { PropTypes } = React;
 const Page = React.createClass({
   propTypes: {
     page: PropTypes.shape({
@@ -245,7 +245,7 @@ const Page = React.createClass({
   },
 });
 
-export default ActionEmitter(Page, {
+module.exports = ActionEmitter(Page, {
   actions: [
     'UPDATE_PAGE_CONTENT',
     'UPDATE_QUERY',

@@ -1,5 +1,5 @@
-import React from 'react';
-import queryString from 'query-string';
+const React = require('react');
+const queryString = require('query-string');
 
 const withQueryFor = Component => withQuery(({ location, match, query }) => (
   <Component
@@ -14,4 +14,5 @@ const withQuery = fn => ({ location, match }) => (
   fn({ location, match, query: queryString.parse(location.search) })
 );
 
-export { withQuery, withQueryFor };
+exports.withQuery = withQuery;
+exports.withQueryFor = withQueryFor;

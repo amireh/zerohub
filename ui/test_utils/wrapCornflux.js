@@ -1,12 +1,12 @@
-import React, { PropTypes } from 'react';
+const React = require('react');
 
-export default function wrapCornflux(Component) {
+module.exports = function wrapCornflux(Component) {
   return React.createClass({
     childContextTypes: {
-      dispatch: PropTypes.func,
+      dispatch: React.PropTypes.func,
     },
     propTypes: {
-      dispatch: PropTypes.func.isRequired,
+      dispatch: React.PropTypes.func.isRequired,
     },
 
     getChildContext() {

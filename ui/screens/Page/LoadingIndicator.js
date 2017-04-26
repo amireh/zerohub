@@ -1,4 +1,4 @@
-import React from 'react';
+const React = require('react');
 
 const LoadingIndicator = React.createClass({
   render() {
@@ -10,4 +10,4 @@ const LoadingIndicator = React.createClass({
   }
 });
 
-export default LoadingIndicator;
+module.exports = LoadingIndicator;

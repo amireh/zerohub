@@ -1,6 +1,6 @@
-import { request } from 'services/PageHub';
+const { request } = require('services/PageHub');
 
-export async function acquireLock({ lockableType, lockableId }) {
+exports.acquireLock = async function({ lockableType, lockableId }) {
   return request({
     url: `/api/v2/locks`,
     method: 'POST',
@@ -11,7 +11,7 @@ export async function acquireLock({ lockableType, lockableId }) {
   });
 }
 
-export async function releaseLock({ lockableType, lockableId }) {
+exports.releaseLock = async function({ lockableType, lockableId }) {
   return request({
     url: `/api/v2/locks`,
     method: 'DELETE',

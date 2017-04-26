@@ -1,6 +1,6 @@
-import * as PageEncryptionService from '../PageEncryptionService';
-import propagateAsyncErrors from 'utils/propagateAsyncErrors';
-import { request } from 'services/PageHub';
+const PageEncryptionService = require('../PageEncryptionService');
+const propagateAsyncErrors = require('utils/propagateAsyncErrors');
+const { request } = require('services/PageHub');
 
 describe('Services::PageEncryptionService', function() {
   const passPhrase = 'speak friend and enter';

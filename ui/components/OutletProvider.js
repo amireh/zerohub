@@ -1,5 +1,6 @@
-import React, { PropTypes } from 'react';
-import invariant from 'invariant';
+const React = require('react');
+const invariant = require('invariant');
+const { PropTypes } = React;
 
 const OutletProvider = React.createClass({
   propTypes: {
@@ -107,4 +108,4 @@ const OutletProvider = React.createClass({
 
 });
 
-export default OutletProvider;
+module.exports = OutletProvider;

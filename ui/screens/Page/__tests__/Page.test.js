@@ -1,12 +1,12 @@
-import Page from '../Page';
-import reactSuite from 'test_utils/reactSuite';
-import { assert } from 'chai';
-import sinonSuite from 'test_utils/sinonSuite';
-import wrapCornflux from 'test_utils/wrapCornflux';
-import LoadingIndicator from '../LoadingIndicator';
-import { drill, m } from 'react-drill';
-import * as ErrorCodes from '../ErrorCodes';
-import ErrorMessage from 'components/ErrorMessage';
+const Page = require('../Page');
+const reactSuite = require('test_utils/reactSuite');
+const { assert } = require('chai');
+const sinonSuite = require('test_utils/sinonSuite');
+const wrapCornflux = require('test_utils/wrapCornflux');
+const LoadingIndicator = require('../LoadingIndicator');
+const { drill, m } = require('react-drill');
+const ErrorCodes = require('../ErrorCodes');
+const ErrorMessage = require('components/ErrorMessage');
 
 describe('Screens::Page::Component', function() {
   const sinon = sinonSuite(this);

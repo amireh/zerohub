@@ -1,9 +1,9 @@
-import { calculateDigest, encrypt, decrypt } from 'services/CoreDelegate';
-import Promise from 'Promise';
-import * as LockingService from 'services/LockingService';
-import { request } from 'services/PageHub';
+const { calculateDigest, encrypt, decrypt } = require('services/CoreDelegate');
+const Promise = require('Promise');
+const LockingService = require('services/LockingService');
+const { request } = require('services/PageHub');
 
-export async function encryptPage({ passPhrase, page }) {
+exports.encryptPage = async function({ passPhrase, page }) {
   if (page.encrypted) {
     return Promise.reject(new Error('Page is already encrypted!'));
   }
@@ -46,7 +46,7 @@ export async function encryptPage({ passPhrase, page }) {
   return withEncryptedContent.pages[0];
 }
 
-export async function decryptPage({ passPhrase, page }) {
+exports.decryptPage = async function({ passPhrase, page }) {
   if (!page.encrypted) {
     return Promise.reject(new Error('Page is already decrypted!'));
   }
@@ -90,7 +90,7 @@ export async function decryptPage({ passPhrase, page }) {
   });
 }
 
-export async function encryptPageContents({ passPhrase, page }) {
+async function encryptPageContents({ passPhrase, page }) {
   const encryptedText = await encrypt({
     passPhrase,
     plainText: page.content
@@ -102,7 +102,9 @@ export async function encryptPageContents({ passPhrase, page }) {
   };
 }
 
-export async function decryptPageContents({ passPhrase, page }) {
+exports.encryptPageContents = encryptPageContents;
+
+async function decryptPageContents({ passPhrase, page }) {
   const plainText = await decrypt({
     passPhrase,
     encryptedText: page.content
@@ -113,3 +115,5 @@ export async function decryptPageContents({ passPhrase, page }) {
     digest: await calculateDigest({ text: plainText }),
   };
 }
+
+exports.decryptPageContents = decryptPageContents;

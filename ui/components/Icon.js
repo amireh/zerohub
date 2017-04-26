@@ -1,6 +1,7 @@
-import React, { PropTypes } from 'react';
-import classSet from 'classnames';
-import omit from 'utils/omit';
+const React = require('react');
+const classSet = require('classnames');
+const omit = require('utils/omit');
+const { PropTypes } = React;
 
 const DISPLAY_GRID_STYLE = {
   fontSize: '24px',
@@ -48,4 +49,4 @@ const Icon = React.createClass({
   }
 });
 
-export default Icon;
+module.exports = Icon;

@@ -1,15 +1,10 @@
-import Promise from 'Promise';
-import { request } from 'services/PageHub';
-import {
-  encryptPage,
-  encryptPageContents,
-  decryptPage,
-  decryptPageContents,
-} from 'services/PageEncryptionService';
-import * as ErrorCodes from './ErrorCodes';
-import { partial, either, } from 'ramda';
+const Promise = require('Promise');
+const { request } = require('services/PageHub');
+const PageEncryptionService = require('services/PageEncryptionService');
+const ErrorCodes = require('./ErrorCodes');
+const { partial, either, } = require('ramda');
 
-export function FETCH_PAGE(container, { passPhrase, pageId }) {
+exports.FETCH_PAGE = function(container, { passPhrase, pageId }) {
   const parsePage = payload => payload.pages[0];
   const emitError = errorCode => () => Promise.reject(errorCode);
   const passIfNotEncrypted = page => !page.encrypted && page;
@@ -40,7 +35,7 @@ export function FETCH_PAGE(container, { passPhrase, pageId }) {
   );
 }
 
-export function UPDATE_PAGE_CONTENT(container, { pageId, passPhrase, encrypted, content }) {
+exports.UPDATE_PAGE_CONTENT = function(container, { pageId, passPhrase, encrypted, content }) {
   const passIfNotEncrypted = () => !encrypted && { content };
   const savePage = pageToCommit => request({
     url: `/api/v2/pages/${pageId}`,
@@ -58,7 +53,7 @@ export function UPDATE_PAGE_CONTENT(container, { pageId, passPhrase, encrypted, 
     .then(
       either(
         passIfNotEncrypted,
-        partial(encryptPageContents, [{ passPhrase, page: { content } }])
+        partial(PageEncryptionService.encryptPageContents, [{ passPhrase, page: { content } }])
       )
     )
     .then(savePage)
@@ -73,7 +68,7 @@ export function UPDATE_PAGE_CONTENT(container, { pageId, passPhrase, encrypted, 
   );
 }
 
-export async function SET_PAGE_ENCRYPTION_STATUS(container, { passPhrase, page, encrypted }) {
+exports.SET_PAGE_ENCRYPTION_STATUS = async function(container, { passPhrase, page, encrypted }) {
   if (encrypted === page.encrypted) {
     return Promise.resolve();
   }
@@ -82,7 +77,7 @@ export async function SET_PAGE_ENCRYPTION_STATUS(container, { passPhrase, page, 
 
   try {
     if (encrypted) {
-      const encryptedPage = await encryptPage({ passPhrase, page });
+      const encryptedPage = await PageEncryptionService.encryptPage({ passPhrase, page });
 
       container.setState({
         saving: false,
@@ -94,7 +89,7 @@ export async function SET_PAGE_ENCRYPTION_STATUS(container, { passPhrase, page, 
     }
     // decrypting
     else {
-      const decryptedPage = await decryptPage({ passPhrase, page });
+      const decryptedPage = await PageEncryptionService.decryptPage({ passPhrase, page });
 
       container.setState({
         saving: false,
@@ -122,7 +117,7 @@ async function tryToDecryptPage({ passPhrase, page }) {
   }
 
   try {
-    const result = await decryptPageContents({ passPhrase, page });
+    const result = await PageEncryptionService.decryptPageContents({ passPhrase, page });
 
     if (page.digest && result.digest !== page.digest) {
       return Promise.reject(ErrorCodes.PAGE_DIGEST_MISMATCH_ERROR);
@@ -135,6 +130,8 @@ async function tryToDecryptPage({ passPhrase, page }) {
     return Promise.reject(ErrorCodes.PAGE_CIPHER_ERROR);
   }
 }
+
+exports.tryToDecryptPage = tryToDecryptPage;
 
 const rethrow = fn => error => { fn(error); throw error; };
 const pass = fn => value => { fn(value); return value; };

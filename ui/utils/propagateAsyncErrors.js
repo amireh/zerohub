@@ -29,7 +29,7 @@
  * @return {Function}
  *         The decorated `fn` with the adjusted behaviour.
  */
-export default function propagateAsyncErrors(fn) {
+module.exports = function propagateAsyncErrors(fn) {
   return function(done) {
     try {
       const promise = fn.call(this, done);

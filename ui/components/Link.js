@@ -1,8 +1,8 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import classSet from 'classnames';
+const React = require('react');
+const { NavLink } = require('react-router-dom');
+const classSet = require('classnames');
 
-export default props => (
+module.exports = props => (
   <NavLink
     activeClassName="link--active"
     {...props}

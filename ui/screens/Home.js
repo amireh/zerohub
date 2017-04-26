@@ -1,5 +1,5 @@
-import React from 'react';
-import Link from 'components/Link';
+const React = require('react');
+const Link = require('components/Link');
 
 const Home = React.createClass({
   render() {
@@ -11,4 +11,4 @@ const Home = React.createClass({
   }
 });
 
-export default Home;
+module.exports = Home;

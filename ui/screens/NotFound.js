@@ -1,6 +1,6 @@
-import React from 'react';
-import Icon from 'components/Icon';
-import { Link } from 'react-router-dom';
+const React = require('react');
+const Icon = require('components/Icon');
+const { Link } = require('react-router-dom');
 
 const NotFound = React.createClass({
   render() {
@@ -24,4 +24,4 @@ const NotFound = React.createClass({
   }
 });
 
-export default NotFound;
+module.exports = NotFound;

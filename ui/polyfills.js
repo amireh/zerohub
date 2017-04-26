@@ -1,4 +1,4 @@
-import I18n from 'I18n';
-import 'regenerator-runtime/runtime';
+const I18n = require('I18n');
+require('regenerator-runtime/runtime');
 
 window.I18n = I18n;

@@ -34,7 +34,7 @@
  * @return {Function} debounced.cancel
  *         Cancel any and all pending future calls.
  */
-export default function debounce(fn, threshold, parameterized) {
+module.exports = function debounce(fn, threshold, parameterized) {
   const timeouts = {};
 
   const debounced = function() {

@@ -1,4 +1,4 @@
-import React from 'react';
+const React = require('react');
 
 const ErrorMessage = React.createClass({
   render() {
@@ -10,4 +10,4 @@ const ErrorMessage = React.createClass({
   }
 });
 
-export default ErrorMessage;
+module.exports = ErrorMessage;

@@ -1,8 +1,8 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { drill } from 'react-drill';
+const React = require('react');
+const ReactDOM = require('react-dom');
+const { drill } = require('react-drill');
 
-export default reactSuite;
+module.exports = reactSuite;
 
 function reactSuite(mochaSuite, Type, initialProps) {
   const rs = {};
@@ -11,26 +11,41 @@ function reactSuite(mochaSuite, Type, initialProps) {
     rs.subject = render(Object.assign({}, rs.subject.props, props));
   };
 
-  let container, subject;
+  rs.mount = function(props) {
+    if (container) {
+      rs.unmount();
+    }
 
-  mochaSuite.beforeEach(function() {
     container = document.body.appendChild( document.createElement('div') );
-    subject = render(evaluate(initialProps));
+    subject = render(Object.assign({}, evaluate(initialProps), props));
 
     rs.subject = subject;
     rs.component = subject;
     rs.scope = drill(subject);
-  });
+  };
 
-  mochaSuite.afterEach(function() {
+  rs.unmount = function() {
     rs.scope = null;
     rs.component = null;
     rs.subject = null;
 
-    ReactDOM.unmountComponentAtNode(container);
-    container.remove();
+    if (container) {
+      ReactDOM.unmountComponentAtNode(container);
+      container.remove();
+      container = null;
+    }
+
     subject = null;
-    container = null;
+  };
+
+  let container, subject;
+
+  mochaSuite.beforeEach(function() {
+    rs.mount();
+  });
+
+  mochaSuite.afterEach(function() {
+    rs.unmount();
   });
 
   function render(props) {

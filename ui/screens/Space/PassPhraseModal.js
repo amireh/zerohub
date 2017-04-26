@@ -1,5 +1,5 @@
-import React from 'react';
-import { Button } from 'components/Native';
+const React = require('react');
+const { Button } = require('components/Native');
 
 const PassPhraseModal = React.createClass({
   render() {
@@ -25,4 +25,4 @@ const PassPhraseModal = React.createClass({
   }
 });
 
-export default PassPhraseModal;
+module.exports = PassPhraseModal;

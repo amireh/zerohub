@@ -1,17 +1,18 @@
-import React, { PropTypes } from 'react';
-import { ActionProvider } from 'cornflux';
-import { Route } from 'react-router-dom';
-// import Link from 'components/Link';
-// import Icon from 'components/Icon';
-import SpaceBrowser from './SpaceBrowser';
-import PassPhraseModal from './PassPhraseModal';
-// import Page from './Page';
-import OutletProvider from 'components/OutletProvider';
-import Outlet from 'components/Outlet';
-import { withQuery } from 'utils/routing';
-import classSet from 'classnames';
-import * as Actions from './actions';
-import PageRouteHandler from 'screens/Page';
+const React = require('react');
+const { ActionProvider } = require('cornflux');
+const { Route } = require('react-router-dom');
+// const Link = require('components/Link');
+// const Icon = require('components/Icon');
+const SpaceBrowser = require('./SpaceBrowser');
+const PassPhraseModal = require('./PassPhraseModal');
+// const Page = require('./Page');
+const OutletProvider = require('components/OutletProvider');
+const Outlet = require('components/Outlet');
+const { withQuery } = require('utils/routing');
+const classSet = require('classnames');
+const Actions = require('./actions');
+const PageRouteHandler = require('screens/Page');
+const { PropTypes } = React;
 
 const Space = React.createClass({
   contextTypes: {
@@ -151,6 +152,6 @@ const Space = React.createClass({
   }
 });
 
-export default ActionProvider(Space, {
+module.exports = ActionProvider(Space, {
   actions: Actions
 });

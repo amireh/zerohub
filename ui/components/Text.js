@@ -1,4 +1,4 @@
-import React from 'react';
+const React = require('react');
 
 const Text = React.createClass({
   propTypes: {
@@ -14,4 +14,4 @@ const Text = React.createClass({
   }
 });
 
-export default Text;
+module.exports = Text;

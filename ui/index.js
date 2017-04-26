@@ -1,6 +1,6 @@
-import './polyfills';
-import React from 'react';
-import { render } from 'react-dom';
-import Root from './screens/Root';
+require('./polyfills');
+const React = require('react');
+const { render } = require('react-dom');
+const Root = require('./screens/Root');
 
 render(<Root />, document.body.querySelector('#app'));

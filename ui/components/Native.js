@@ -1,11 +1,11 @@
-import React from 'react';
-import classSet from 'classnames';
-import omit from '../utils/omit';
-import AutosizeTextarea from 'react-textarea-autosize';
+const React = require('react');
+const classSet = require('classnames');
+const omit = require('../utils/omit');
+const AutosizeTextarea = require('react-textarea-autosize').default;
 
 const { bool, func, string, oneOf, } = React.PropTypes;
 
-export const TextInput = React.createClass({
+exports.TextInput = React.createClass({
   propTypes: {
     className: string,
   },
@@ -21,7 +21,7 @@ export const TextInput = React.createClass({
   }
 });
 
-export const TextArea = React.createClass({
+exports.TextArea = React.createClass({
   propTypes: {
     className: string,
   },
@@ -36,7 +36,7 @@ export const TextArea = React.createClass({
   }
 });
 
-export const Button = React.createClass({
+exports.Button = React.createClass({
   propTypes: {
     className: string,
     type: string,
@@ -66,7 +66,7 @@ export const Button = React.createClass({
   }
 });
 
-export const Checkbox = React.createClass({
+exports.Checkbox = React.createClass({
   propTypes: {
     className: string,
     type: string,

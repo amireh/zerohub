@@ -1,9 +1,9 @@
-import PageDrawer from '../PageDrawer';
-import reactSuite from 'test_utils/reactSuite';
-import { assert } from 'chai';
-import sinonSuite from 'test_utils/sinonSuite';
-import { m } from 'react-drill';
-import Toggle from 'components/Toggle';
+const PageDrawer = require('../PageDrawer');
+const reactSuite = require('test_utils/reactSuite');
+const { assert } = require('chai');
+const sinonSuite = require('test_utils/sinonSuite');
+const { m } = require('react-drill');
+const Toggle = require('components/Toggle');
 
 describe('Screens::Page::PageDrawer', function() {
   const sinon = sinonSuite(this);

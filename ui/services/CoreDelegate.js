@@ -1,7 +1,7 @@
-import invariant from 'invariant';
+const invariant = require('invariant');
 const { ipcRenderer } = electronRequire('electron')
 
-export function retrievePassPhrase({ spaceId }) {
+exports.retrievePassPhrase = function({ spaceId }) {
   invariant(typeof spaceId === 'string' && spaceId.length, '"spaceId" must be a string');
 
   return send('RETRIEVE_PASS_PHRASE', {
@@ -11,7 +11,7 @@ export function retrievePassPhrase({ spaceId }) {
   });
 }
 
-export function generatePassPhrase({ spaceId }) {
+exports.generatePassPhrase = function({ spaceId }) {
   invariant(typeof spaceId === 'string' && spaceId.length, '"spaceId" must be a string');
 
   return send('GENERATE_PASS_PHRASE', {
@@ -21,21 +21,21 @@ export function generatePassPhrase({ spaceId }) {
   });
 }
 
-export function encrypt({ passPhrase, plainText }) {
+exports.encrypt = function({ passPhrase, plainText }) {
   return send('ENCRYPT_TEXT', {
     plainText,
     passPhrase
   });
 }
 
-export function decrypt({ passPhrase, encryptedText }) {
+exports.decrypt = function({ passPhrase, encryptedText }) {
   return send('DECRYPT_TEXT', {
     encryptedText,
     passPhrase
   });
 }
 
-export function calculateDigest({ text }) {
+exports.calculateDigest = function({ text }) {
   invariant(typeof text === 'string' && text.length,
     '"text" must be a string'
   );
@@ -43,7 +43,7 @@ export function calculateDigest({ text }) {
   return send('CALCULATE_DIGEST', { text });
 }
 
-export function calculateSecretDigest({ passPhrase, text }) {
+exports.calculateSecretDigest = function({ passPhrase, text }) {
   invariant(typeof passPhrase === 'string' && passPhrase.length,
     '"passPhrase" must be a string'
   );

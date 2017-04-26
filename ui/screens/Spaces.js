@@ -1,7 +1,8 @@
-import React, { PropTypes } from 'react';
-import { ActionProvider } from 'cornflux';
-import * as PageHub from 'services/PageHub';
-import Link from 'components/Link';
+const React = require('react');
+const { ActionProvider } = require('cornflux');
+const PageHub = require('services/PageHub');
+const Link = require('components/Link');
+const { PropTypes } = React;
 
 const Spaces = React.createClass({
   contextTypes: {
@@ -44,7 +45,7 @@ const Spaces = React.createClass({
   }
 });
 
-export default ActionProvider(Spaces, {
+module.exports = ActionProvider(Spaces, {
   actions: {
     FETCH_SPACES(container, { userId }) {
       container.setState({ loadingSpaces: true });

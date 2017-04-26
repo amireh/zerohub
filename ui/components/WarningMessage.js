@@ -1,4 +1,4 @@
-import React from 'react';
+const React = require('react');
 
 const WarningMessage = React.createClass({
   render() {
@@ -10,4 +10,4 @@ const WarningMessage = React.createClass({
   }
 });
 
-export default WarningMessage;
+module.exports = WarningMessage;

@@ -1,6 +1,7 @@
-import React, { PropTypes } from 'react';
-import Toggle from 'components/Toggle';
-import { Button } from 'components/Native';
+const React = require('react');
+const Toggle = require('components/Toggle');
+const { Button } = require('components/Native');
+const { PropTypes } = React;
 
 const PageDrawer = React.createClass({
   propTypes: {
@@ -78,4 +79,4 @@ const PageDrawer = React.createClass({
   }
 });
 
-export default PageDrawer;
+module.exports = PageDrawer;

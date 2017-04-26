@@ -6,7 +6,8 @@
   "scripts": {
     "start": "webpack --config webpack/development.js -w --progress",
     "start:electron": "node -r dotenv/config ./node_modules/.bin/electron core/index",
-    "test": "NODE_ENV=test ELECTRON_ENABLE_LOGGING=true karma start"
+    "test": "NODE_ENV=test ELECTRON_ENABLE_LOGGING=true karma start",
+    "lint": "eslint ui core"
   },
   "repository": {
     "type": "git",

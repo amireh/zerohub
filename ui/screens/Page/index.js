@@ -1,7 +1,9 @@
-import React, { PropTypes } from 'react';
-import { ActionProvider } from 'cornflux';
-import Page from './Page';
-import * as Actions from './Actions';
+const React = require('react');
+const { ActionProvider } = require('cornflux');
+const Page = require('./Page');
+const Actions = require('./Actions');
+const actions = require('actions');
+const { PropTypes } = React;
 
 const PageRouteHandler = React.createClass({
   contextTypes: {
@@ -31,6 +33,7 @@ const PageRouteHandler = React.createClass({
       loading: false,
       loadError: null,
       page: null,
+      locks: [],
     };
   },
 
@@ -39,15 +42,37 @@ const PageRouteHandler = React.createClass({
       pageId: this.props.params.pageId,
       passPhrase: this.props.passPhrase,
     });
+
+    actions.applyOntoComponent(this, actions.acquireLock, {
+      lockableType: 'Page',
+      lockableId: this.props.params.pageId,
+    });
   },
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.params.pageId !== this.props.params.pageId) {
+      actions.applyOntoComponent(this, actions.releaseLock, {
+        lockableType: 'Page',
+        lockableId: this.props.params.pageId,
+      });
+
+      actions.applyOntoComponent(this, actions.acquireLock, {
+        lockableType: 'Page',
+        lockableId: nextProps.params.pageId,
+      });
+
       this.props.dispatch('FETCH_PAGE', {
         pageId: nextProps.params.pageId,
-        passPhrase: this.props.passPhrase,
+        passPhrase: nextProps.passPhrase,
       });
     }
+  },
+
+  componentWillUnmount() {
+    actions.applyOntoComponent(this, actions.releaseLock, {
+      lockableType: 'Page',
+      lockableId: this.props.params.pageId,
+    });
   },
 
   render() {
@@ -55,12 +80,13 @@ const PageRouteHandler = React.createClass({
       <Page
         {...this.state}
         {...this.props}
+        canEdit={this.state.locks.indexOf(this.props.params.pageId) > -1}
       />
     );
   },
 });
 
-export default ActionProvider(PageRouteHandler, {
+module.exports = ActionProvider(PageRouteHandler, {
   actions: Actions,
   verbose: true,
 });
