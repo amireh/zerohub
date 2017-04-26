@@ -19,16 +19,12 @@ describe('Services::PageEncryptionService', function() {
         digest: null,
       }
 
-      request.stub(params => {
-        return {
-          pages: [
-            page
-          ]
-        };
+      request.stub(() => {
+        return { pages: [ page ] };
       })
 
-      const nextPage = await PageEncryptionService.encryptPage({ passPhrase, page });
-      // TODO: wtf?
+      await PageEncryptionService.encryptPage({ passPhrase, page });
+      // TODO: what now :D
     }))
   })
 })

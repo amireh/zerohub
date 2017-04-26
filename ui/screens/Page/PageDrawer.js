@@ -6,6 +6,7 @@ const { PropTypes } = React;
 const PageDrawer = React.createClass({
   propTypes: {
     onChangeOfEncryptionStatus: PropTypes.func.isRequired,
+    onGeneratePassPhrase: PropTypes.func.isRequired,
   },
 
   render() {
@@ -75,7 +76,7 @@ const PageDrawer = React.createClass({
   },
 
   generatePassPhrase() {
-    this.props.dispatch('GENERATE_PASS_PHRASE', { spaceId: this.props.space.id})
+    this.props.onGeneratePassPhrase({ spaceId: this.props.space.id })
   }
 });
 

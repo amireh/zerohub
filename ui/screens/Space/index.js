@@ -1,5 +1,4 @@
 const React = require('react');
-const { ActionProvider } = require('cornflux');
 const { Route } = require('react-router-dom');
 const SpaceBrowser = require('./SpaceBrowser');
 const PassPhraseModal = require('./PassPhraseModal');
@@ -7,18 +6,29 @@ const OutletProvider = require('components/OutletProvider');
 const Outlet = require('components/Outlet');
 const { withQuery } = require('utils/routing');
 const classSet = require('classnames');
-const Actions = require('./actions');
 const PageRouteHandler = require('screens/Page');
+const { actions, applyOntoComponent } = require('actions');
 const { PropTypes } = React;
 
 const Space = React.createClass({
   contextTypes: {
-    dispatch: PropTypes.func,
     config: PropTypes.object,
   },
 
   propTypes: {
+    match: PropTypes.shape({
+      url: PropTypes.string.isRequired,
+    }).isRequired,
+
     onUpdateQuery: PropTypes.func,
+
+    params: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+    }).isRequired,
+
+    query: PropTypes.shape({
+      drawer: PropTypes.oneOf([ '1', null ])
+    }).isRequired,
   },
 
   getInitialState() {
@@ -27,17 +37,9 @@ const Space = React.createClass({
       spaces: [],
       pages: [],
       folders: [],
-      decryptedContents: {},
-      decryptedDigests: {},
       passPhrase: null,
       loadingSpace: false,
       spaceLoadError: null,
-      // savingPage: false,
-      pagesBeingSaved: {},
-      pagesBeingDecrypted: {},
-      pageSavingErrors: {},
-      pageDecryptionErrors: {},
-      // pageSaveError: false,
       retrievingPassPhrase: false,
       passPhraseRetrievalError: false,
     };
@@ -46,25 +48,31 @@ const Space = React.createClass({
   componentDidMount() {
     const { config } = this.context;
 
-    this.context.dispatch('FETCH_SPACES', {
+    applyOntoComponent(this, actions.fetchSpaces, {
       userId: config.userId,
     });
 
-    this.context.dispatch('FETCH_SPACE', {
+    applyOntoComponent(this, actions.fetchSpace, {
       userId: config.userId,
       spaceId: this.props.params.id
     });
 
-    this.props.dispatch('RETRIEVE_PASS_PHRASE', { spaceId: this.props.params.id });
+    applyOntoComponent(this, actions.retrievePassPhrase, {
+      spaceId: this.props.params.id
+    });
   },
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.params.id !== this.props.params.id) {
       const { config } = this.context;
 
-      this.context.dispatch('FETCH_SPACE', {
+      applyOntoComponent(this, actions.fetchSpace, {
         userId: config.userId,
-        spaceId: nextProps.params.id,
+        spaceId: nextProps.params.id
+      });
+
+      applyOntoComponent(this, actions.retrievePassPhrase, {
+        spaceId: nextProps.params.id
       });
     }
   },
@@ -112,8 +120,7 @@ const Space = React.createClass({
               exact
               path={`${this.props.match.url}/pages/:id`}
               render={withQuery(({ match, query }) => {
-                const { params } = match;
-                const pageId = params.id;
+                const pageId = match.params.id;
 
                 return (
                   <PageRouteHandler
@@ -124,23 +131,9 @@ const Space = React.createClass({
                     passPhrase={this.state.passPhrase && this.state.passPhrase.value}
                     isRetrievingPassPhrase={this.state.retrievingPassPhrase}
                     onUpdateQuery={this.props.onUpdateQuery}
+                    onGeneratePassPhrase={this.generatePassPhrase.bind(null, space.id)}
                   />
                 );
-
-                // return (
-                //   <Page
-                //     query={query}
-                //     params={match.params}
-                //     space={this.state.space}
-                //     page={this.state.pages.filter(x => x.id === params.id)[0]}
-                //     decryptedContent={this.state.decryptedContents[pageId] || null}
-                //     decryptedDigest={this.state.decryptedDigests[pageId] || null}
-                //     isSaving={!!this.state.pagesBeingSaved[pageId]}
-                //     isDecrypting={!!this.state.pagesBeingDecrypted[pageId]}
-                //     hasSavingError={!!this.state.pageSavingErrors[pageId]}
-                //     hasDecryptionError={!!this.state.pageDecryptionErrors[pageId]}
-                //   />
-                // );
               })}
             />
           </div>
@@ -151,9 +144,13 @@ const Space = React.createClass({
         </div>
       </OutletProvider>
     )
+  },
+
+  generatePassPhrase(spaceId) {
+    applyOntoComponent(this, actions.generatePassPhrase, {
+      spaceId
+    });
   }
 });
 
-module.exports = ActionProvider(Space, {
-  actions: Actions
-});
+module.exports = Space;

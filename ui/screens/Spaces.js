@@ -1,12 +1,11 @@
 const React = require('react');
-const { ActionProvider } = require('cornflux');
-const PageHub = require('services/PageHub');
 const Link = require('components/Link');
+const { applyOntoComponent, actions } = require('actions');
 const { PropTypes } = React;
 
 const Spaces = React.createClass({
   contextTypes: {
-    dispatch: PropTypes.func,
+    config: PropTypes.object,
   },
 
   getInitialState() {
@@ -18,7 +17,9 @@ const Spaces = React.createClass({
   },
 
   componentDidMount() {
-    this.context.dispatch('FETCH_SPACES', { userId: 1 });
+    const { config } = this.context;
+
+    applyOntoComponent(this, actions.fetchSpaces, { userId: config.userId });
   },
 
   render() {
@@ -45,23 +46,4 @@ const Spaces = React.createClass({
   }
 });
 
-module.exports = ActionProvider(Spaces, {
-  actions: {
-    FETCH_SPACES(container, { userId }) {
-      container.setState({ loadingSpaces: true });
-
-      return PageHub.request({
-        url: `/api/v2/spaces`
-      }).then(payload => {
-        container.setState({ spaces: payload.spaces })
-      }, error => {
-        console.error('request failed:', error)
-        container.setState({ spaceLoadError: true })
-      }).then(() => {
-        container.setState({ loadingSpaces: false });
-      })
-
-      // return Promise.resolve();
-    }
-  }
-});
+module.exports = Spaces;

@@ -5,7 +5,7 @@ const sinonSuite = require('test_utils/sinonSuite');
 const wrapCornflux = require('test_utils/wrapCornflux');
 const LoadingIndicator = require('../LoadingIndicator');
 const { drill, m } = require('react-drill');
-const ErrorCodes = require('../ErrorCodes');
+const ErrorCodes = require('ErrorCodes');
 const ErrorMessage = require('components/ErrorMessage');
 
 describe('Screens::Page::Component', function() {

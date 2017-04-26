@@ -1,12 +1,16 @@
 exports.actions = {
   acquireLock: require('./acquireLock'),
-  releaseLock: require('./releaseLock'),
   fetchPage: require('./fetchPage'),
-  updatePageContent: require('./updatePageContent'),
-  setPageEncryptionStatus: require('./setPageEncryptionStatus'),
-  updateQuery: require('./updateQuery'),
+  fetchSpace: require('./fetchSpace'),
+  fetchSpaces: require('./fetchSpaces'),
+  generatePassPhrase: require('./generatePassPhrase'),
+  releaseLock: require('./releaseLock'),
   replaceQuery: require('./replaceQuery'),
+  retrievePassPhrase: require('./retrievePassPhrase'),
+  setPageEncryptionStatus: require('./setPageEncryptionStatus'),
   transition: require('./transition'),
+  updateQuery: require('./updateQuery'),
+  updatePageContent: require('./updatePageContent'),
 };
 
 exports.applyOntoComponent = function(component, action, payload) {

@@ -1,5 +1,5 @@
-const Actions = require('../Actions');
-const ErrorCodes = require('../ErrorCodes');
+const { actions: Actions } = require('actions');
+const ErrorCodes = require('ErrorCodes');
 const PageEncryptionService = require('services/PageEncryptionService');
 const sinonSuite = require('test_utils/sinonSuite');
 const propagateAsyncErrors = require('utils/propagateAsyncErrors');
@@ -31,7 +31,7 @@ describe('Screens::Page::Actions', function() {
   })
 
   describe('.FETCH_PAGE', function() {
-    const subject = Actions.FETCH_PAGE;
+    const subject = Actions.fetchPage;
     const passPhrase = 'speak friend and enter';
 
     it('retrieves the page', function(done) {

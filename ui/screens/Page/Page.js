@@ -5,7 +5,7 @@ const Icon = require('components/Icon');
 const WarningMessage = require('components/WarningMessage');
 const OutletOccupant = require('components/OutletOccupant');
 const PageDrawer = require('./PageDrawer');
-const ErrorCodes = require('./ErrorCodes');
+const ErrorCodes = require('ErrorCodes');
 const LoadingIndicator = require('./LoadingIndicator');
 const ErrorMessage = require('components/ErrorMessage');
 const debounce = require('utils/debounce');
@@ -31,9 +31,10 @@ const Page = React.createClass({
       drawer: PropTypes.oneOf([ '1', null ]),
     }).isRequired,
 
-    onUpdateContent: PropTypes.func,
-    onUpdateQuery: PropTypes.func,
-    onUpdatePageEncryptionStatus: PropTypes.func,
+    onUpdateContent: PropTypes.func.isRequired,
+    onUpdateQuery: PropTypes.func.isRequired,
+    onUpdatePageEncryptionStatus: PropTypes.func.isRequired,
+    onGeneratePassPhrase: PropTypes.func.isRequired,
 
     saving: PropTypes.bool,
     isDecrypting: PropTypes.bool,
@@ -105,7 +106,8 @@ const Page = React.createClass({
               page={this.props.page}
               passPhrase={this.props.passPhrase}
               isRetrievingPassPhrase={this.props.isRetrievingPassPhrase}
-              onChangeOfEncryptionStatus={this.emitChangeOfEncryptionStatus}
+              onChangeOfEncryptionStatus={this.props.onUpdatePageEncryptionStatus}
+              onGeneratePassPhrase={this.props.onGeneratePassPhrase}
             />
           </OutletOccupant>
         )}
@@ -230,10 +232,6 @@ const Page = React.createClass({
     this.props.onUpdateQuery({
       drawer: this.props.query.drawer === '1' ? null : '1'
     })
-  },
-
-  emitChangeOfEncryptionStatus(nextStatus) {
-    this.props.onUpdatePageEncryptionStatus(nextStatus);
   },
 });
 

@@ -3,7 +3,6 @@ require('dotenv').config();
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
 const url = require('url')
-const { ipcMain } = require('electron')
 
 let setup;
 

@@ -1,15 +1,13 @@
 const React = require('react');
 const { HashRouter, Route, memoryHistory, Switch } = require('react-router-dom');
-const { ActionProvider } = require('cornflux');
-const queryString = require('query-string');
 const Home = require('./Home');
 const NotFound = require('./NotFound');
 const Spaces = require('./Spaces');
 const Space = require('./Space');
 const { withQueryFor } = require('utils/routing');
-const { PropTypes } = React;
 const { partial } = require('ramda');
-const { applyOntoComponent, actions } = require('actions');
+const { actions } = require('actions');
+const { PropTypes } = React;
 
 const APP_ENV = electronRequire('electron').remote.getGlobal('APP_ENV');
 
@@ -81,41 +79,4 @@ const RootWithRoutes = React.createClass({
   }
 })
 
-module.exports = ActionProvider(RootWithRoutes, {
-  actions: {
-    UPDATE_QUERY: (container, nextQuery) => {
-      const { history } = container.refs.router;
-      const baseQuery = queryString.parse(history.location.search);
-      const withoutNulls = Object.keys(nextQuery).reduce(function(map, key) {
-        if (nextQuery[key] !== null) {
-          map[key] = nextQuery[key];
-        }
-        else {
-          delete map[key];
-        }
-
-        return map;
-      }, baseQuery);
-
-      history.push(`${history.location.pathname}?${queryString.stringify(withoutNulls)}`)
-    },
-
-    REPLACE_QUERY: (container, nextQuery) => {
-      const { history } = container.refs.router;
-      const withoutNulls = Object.keys(nextQuery).reduce(function(map, key) {
-        if (nextQuery[key] !== null) {
-          map[key] = nextQuery[key];
-        }
-
-        return map;
-      }, {});
-
-      history.push(`${history.location.pathname}?${queryString.stringify(withoutNulls)}`)
-    },
-
-    TRANSITION(container, nextPathname) {
-      const { history } = container.refs.router;
-      history.push(nextPathname)
-    }
-  }
-});
+module.exports = RootWithRoutes;
