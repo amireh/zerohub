@@ -8,11 +8,6 @@ export async function encryptPage({ passPhrase, page }) {
     return Promise.reject(new Error('Page is already encrypted!'));
   }
 
-  if (page.digest && page.digest !== await calculateDigest({ text: page.content })) {
-    return Promise.reject(
-      new Error(`Unexpected page content digest; perhaps it is already encrypted?`)
-    );
-  }
   const lockingContext = {
     lockableType: 'Page',
     lockableId: page.id,

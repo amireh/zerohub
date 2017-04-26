@@ -23,12 +23,14 @@ describe('Screens::Page::Actions', function() {
 
     beforeEach(function() {
       container = {
-        setState() {},
+        isMounted() { return true; },
+        setState(nextState) {
+          Object.assign(container.state, nextState)
+        },
         state: {
           page: null,
           loading: false,
-          loadError: false,
-          loadErrorCode: null,
+          loadError: null,
         },
       }
     })
@@ -77,8 +79,8 @@ describe('Screens::Page::Actions', function() {
 
       subject(container, { pageId: 'page1', passPhrase }).then(function() {
         done('should not succeed!!!')
-      }).catch(function(error) {
-        assert.equal(error.message, ErrorCodes.PAGE_FETCH_ERROR)
+      }).catch(function() {
+        assert.equal(container.state.loadError, ErrorCodes.PAGE_FETCH_ERROR)
         done();
       });
     });
@@ -90,8 +92,8 @@ describe('Screens::Page::Actions', function() {
 
       subject(container, { pageId: 'page1' }).then(function() {
         done('should not succeed!!!')
-      }).catch(function(error) {
-        assert.equal(error.message, ErrorCodes.MISSING_PASS_PHRASE_ERROR)
+      }).catch(function() {
+        assert.equal(container.state.loadError, ErrorCodes.MISSING_PASS_PHRASE_ERROR)
         done();
       });
     });
@@ -107,8 +109,8 @@ describe('Screens::Page::Actions', function() {
 
       subject(container, { pageId: 'page1', passPhrase }).then(function() {
         done('should not succeed!!!')
-      }).catch(function(error) {
-        assert.equal(error.message, ErrorCodes.PAGE_CIPHER_ERROR)
+      }).catch(function() {
+        assert.equal(container.state.loadError, ErrorCodes.PAGE_CIPHER_ERROR)
         done();
       });
     });
@@ -127,8 +129,8 @@ describe('Screens::Page::Actions', function() {
 
       subject(container, { pageId: 'page1', passPhrase }).then(function() {
         done('should not succeed!!!')
-      }).catch(function(error) {
-        assert.equal(error.message, ErrorCodes.PAGE_DIGEST_MISMATCH_ERROR)
+      }).catch(function() {
+        assert.equal(container.state.loadError, ErrorCodes.PAGE_DIGEST_MISMATCH_ERROR)
         done();
       });
     })

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import Toggle from 'react-toggle';
+import Toggle from 'components/Toggle';
 import { Button } from 'components/Native';
 
 const PageDrawer = React.createClass({
@@ -16,7 +16,7 @@ const PageDrawer = React.createClass({
 
         <div className="space-page-drawer__content">
           <label className="form-toggle-label">
-            Encrypt this page
+            {I18n.t('Encrypt this page')}
 
             {' '}
 

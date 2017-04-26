@@ -2,8 +2,7 @@ import PageDrawer from '../PageDrawer';
 import reactSuite from 'test_utils/reactSuite';
 import { assert } from 'chai';
 import sinonSuite from 'test_utils/sinonSuite';
-import wrapCornflux from 'test_utils/wrapCornflux';
-import { drill, m } from 'react-drill';
+import { m } from 'react-drill';
 import Toggle from 'components/Toggle';
 
 describe('Screens::Page::PageDrawer', function() {
@@ -27,7 +26,7 @@ describe('Screens::Page::PageDrawer', function() {
   });
 
   it('renders a checkbox for setting page encryption status', function() {
-    assert(suite.scope.find('label', m.hasText('Encrypt this page')).has(Toggle))
+    assert.ok(suite.scope.find('label', m.hasText('Encrypt this page')).has(Toggle))
   });
 
   it('disables the encryption control if there is no passphrase', function() {
