@@ -1,8 +1,6 @@
 const React = require('react');
-const { ActionProvider } = require('cornflux');
 const Page = require('./Page');
-const Actions = require('./Actions');
-const actions = require('actions');
+const { actions, applyOntoComponent } = require('actions');
 const { PropTypes } = React;
 
 const PageRouteHandler = React.createClass({
@@ -11,13 +9,14 @@ const PageRouteHandler = React.createClass({
   },
 
   propTypes: {
-    dispatch: PropTypes.func.isRequired,
-
     space: PropTypes.shape({
       id: PropTypes.string.isRequired,
       encrypted: PropTypes.bool,
     }).isRequired,
 
+    onUpdateQuery: PropTypes.func,
+
+    passPhrase: PropTypes.string,
     params: PropTypes.shape({
       pageId: PropTypes.string.isRequired,
     }).isRequired,
@@ -38,12 +37,12 @@ const PageRouteHandler = React.createClass({
   },
 
   componentDidMount() {
-    this.props.dispatch('FETCH_PAGE', {
+    applyOntoComponent(this, actions.fetchPage, {
       pageId: this.props.params.pageId,
       passPhrase: this.props.passPhrase,
     });
 
-    actions.applyOntoComponent(this, actions.acquireLock, {
+    applyOntoComponent(this, actions.acquireLock, {
       lockableType: 'Page',
       lockableId: this.props.params.pageId,
     });
@@ -51,17 +50,17 @@ const PageRouteHandler = React.createClass({
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.params.pageId !== this.props.params.pageId) {
-      actions.applyOntoComponent(this, actions.releaseLock, {
+      applyOntoComponent(this, actions.releaseLock, {
         lockableType: 'Page',
         lockableId: this.props.params.pageId,
       });
 
-      actions.applyOntoComponent(this, actions.acquireLock, {
+      applyOntoComponent(this, actions.acquireLock, {
         lockableType: 'Page',
         lockableId: nextProps.params.pageId,
       });
 
-      this.props.dispatch('FETCH_PAGE', {
+      applyOntoComponent(this, actions.fetchPage, {
         pageId: nextProps.params.pageId,
         passPhrase: nextProps.passPhrase,
       });
@@ -69,7 +68,7 @@ const PageRouteHandler = React.createClass({
   },
 
   componentWillUnmount() {
-    actions.applyOntoComponent(this, actions.releaseLock, {
+    applyOntoComponent(this, actions.releaseLock, {
       lockableType: 'Page',
       lockableId: this.props.params.pageId,
     });
@@ -81,13 +80,30 @@ const PageRouteHandler = React.createClass({
         {...this.state}
         {...this.props}
         canEdit={this.state.locks.indexOf(this.props.params.pageId) > -1}
+        onUpdateContent={this.updateContent}
+        onUpdatePageEncryptionStatus={this.updatePageEncryptionStatus}
+        onUpdateQuery={this.props.onUpdateQuery}
       />
     );
   },
+
+  updateContent(nextContent) {
+    applyOntoComponent(this, actions.updatePageContent, {
+      pageId: this.state.page.id,
+      encrypted: this.state.page.encrypted,
+      passPhrase: this.props.passPhrase,
+      content: nextContent
+    })
+  },
+
+  updatePageEncryptionStatus(nextStatus) {
+    applyOntoComponent(this, actions.setPageEncryptionStatus, {
+      page: this.state.page,
+      encrypted: nextStatus,
+      passPhrase: this.props.passPhrase,
+    })
+  }
 });
 
-module.exports = ActionProvider(PageRouteHandler, {
-  actions: Actions,
-  verbose: true,
-});
+module.exports = PageRouteHandler;
 

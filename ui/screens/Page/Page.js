@@ -1,6 +1,5 @@
 const React = require('react');
 const CodeMirror = require('CodeMirror');
-const { ActionEmitter } = require('cornflux');
 const { Button } = require('components/Native');
 const Icon = require('components/Icon');
 const WarningMessage = require('components/WarningMessage');
@@ -24,8 +23,6 @@ const Page = React.createClass({
     pageTitle: PropTypes.string,
     passPhrase: PropTypes.string,
 
-    dispatch: PropTypes.func.isRequired,
-
     space: PropTypes.shape({
       id: PropTypes.string,
     }),
@@ -33,6 +30,10 @@ const Page = React.createClass({
     query: PropTypes.shape({
       drawer: PropTypes.oneOf([ '1', null ]),
     }).isRequired,
+
+    onUpdateContent: PropTypes.func,
+    onUpdateQuery: PropTypes.func,
+    onUpdatePageEncryptionStatus: PropTypes.func,
 
     saving: PropTypes.bool,
     isDecrypting: PropTypes.bool,
@@ -222,33 +223,18 @@ const Page = React.createClass({
   _emitChangeOfContent(instance/*, changes*/) {
     console.debug('updating page content...');
 
-    this.props.dispatch('UPDATE_PAGE_CONTENT', {
-      pageId: this.props.page.id,
-      encrypted: this.props.page.encrypted,
-      passPhrase: this.props.passPhrase,
-      content: instance.doc.getValue()
-    })
+    this.props.onUpdateContent(instance.doc.getValue());
   },
 
   toggleDrawer() {
-    this.props.dispatch('UPDATE_QUERY', {
+    this.props.onUpdateQuery({
       drawer: this.props.query.drawer === '1' ? null : '1'
     })
   },
 
-  emitChangeOfEncryptionStatus(status) {
-    this.props.dispatch('SET_PAGE_ENCRYPTION_STATUS', {
-      page: this.props.page,
-      passPhrase: this.props.passPhrase,
-      encrypted: status
-    });
+  emitChangeOfEncryptionStatus(nextStatus) {
+    this.props.onUpdatePageEncryptionStatus(nextStatus);
   },
 });
 
-module.exports = ActionEmitter(Page, {
-  actions: [
-    'UPDATE_PAGE_CONTENT',
-    'UPDATE_QUERY',
-    'SET_PAGE_ENCRYPTION_STATUS'
-  ]
-});
+module.exports = Page;

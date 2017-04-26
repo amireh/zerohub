@@ -16,7 +16,7 @@ window.addEventListener('unhandledrejection', function(data) {
 });
 
 before(function() {
-  request.stub(Function.prototype);
+  request.stub(() => Promise.resolve());
 })
 
 tap(testFiles, context => {

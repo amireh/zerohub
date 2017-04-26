@@ -3,10 +3,15 @@ const reactSuite = require('test_utils/reactSuite');
 const { assert } = require('chai');
 const sinonSuite = require('test_utils/sinonSuite');
 const assertChange = require('test_utils/assertChange');
-const actions = require('actions');
+const { actions } = require('actions');
 
 describe('Screens::Page::PageRouteHandler', function() {
   const sinon = sinonSuite(this);
+
+  beforeEach(function() {
+    sinon.stub(actions, 'fetchPage')
+  })
+
   const suite = reactSuite(this, PageRouteHandler, () => {
     return {
       dispatch: sinon.stub(),
@@ -22,7 +27,7 @@ describe('Screens::Page::PageRouteHandler', function() {
   });
 
   it('fetches the page upon load', function() {
-    assert.calledWith(suite.subject.props.dispatch, 'FETCH_PAGE', sinon.match({
+    assert.calledWith(actions.fetchPage, sinon.match.any, sinon.match({
       pageId: 'page1',
     }))
   });
@@ -34,7 +39,7 @@ describe('Screens::Page::PageRouteHandler', function() {
       }
     });
 
-    assert.calledWith(suite.subject.props.dispatch, 'FETCH_PAGE', sinon.match({
+    assert.calledWith(actions.fetchPage, sinon.match.any, sinon.match({
       pageId: 'page2',
     }))
   });

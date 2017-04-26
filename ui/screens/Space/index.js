@@ -1,11 +1,8 @@
 const React = require('react');
 const { ActionProvider } = require('cornflux');
 const { Route } = require('react-router-dom');
-// const Link = require('components/Link');
-// const Icon = require('components/Icon');
 const SpaceBrowser = require('./SpaceBrowser');
 const PassPhraseModal = require('./PassPhraseModal');
-// const Page = require('./Page');
 const OutletProvider = require('components/OutletProvider');
 const Outlet = require('components/Outlet');
 const { withQuery } = require('utils/routing');
@@ -18,6 +15,10 @@ const Space = React.createClass({
   contextTypes: {
     dispatch: PropTypes.func,
     config: PropTypes.object,
+  },
+
+  propTypes: {
+    onUpdateQuery: PropTypes.func,
   },
 
   getInitialState() {
@@ -122,6 +123,7 @@ const Space = React.createClass({
                     pageTitle={this.state.pages.filter(x => x.id === pageId)[0].title}
                     passPhrase={this.state.passPhrase && this.state.passPhrase.value}
                     isRetrievingPassPhrase={this.state.retrievingPassPhrase}
+                    onUpdateQuery={this.props.onUpdateQuery}
                   />
                 );
 

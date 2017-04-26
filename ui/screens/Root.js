@@ -8,6 +8,8 @@ const Spaces = require('./Spaces');
 const Space = require('./Space');
 const { withQueryFor } = require('utils/routing');
 const { PropTypes } = React;
+const { partial } = require('ramda');
+const { applyOntoComponent, actions } = require('actions');
 
 const APP_ENV = electronRequire('electron').remote.getGlobal('APP_ENV');
 
@@ -23,6 +25,8 @@ const RootWithRoutes = React.createClass({
   },
 
   render() {
+    const { withRoutingShingles } = this;
+
     return (
       <HashRouter ref="router" history={memoryHistory}>
         <Switch>
@@ -37,12 +41,12 @@ const RootWithRoutes = React.createClass({
           <Route
             exact
             path="/spaces"
-            render={withQueryFor(Spaces)}
+            render={withQueryFor(withRoutingShingles(Spaces))}
           />
 
           <Route
             path="/spaces/:id"
-            render={withQueryFor(Space)}
+            render={withQueryFor(withRoutingShingles(Space))}
           />
 
           <Route
@@ -63,6 +67,17 @@ const RootWithRoutes = React.createClass({
       apiToken: APP_ENV.API_TOKEN,
       userId: APP_ENV.API_USER_ID,
     };
+  },
+
+  withRoutingShingles(Component) {
+    return props => (
+      <Component
+        onUpdateQuery={partial(actions.updateQuery, [this])}
+        onReplaceQuery={partial(actions.updateQuery, [this])}
+        onTransition={partial(actions.updateQuery, [this])}
+        {...props}
+      />
+    );
   }
 })
 
