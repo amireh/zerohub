@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const root = path.resolve(__dirname, '..');
 
 module.exports = {
-  devtool: process.env.NODE_ENV === 'production' ? null : 'eval',
+  devtool: process.env.NODE_ENV === 'production' ? false : 'eval',
 
   plugins: [
     new webpack.DefinePlugin({
