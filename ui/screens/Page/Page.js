@@ -9,6 +9,7 @@ const ErrorCodes = require('ErrorCodes');
 const LoadingIndicator = require('./LoadingIndicator');
 const ErrorMessage = require('components/ErrorMessage');
 const debounce = require('utils/debounce');
+
 const { PropTypes } = React;
 const Page = React.createClass({
   propTypes: {
@@ -96,11 +97,10 @@ const Page = React.createClass({
 
         <div className="space-page__content">
           {this.renderBody()}
-
         </div>
 
         {this.props.page && this.props.query.drawer === '1' && (
-          <OutletOccupant name="SPACE_DRAWER" page={this.props.page}>
+          <OutletOccupant name="MEMBER_DRAWER" page={this.props.page}>
             <PageDrawer
               space={this.props.space}
               page={this.props.page}

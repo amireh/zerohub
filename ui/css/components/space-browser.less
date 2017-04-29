@@ -1,29 +1,58 @@
 .space-browser {
+  font-size: 0.9rem;
+
+  .link {
+    text-decoration: none;
+    // color: inherit;
+  }
   .link--active {
     font-weight: bold;
   }
 
-  &__current-space-title {
-    margin: 0;
-    line-height: 4rem;
-    height: 4rem;
-  }
+  // &__header {
+  //   letter-spacing: -0.5px;
+  //   // font-weight: bold;
+  //   line-height: 1rem;
+  //   margin: 1rem 0;
+  //   text-transform: uppercase;
+  // }
 
-  &__other-spaces {
-    margin-top: 2rem;
-    margin-bottom: 2rem 0;
-  }
-
-  &__other-spaces-header {
-    letter-spacing: -0.5px;
-    // font-weight: bold;
-    line-height: 1rem;
-    margin: 1rem 0;
+  &__header {
+    display: block;
+    font-weight: bold;
     text-transform: uppercase;
+    // margin-bottom: -0.5rem;
   }
 
-  &__other-spaces-count {
-    font-size: small;
+  &__header-count {
+    // font-size: small;
     margin-left: 0.5rem;
+  }
+
+  &__listing {
+    margin-left: -1rem;
+    margin-top: 0.5rem;
+  }
+
+  &__space {
+    color: @base3;
+    display: block;
+    padding: 0.25rem 0.5rem;
+    padding-left: 1rem;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+
+    &.link {
+      text-decoration: none;
+    }
+
+    &:hover {
+      background: rgba(0,0,0,0.2);
+    }
+
+    &--active, &--active:hover {
+      background: @blue;
+      color: @base5;
+    }
   }
 }

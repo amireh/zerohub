@@ -6,8 +6,8 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background: black;
-    z-index: -1;
+    background: #222;
+    z-index: -2;
   }
 
   &:after {
@@ -17,40 +17,66 @@
     right: 25%;
     bottom: 0;
     left: 25%;
+    // margin: 1rem;
+    box-shadow: 0 0 0 5px @red, 0 0 0 10px #333;
+    // box-shadow: 0 1px 3px 0 rgba(0,0,0,0.5);
+    // border: solid 1rem @red;
     background: white;
-    z-index: -1;
+    z-index: -2;
   }
+}
+
+.login-center {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .login {
   margin: 0 auto;
   max-width: 720px;
   text-align: center;
-  background: white;
 
   &__logo {
+    display: block;
+
     h1 {
       font-family: 'akashiregular';
       font-size: 5rem;
-      margin-top: 0;
+      letter-spacing: 0.25rem;
+      margin-bottom: 0;
+      -webkit-text-stroke: 0;
 
-      &::first-letter {
+      em {
         color: @red;
+        font-style: normal;
       }
     }
   }
 
   &__form {
+    display: block;
+    max-width: 14rem;
+    margin: 0 auto;
+
+    .error-message {
+      padding: 0.5rem;
+      font-size: 0.85rem;
+    }
+
     label {
       display: block;
       .margin-tb-s;
 
-      span {
-        display: inline-block;
-        width: 10rem;
-        text-align: right;
-        margin-right: 1rem;
+      input[type="text"], input[type="password"] {
+        width: 14rem;
       }
+    }
+
+    label input[type="checkbox"] {
+      .margin-tb-m;
+      .margin-r-s;
     }
   }
 }

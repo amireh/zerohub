@@ -13,48 +13,26 @@ const Login = React.createClass({
       userWantsToSaveToken: true,
       username: '',
       password: '',
-      loading: !this.props.user,
     };
-  },
-
-  componentWillMount() {
-    if (!this.props.user) {
-      const unsetLoading = () => {
-        if (this.isMounted()) {
-          this.setState({ loading: false });
-        }
-      }
-
-      actions.retrieveCredentials().then(apiToken => {
-        if (this.isMounted() && apiToken) {
-          this.loginWith({ apiToken }).then(payload => {
-            if (this.isMounted()) {
-              this.emitChangeOfUser(payload);
-            }
-          });
-        }
-      }).then(unsetLoading, unsetLoading)
-    }
   },
 
   render() {
     if (this.props.user) {
       return <Redirect to="/" />
     }
-    else if (this.state.loading) {
-      return <Splash />
-    }
 
     return (
       <div className="login-container">
-        <div className="login">
-          <div className="login__logo">
-            <h1>{I18n.t('0Hub')}</h1>
-          </div>
+        <div className="login-center">
+          <div className="login">
+            <div className="login__logo">
+              <h1><em>0</em><span>Hub</span></h1>
+            </div>
 
-          <div className="">
             <div className="">
-              {this.renderForm()}
+              <div className="">
+                {this.renderForm()}
+              </div>
             </div>
           </div>
         </div>
@@ -66,7 +44,7 @@ const Login = React.createClass({
     return (
       <form className="login__form" onSubmit={this.submit}>
         {this.state.credentialError && (
-          <ErrorMessage>{I18n.t('Invalid credentials, please try again.')}</ErrorMessage>
+          <ErrorMessage>{I18n.t('Invalid credentials.')}</ErrorMessage>
         )}
 
         <label>
@@ -101,7 +79,7 @@ const Login = React.createClass({
         </label>
 
         <Button type="submit" onClick={this.submit}>
-          {I18n.t('Login')}
+          {I18n.t('Sign in')}
         </Button>
       </form>
     );

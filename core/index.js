@@ -4,6 +4,8 @@ const { app, BrowserWindow } = require('electron')
 const path = require('path')
 const url = require('url')
 
+app.commandLine.appendSwitch('disable-smooth-scrolling');
+
 let setup;
 
 global.APP_ENV = {
@@ -28,7 +30,13 @@ let win
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({width: 800, height: 600})
+  win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      disableBlinkFeatures: 'CSSOMSmoothScroll'
+    }
+  })
 
   // and load the index.html of the app.
   win.loadURL(url.format({
@@ -41,7 +49,9 @@ function createWindow () {
   }))
 
   // Open the DevTools.
-  win.webContents.openDevTools()
+  if (process.env.NODE_ENV === 'development') {
+    win.webContents.openDevTools()
+  }
 
   // Emitted when the window is closed.
   win.on('closed', () => {

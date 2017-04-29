@@ -1,12 +1,14 @@
 const React = require('react');
 const { Route } = require('react-router-dom');
-const SpaceBrowser = require('./SpaceBrowser');
+const PageBrowser = require('./PageBrowser');
 const PassPhraseModal = require('./PassPhraseModal');
-const OutletProvider = require('components/OutletProvider');
-const Outlet = require('components/Outlet');
+const OutletOccupant = require('components/OutletOccupant');
+const MemberLayout = require('components/MemberLayout');
 const { withQuery } = require('utils/routing');
 const classSet = require('classnames');
 const PageRouteHandler = require('screens/Page');
+const UserMenu = require('components/UserMenu');
+
 const { actions, applyOntoComponent } = require('actions');
 const { PropTypes } = React;
 
@@ -95,7 +97,7 @@ const Space = React.createClass({
 
   renderSpace(space) {
     return (
-      <OutletProvider names={[ 'SPACE_DRAWER' ]}>
+      <MemberLayout>
         <div
           className={classSet("pure-g space", {
             'space--with-drawer': this.props.query.drawer === '1'
@@ -105,15 +107,24 @@ const Space = React.createClass({
             <PassPhraseModal passPhrase={this.state.passPhrase} />
           )}
 
-          <div className="pure-u-1-1 space__sidebar-container">
-            <SpaceBrowser
-              space={space}
-              spaces={this.state.spaces}
-              folders={this.state.folders}
-              pages={this.state.pages}
-              match={this.props.match}
-            />
-          </div>
+          <OutletOccupant name="MEMBER_SIDEBAR">
+            <div>
+              <UserMenu
+                user={this.props.user}
+                title={space.title}
+                links={[
+                  { to: '/spaces', label: I18n.t('Switch space') }
+                ]}
+              />
+
+              <PageBrowser
+                space={space}
+                folders={this.state.folders}
+                pages={this.state.pages}
+                match={this.props.match}
+              />
+            </div>
+          </OutletOccupant>
 
           <div className="pure-u-1-1 space__content-container">
             <Route
@@ -137,12 +148,8 @@ const Space = React.createClass({
               })}
             />
           </div>
-
-          <Outlet name="SPACE_DRAWER" onChange={this.trackDrawer}>
-            <div className="space__drawer-container" />
-          </Outlet>
         </div>
-      </OutletProvider>
+      </MemberLayout>
     )
   },
 

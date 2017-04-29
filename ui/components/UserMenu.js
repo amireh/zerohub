@@ -8,16 +8,26 @@ const Menu = React.createClass({
   render() {
     return (
       <div className="user-menu__menu">
+        {this.props.links.map(link => {
+          return (
+            <div key={link.to} className="user-menu__menu-item">
+              <Link to={link.to}>{link.label}</Link>
+            </div>
+          );
+        })}
+
         <div className="user-menu__menu-item">
-          <Button>
-            <Link to="/settings">{I18n.t('Settings')}</Link>
-          </Button>
+          <Link to="/settings">{I18n.t('Settings')}</Link>
         </div>
 
         <div className="user-menu__menu-item">
-          <Button>
-            <Link to="/logout">{I18n.t('Sign out')}</Link>
-          </Button>
+          <Link to="/vault">{I18n.t('Vault')}</Link>
+        </div>
+
+        <div className="user-menu__menu-separator" />
+
+        <div className="user-menu__menu-item">
+          <Link to="/logout">{I18n.t('Sign out')}</Link>
         </div>
       </div>
     )
@@ -27,6 +37,11 @@ const Menu = React.createClass({
 const UserMenu = React.createClass({
   propTypes: {
     user: PropTypes.object,
+    title: PropTypes.string,
+    links: PropTypes.arrayOf(PropTypes.shape({
+      to: PropTypes.string,
+      label: PropTypes.string,
+    }))
   },
 
   getInitialState() {
@@ -36,7 +51,7 @@ const UserMenu = React.createClass({
   },
 
   render() {
-    const { user } = this.props;
+    const { user, title } = this.props;
 
     if (!user) {
       return null;
@@ -44,14 +59,23 @@ const UserMenu = React.createClass({
 
     return (
       <div className="user-menu">
+        <div className="user-menu__caption">
+          <Button hint="icon" onClick={this.toggleMenu}>
 
-        <Button hint="icon" onClick={this.toggleMenu}>
-          {user.name}
+            <span className="user-menu__caption-primary">
+              {title || user.name}
+              <Icon className="icon-keyboard_arrow_down" />
+            </span>
 
-          <Icon className="icon-keyboard_arrow_down" />
-        </Button>
+            {title && (
+              <span className="user-menu__caption-secondary">
+                {user.name}
+              </span>
+            )}
+          </Button>
+        </div>
 
-        {this.state.menuOpen && (<Menu />)}
+        {this.state.menuOpen && (<Menu links={this.props.links || []} />)}
       </div>
     );
   },

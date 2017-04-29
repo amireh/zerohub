@@ -10,17 +10,24 @@ const { withQueryFor } = require('utils/routing');
 const { partial } = require('ramda');
 const { actions } = require('actions');
 const createAuthenticatedRoute = require('components/createAuthenticatedRoute');
+const ApplicationLoader = require('components/ApplicationLoader');
 
 const { PropTypes } = React;
 
 const RootWithRoutes = React.createClass({
+  propTypes: {
+    applicationData: PropTypes.shape({
+      user: PropTypes.object,
+    }),
+  },
+
   childContextTypes: {
     config: PropTypes.object,
   },
 
   getInitialState() {
     return {
-      user: null
+      user: this.props.applicationData.user,
     };
   },
 
@@ -108,4 +115,4 @@ const RootWithRoutes = React.createClass({
   }
 })
 
-module.exports = RootWithRoutes;
+module.exports = ApplicationLoader(RootWithRoutes);

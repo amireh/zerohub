@@ -5,7 +5,7 @@ const Splash = React.createClass({
       <div className="splash-container">
         <div className="splash">
           <div className="splash__logo">
-            <h1>{I18n.t('0Hub')}</h1>
+            <h1><em>0</em><span>Hub</span></h1>
           </div>
         </div>
       </div>
