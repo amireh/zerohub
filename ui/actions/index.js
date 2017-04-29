@@ -16,6 +16,7 @@ exports.actions = {
   storeCredentials: require('./storeCredentials'),
   transition: require('./transition'),
   updateQuery: require('./updateQuery'),
+  updatePage: require('./updatePage'),
   updatePageContent: require('./updatePageContent'),
 };
 

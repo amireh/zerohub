@@ -30,7 +30,7 @@ const Handlers = {
 
     keytar.replacePassword('0hub', message.data.key, phrase);
 
-    event.sender.send('RETRIEVE_PASS_PHRASE_RC', {
+    event.sender.send('GENERATE_PASS_PHRASE_RC', {
       id: message.id,
       data: {
         passPhrase: {

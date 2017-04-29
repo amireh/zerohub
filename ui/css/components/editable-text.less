@@ -1,0 +1,22 @@
+.editable-text.text-input,
+.editable-text.text-area,
+.editable-text.combo-box .combo-box__input {
+  padding: 0 0 0.5em 0;
+  vertical-align: inherit;
+  line-height: inherit;
+  outline: none;
+  border: none;
+  border-bottom: 0.1em solid transparent;
+  background-color: transparent;
+  box-shadow: none;
+  color: inherit;
+
+  &:hover {
+    border-bottom-color: @base3;
+  }
+
+  &:focus {
+    border-bottom-color: @blue;
+    outline: none;
+  }
+}

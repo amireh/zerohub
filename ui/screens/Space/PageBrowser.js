@@ -2,6 +2,7 @@ const React = require('react');
 const classSet = require('classnames');
 const Link = require('components/Link');
 const Icon = require('components/Icon');
+const unescapeHTML = require('utils/unescapeHTML');
 const { PropTypes } = React;
 
 const PageBrowser = React.createClass({
@@ -71,10 +72,5 @@ const PageBrowser = React.createClass({
   }
 });
 
-function unescapeHTML(input) {
-  const doc = new DOMParser().parseFromString(input, "text/html");
-
-  return doc.documentElement.textContent;
-}
 
 module.exports = PageBrowser;

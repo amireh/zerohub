@@ -143,6 +143,7 @@ const Space = React.createClass({
                     isRetrievingPassPhrase={this.state.retrievingPassPhrase}
                     onUpdateQuery={this.props.onUpdateQuery}
                     onGeneratePassPhrase={this.generatePassPhrase.bind(null, space.id)}
+                    onChangeOfPage={this.trackUpdatedPage}
                   />
                 );
               })}
@@ -157,6 +158,20 @@ const Space = React.createClass({
     applyOntoComponent(this, actions.generatePassPhrase, {
       spaceId
     });
+  },
+
+  trackUpdatedPage(nextPage) {
+    this.setState({
+      pages: this.state.pages.map(page => {
+        if (page.id === nextPage.id) {
+          return nextPage;
+        }
+        else {
+          return page
+        }
+      })
+    })
+
   }
 });
 

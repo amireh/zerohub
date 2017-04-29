@@ -8,7 +8,9 @@ const PageDrawer = require('./PageDrawer');
 const ErrorCodes = require('ErrorCodes');
 const LoadingIndicator = require('./LoadingIndicator');
 const ErrorMessage = require('components/ErrorMessage');
+const EditableText = require('components/EditableText');
 const debounce = require('utils/debounce');
+const unescapeHTML = require('utils/unescapeHTML');
 
 const { PropTypes } = React;
 const Page = React.createClass({
@@ -69,7 +71,10 @@ const Page = React.createClass({
       <div className="space-page">
         <div className="space-page__header">
           <h1 className="space-page__title">
-            {pageTitle}
+            <EditableText
+              value={unescapeHTML(pageTitle || I18n.t('Untitled Page'))}
+              onChange={this.props.onUpdateTitle}
+            />
 
             {this.props.page && this.props.page.encrypted && (
               <Icon
@@ -223,8 +228,6 @@ const Page = React.createClass({
   },
 
   _emitChangeOfContent(instance/*, changes*/) {
-    console.debug('updating page content...');
-
     this.props.onUpdateContent(instance.doc.getValue());
   },
 

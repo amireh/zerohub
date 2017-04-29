@@ -1,12 +1,12 @@
 .member-layout {
   &--with-drawer &__content {
-    margin-right: 280px;
+    margin-right: @member-sidebar-width;
   }
 
   &__sidebar {
     position: fixed;
     left: 0;
-    width: 280px;
+    width: @member-sidebar-width;
     overflow: auto;
     top: 0;
     bottom: 0;
@@ -19,11 +19,11 @@
   }
 
   &__content {
-    margin-left: 280px;
+    margin-left: @member-sidebar-width;
   }
 
   &__drawer {
-    width: 280px;
+    width: @member-drawer-width;
     position: fixed;
     right: 0;
     top: 0;

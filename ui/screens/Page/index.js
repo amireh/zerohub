@@ -85,6 +85,7 @@ const PageRouteHandler = React.createClass({
         onUpdatePageEncryptionStatus={this.updatePageEncryptionStatus}
         onGeneratePassPhrase={this.props.onGeneratePassPhrase}
         onUpdateQuery={this.props.onUpdateQuery}
+        onUpdateTitle={this.updateTitle}
       />
     );
   },
@@ -104,7 +105,30 @@ const PageRouteHandler = React.createClass({
       encrypted: nextStatus,
       passPhrase: this.props.passPhrase,
     })
-  }
+  },
+
+  updateTitle(nextTitle) {
+    if (nextTitle === this.state.page.title) {
+      return;
+    }
+
+    applyOntoComponent(this, actions.updatePage, {
+      pageId: this.state.page.id,
+      attributes: {
+        title: nextTitle
+      }
+    }).then(payload => {
+      if (!this.isMounted()) {
+        return;
+      }
+
+      Object.assign(this.state.page, {
+        title: payload.pages[0].title
+      });
+
+      this.props.onChangeOfPage(this.state.page);
+    })
+  },
 });
 
 module.exports = PageRouteHandler;

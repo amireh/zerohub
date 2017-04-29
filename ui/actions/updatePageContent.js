@@ -22,7 +22,7 @@ module.exports = function updatePageContent({ setState }, { pageId, passPhrase, 
     Promise.resolve().then(
       either(
         passIfNotEncrypted,
-        partial(PageEncryptionService.encryptPageContents, [{ passPhrase, page: { content } }])
+        partial(PageEncryptionService.encryptPage, [{ passPhrase, page: { content } }])
       )
     )
     .then(savePage)
