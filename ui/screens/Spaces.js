@@ -1,6 +1,9 @@
 const React = require('react');
 const Link = require('components/Link');
+const MemberLayout = require('components/MemberLayout');
+const OutletOccupant = require('components/OutletOccupant');
 const { applyOntoComponent, actions } = require('actions');
+const SpaceBrowser = require('./Space/SpaceBrowser');
 const { PropTypes } = React;
 
 const Spaces = React.createClass({
@@ -24,16 +27,20 @@ const Spaces = React.createClass({
 
   render() {
     return (
-      <div>
-        {this.state.loadingSpaces && <p>Loading spaces...</p>}
-        {this.state.spaceLoadError && (
-          <p className="error-notification">
-            Error loading spaces!
-          </p>
-        )}
+      <MemberLayout user={this.props.user}>
+        <div>
+          {this.state.loadingSpaces && <p>Loading spaces...</p>}
+          {this.state.spaceLoadError && (
+            <p className="error-notification">
+              {I18n.t('Error loading spaces!')}
+            </p>
+          )}
 
-        {this.state.spaces.map(this.renderSpace)}
-      </div>
+          <OutletOccupant name="MEMBER_SIDEBAR">
+            <SpaceBrowser spaces={this.state.spaces} />
+          </OutletOccupant>
+        </div>
+      </MemberLayout>
     );
   },
 

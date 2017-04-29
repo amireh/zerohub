@@ -4,7 +4,7 @@ const { PropTypes } = React;
 const Outlet = React.createClass({
   propTypes: {
     name: PropTypes.string.isRequired,
-    children: PropTypes.node.isRequired,
+    children: PropTypes.node,
   },
 
   contextTypes: {
@@ -26,6 +26,12 @@ const Outlet = React.createClass({
 
     if (!occupant) {
       return null;
+    }
+
+    const hasChildren = React.Children.count(this.props.children);
+
+    if (!hasChildren) {
+      return React.Children.only(occupant.props.children);
     }
 
     const child = React.Children.only(this.props.children);

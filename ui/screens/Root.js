@@ -5,15 +5,23 @@ const NotFound = require('./NotFound');
 const Spaces = require('./Spaces');
 const Space = require('./Space');
 const Login = require('./Login');
+const Logout = require('./Logout');
 const { withQueryFor } = require('utils/routing');
 const { partial } = require('ramda');
 const { actions } = require('actions');
+const createAuthenticatedRoute = require('components/createAuthenticatedRoute');
 
 const { PropTypes } = React;
 
 const RootWithRoutes = React.createClass({
   childContextTypes: {
     config: PropTypes.object,
+  },
+
+  getInitialState() {
+    return {
+      user: null
+    };
   },
 
   getChildContext() {
@@ -31,31 +39,40 @@ const RootWithRoutes = React.createClass({
           <Route
             exact
             path="/"
-            render={({ location }) => (
-              <Home location={location} {...this.props} />
-            )}
+            render={withQueryFor(withRoutingShingles(Home))}
           />
+
           <Route
             exact
             path="/login"
-            render={withQueryFor(withRoutingShingles(Login))}
+            render={withQueryFor(withRoutingShingles(props => (
+              <Login {...props} onChangeOfUser={this.trackUser} />
+            )))}
+          />
+
+          <Route
+            exact
+            path="/logout"
+            render={withQueryFor(withRoutingShingles(createAuthenticatedRoute(props => (
+              <Logout {...props} onChangeOfUser={this.trackUser} />
+            ))))}
           />
 
           <Route
             exact
             path="/spaces"
-            render={withQueryFor(withRoutingShingles(Spaces))}
+            render={withQueryFor(withRoutingShingles(createAuthenticatedRoute(Spaces)))}
           />
 
           <Route
             path="/spaces/:id"
-            render={withQueryFor(withRoutingShingles(Space))}
+            render={withQueryFor(withRoutingShingles(createAuthenticatedRoute(Space)))}
           />
 
           <Route
             exact
             path="/not-found"
-            render={withQueryFor(NotFound)}
+            render={withQueryFor(withRoutingShingles(NotFound))}
           />
 
           <Route component={NotFound} />
@@ -80,9 +97,14 @@ const RootWithRoutes = React.createClass({
         onUpdateQuery={partial(actions.updateQuery, [this])}
         onReplaceQuery={partial(actions.replaceQuery, [this])}
         onTransition={partial(actions.transition, [this])}
+        user={this.state.user}
         {...props}
       />
     );
+  },
+
+  trackUser(user) {
+    this.setState({ user });
   }
 })
 

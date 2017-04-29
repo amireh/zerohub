@@ -1,7 +1,7 @@
 const keytar = require('keytar');
 const crypto = require('crypto');
 const { ipcMain } = require('electron');
-const discardNullValues = require('./discardNullValues');
+const discardUndefinedValues = require('./discardUndefinedValues');
 
 let rendererMessageId = 0;
 
@@ -103,7 +103,7 @@ const Handlers = {
 
   UPDATE_SETTINGS(event, message) {
     const settings = getUserSettings();
-    const nextSettings = discardNullValues({
+    const nextSettings = discardUndefinedValues({
       apiToken: message.data.apiToken
     });
 

@@ -1,35 +1,48 @@
 const React = require('react');
-const { request } = require('services/PageHub');
+const { request, setApiToken } = require('services/PageHub');
 const { Redirect } = require('react-router-dom');
 const ErrorMessage = require('components/ErrorMessage');
-const { actions, applyOntoComponent } = require('actions');
+const Splash = require('components/Splash');
+const { actions } = require('actions');
 const { TextInput, Checkbox, Button } = require('components/Native');
-const APP_ENV = electronRequire('electron').remote.getGlobal('APP_ENV');
 
 const Login = React.createClass({
   getInitialState: function() {
     return {
       credentialError: false,
-      shouldSaveToken: true,
+      userWantsToSaveToken: true,
       username: '',
       password: '',
-      loggedIn: false,
-      reading: true,
+      loading: !this.props.user,
     };
   },
 
-  componentDidMount() {
-    applyOntoComponent(this, actions.retrieveCredentials).then(apiToken => {
-      this.setState({ reading: false });
-      this.loginWith(apiToken);
-    }).catch(() => {
-      this.setState({ reading: false });
-    })
+  componentWillMount() {
+    if (!this.props.user) {
+      const unsetLoading = () => {
+        if (this.isMounted()) {
+          this.setState({ loading: false });
+        }
+      }
+
+      actions.retrieveCredentials().then(apiToken => {
+        if (this.isMounted() && apiToken) {
+          this.loginWith({ apiToken }).then(payload => {
+            if (this.isMounted()) {
+              this.emitChangeOfUser(payload);
+            }
+          });
+        }
+      }).then(unsetLoading, unsetLoading)
+    }
   },
 
   render() {
-    if (this.state.loggedIn) {
+    if (this.props.user) {
       return <Redirect to="/" />
+    }
+    else if (this.state.loading) {
+      return <Splash />
     }
 
     return (
@@ -41,10 +54,6 @@ const Login = React.createClass({
 
           <div className="">
             <div className="">
-              {this.state.reading && (
-                <p>{I18n.t('Logging in using stored credentials... please wait.')}</p>
-              )}
-
               {this.renderForm()}
             </div>
           </div>
@@ -84,7 +93,7 @@ const Login = React.createClass({
         <label>
           <Checkbox
             type="checkbox"
-            checked={this.state.shouldSaveToken}
+            checked={this.state.userWantsToSaveToken}
             onChange={this.trackSaveToken}
           />
 
@@ -100,7 +109,7 @@ const Login = React.createClass({
 
   trackSaveToken(e) {
     this.setState({
-      shouldSaveToken: e.target.checked
+      userWantsToSaveToken: e.target.checked
     })
   },
 
@@ -115,28 +124,34 @@ const Login = React.createClass({
   submit(e) {
     e.preventDefault();
 
-    this.loginWith( btoa(`${this.state.username}:${this.state.password}`) );
-  },
+    const apiToken = btoa(`${this.state.username}:${this.state.password}`);
 
-  loginWith(apiToken) {
-    APP_ENV.API_TOKEN = apiToken;
-
-    request({
-      url: '/api/users/self'
-    }).then(() => {
-      const logIn = () => this.setState({ loggedIn: true });
-
-      if (this.state.shouldSaveToken) {
-        applyOntoComponent(this, actions.storeCredentials, {
-          apiToken
-        }).then(logIn)
+    this.loginWith({ apiToken, }).then(payload => {
+      if (this.isMounted() && this.state.userWantsToSaveToken) {
+        return actions.storeCredentials(this, { apiToken }).then(() => payload);
       }
       else {
-        logIn();
+        return payload;
       }
-    }, () => {
-      this.setState({ credentialError: true })
+    }).then(payload => {
+      if (this.isMounted()) {
+        this.emitChangeOfUser(payload);
+      }
     });
+  },
+
+  loginWith({ apiToken }) {
+    setApiToken(apiToken);
+
+    return request({ url: '/api/users/self' }).catch(() => {
+      if (this.isMounted()) {
+        this.setState({ credentialError: true })
+      }
+    });
+  },
+
+  emitChangeOfUser(payload) {
+    this.props.onChangeOfUser(payload.users[0]);
   }
 });
 

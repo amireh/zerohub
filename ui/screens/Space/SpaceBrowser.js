@@ -6,15 +6,12 @@ const SpaceBrowser = React.createClass({
   propTypes: {
     space: PropTypes.shape({
       id: PropTypes.string.isRequired,
-    }).isRequired,
+    }),
+
+    folders: PropTypes.array,
+    pages: PropTypes.array,
 
     spaces: PropTypes.array.isRequired,
-    folders: PropTypes.array.isRequired,
-    pages: PropTypes.array.isRequired,
-
-    match: PropTypes.shape({
-      url: PropTypes.string.isRequired,
-    }).isRequired,
   },
 
   render() {
@@ -22,13 +19,15 @@ const SpaceBrowser = React.createClass({
 
     return (
       <div className="space-browser">
-        <div className="space-browser__current-space">
-          <header className="space-browser__current-space-title">
-            <Link to={`/spaces/${space.id}`}>{space.title}</Link>
-          </header>
+        {space && (
+          <div className="space-browser__current-space">
+            <header className="space-browser__current-space-title">
+              <Link to={`/spaces/${space.id}`}>{space.title}</Link>
+            </header>
 
-          {this.props.folders.map(this.renderFolder)}
-        </div>
+            {this.props.folders.map(this.renderFolder)}
+          </div>
+        )}
 
         <div className="space-browser__other-spaces">
           <header className="space-browser__other-spaces-header">
@@ -76,7 +75,7 @@ const SpaceBrowser = React.createClass({
   renderPage(page) {
     return (
       <li key={page.id}>
-        <Link to={`${this.props.match.url}/pages/${page.id}`}>
+        <Link to={`/spaces/${this.props.space.id}/pages/${page.id}`}>
           {page.title}
         </Link>
       </li>

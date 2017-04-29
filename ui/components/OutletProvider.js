@@ -91,14 +91,26 @@ const OutletProvider = React.createClass({
   },
 
   addOutletChangeListener(listener) {
+    if (!this.changeListeners) {
+      return;
+    }
+
     this.changeListeners.push(listener);
   },
 
   emitChangeOfOutletState(name) {
+    if (!this.changeListeners) {
+      return;
+    }
+
     this.changeListeners.forEach(fn => fn(name));
   },
 
   removeOutletChangeListener(listener) {
+    if (!this.changeListeners) {
+      return;
+    }
+
     const index = this.changeListeners.indexOf(listener);
 
     if (index > -1) {

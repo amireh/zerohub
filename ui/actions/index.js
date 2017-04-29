@@ -6,6 +6,7 @@ exports.actions = {
   fetchSpace: require('./fetchSpace'),
   fetchSpaces: require('./fetchSpaces'),
   generatePassPhrase: require('./generatePassPhrase'),
+  logout: require('./logout'),
   releaseLock: require('./releaseLock'),
   replaceQuery: require('./replaceQuery'),
   retrieveCredentials: require('./retrieveCredentials'),
