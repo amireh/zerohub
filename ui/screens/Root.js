@@ -4,12 +4,12 @@ const Home = require('./Home');
 const NotFound = require('./NotFound');
 const Spaces = require('./Spaces');
 const Space = require('./Space');
+const Login = require('./Login');
 const { withQueryFor } = require('utils/routing');
 const { partial } = require('ramda');
 const { actions } = require('actions');
-const { PropTypes } = React;
 
-const APP_ENV = electronRequire('electron').remote.getGlobal('APP_ENV');
+const { PropTypes } = React;
 
 const RootWithRoutes = React.createClass({
   childContextTypes: {
@@ -34,6 +34,11 @@ const RootWithRoutes = React.createClass({
             render={({ location }) => (
               <Home location={location} {...this.props} />
             )}
+          />
+          <Route
+            exact
+            path="/login"
+            render={withQueryFor(withRoutingShingles(Login))}
           />
 
           <Route
@@ -60,6 +65,8 @@ const RootWithRoutes = React.createClass({
   },
 
   getConfig() {
+    const APP_ENV = electronRequire('electron').remote.getGlobal('APP_ENV');
+
     return {
       apiHost: APP_ENV.API_HOST,
       apiToken: APP_ENV.API_TOKEN,
@@ -71,8 +78,8 @@ const RootWithRoutes = React.createClass({
     return props => (
       <Component
         onUpdateQuery={partial(actions.updateQuery, [this])}
-        onReplaceQuery={partial(actions.updateQuery, [this])}
-        onTransition={partial(actions.updateQuery, [this])}
+        onReplaceQuery={partial(actions.replaceQuery, [this])}
+        onTransition={partial(actions.transition, [this])}
         {...props}
       />
     );

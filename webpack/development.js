@@ -33,7 +33,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        loaders: [ 'babel-loader' ],
+        use: [ 'babel-loader' ],
         include: [
           path.join(root, 'ui'),
           path.join(root, 'node_modules/cornflux/src'),
@@ -42,7 +42,7 @@ module.exports = {
 
       {
         test: /\.less$/,
-        loaders: [ 'style-loader', 'css-loader', 'less-loader' ],
+        use: [ 'style-loader', 'css-loader', 'less-loader' ],
         include: [
           path.join(root, 'ui/css'),
         ],

@@ -1,0 +1,56 @@
+.login-container {
+  &:before {
+    content: '';
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: black;
+    z-index: -1;
+  }
+
+  &:after {
+    content: '';
+    position: fixed;
+    top: 0;
+    right: 25%;
+    bottom: 0;
+    left: 25%;
+    background: white;
+    z-index: -1;
+  }
+}
+
+.login {
+  margin: 0 auto;
+  max-width: 720px;
+  text-align: center;
+  background: white;
+
+  &__logo {
+    h1 {
+      font-family: 'akashiregular';
+      font-size: 5rem;
+      margin-top: 0;
+
+      &::first-letter {
+        color: @red;
+      }
+    }
+  }
+
+  &__form {
+    label {
+      display: block;
+      .margin-tb-s;
+
+      span {
+        display: inline-block;
+        width: 10rem;
+        text-align: right;
+        margin-right: 1rem;
+      }
+    }
+  }
+}

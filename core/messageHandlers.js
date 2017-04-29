@@ -1,6 +1,7 @@
 const keytar = require('keytar');
 const crypto = require('crypto');
 const { ipcMain } = require('electron');
+const discardNullValues = require('./discardNullValues');
 
 let rendererMessageId = 0;
 
@@ -99,8 +100,46 @@ const Handlers = {
       data: digest
     });
   },
+
+  UPDATE_SETTINGS(event, message) {
+    const settings = getUserSettings();
+    const nextSettings = discardNullValues({
+      apiToken: message.data.apiToken
+    });
+
+    keytar.replacePassword('0hub', 'settings', JSON.stringify(
+      Object.assign({}, settings, nextSettings)
+    ));
+
+    event.sender.send('UPDATE_SETTINGS_RC', {
+      id: message.id,
+      data: {
+        success: true
+      }
+    });
+  },
+
+  RETRIEVE_SETTINGS(event, message) {
+    const settings = getUserSettings();
+
+    event.sender.send('RETRIEVE_SETTINGS_RC', {
+      id: message.id,
+      data: settings
+    });
+  }
 };
 
 Object.keys(Handlers).forEach(messageName => {
   ipcMain.on(messageName, Handlers[messageName]);
 });
+
+function getUserSettings() {
+  const rawData = keytar.getPassword('0hub', 'settings');
+
+  try {
+    return JSON.parse(rawData) || {};
+  }
+  catch (e) {
+    return {};
+  }
+}

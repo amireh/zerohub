@@ -12,8 +12,8 @@ exports.request = createStubbableFunction(function request(params) {
     headers: Object.assign({}, params.headers, {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': `Basic ${APP_ENV.API_TOKEN}`,
+      'Authorization': APP_ENV.API_TOKEN ? `Basic ${APP_ENV.API_TOKEN}` : null,
       'X-0-Hub': '1'
     })
-  }));
+  }))
 });

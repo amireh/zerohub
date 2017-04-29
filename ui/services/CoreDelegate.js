@@ -55,6 +55,8 @@ exports.calculateSecretDigest = function({ passPhrase, text }) {
   return send('CALCULATE_SECRET_DIGEST', { text, passPhrase });
 }
 
+exports.send = send;
+
 function generateMessageId() {
   return ipcRenderer.sendSync('GENERATE_MESSAGE_ID');
 }
