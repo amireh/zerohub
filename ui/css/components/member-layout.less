@@ -1,18 +1,42 @@
 .member-layout {
+  &:before {
+    content: '';
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: @member-sidebar-width;
+    background: #333;
+
+    box-shadow: -5px 0 5px -1px #222 inset;
+  }
+
+  &__menu {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: @member-sidebar-width;
+    vertical-align: top;
+    height: 4rem;
+    z-index: 1;
+  }
 
   &__sidebar {
     position: fixed;
     left: 0;
+    top: @member-menu-height;
     width: @member-sidebar-width;
     overflow: auto;
-    top: 0;
+    margin-top: 1rem;
+    z-index: 0;
     bottom: 0;
-    padding: 0 1em;
-    // border-right: 0.1rem solid @red;
-    background: #333;
-    box-shadow: -5px 0 5px -1px #222 inset;
 
     color: white;
+  }
+
+  &__menu, &__sidebar {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   &__content {
@@ -31,7 +55,6 @@
   &__drawer {
     width: @member-drawer-width;
     position: fixed;
-    // background: @base4;
     right: -@member-drawer-width;
     top: 0;
     bottom: 0;
@@ -42,7 +65,5 @@
 
   &--with-drawer &__drawer {
     right: 0;
-    // transform: translate3d(0px, 0, 0);
   }
-
 }

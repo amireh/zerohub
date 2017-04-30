@@ -37,12 +37,12 @@ const Spaces = React.createClass({
             </p>
           )}
 
-          <OutletOccupant name="MEMBER_SIDEBAR">
-            <div>
-              <UserMenu user={this.props.user} />
+          <OutletOccupant name="MEMBER_MENU">
+            <UserMenu user={this.props.user} />
+          </OutletOccupant>
 
-              <SpaceBrowser spaces={this.state.spaces} />
-            </div>
+          <OutletOccupant name="MEMBER_SIDEBAR">
+            <SpaceBrowser spaces={this.state.spaces} />
           </OutletOccupant>
         </div>
       </MemberLayout>

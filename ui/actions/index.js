@@ -24,10 +24,10 @@ exports.actions = {
 };
 
 exports.applyOntoComponent = function(component, action, payload) {
-  if (action.length === 1) {
+  if (action.length < 2) {
     return action(payload);
   }
-  else if (action.length === 2) {
+  else {
     return action({
       state: component.state,
       setState: function(nextState) {

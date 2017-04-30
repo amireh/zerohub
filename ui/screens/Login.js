@@ -2,7 +2,6 @@ const React = require('react');
 const { request, setApiToken } = require('services/PageHub');
 const { Redirect } = require('react-router-dom');
 const ErrorMessage = require('components/ErrorMessage');
-const Splash = require('components/Splash');
 const { actions } = require('actions');
 const { TextInput, Checkbox, Button } = require('components/Native');
 
@@ -43,10 +42,6 @@ const Login = React.createClass({
   renderForm() {
     return (
       <form className="login__form" onSubmit={this.submit}>
-        {this.state.credentialError && (
-          <ErrorMessage>{I18n.t('Invalid credentials.')}</ErrorMessage>
-        )}
-
         <label>
           <TextInput
             autoFocus
@@ -68,7 +63,11 @@ const Login = React.createClass({
           />
         </label>
 
-        <label>
+        {this.state.credentialError && (
+          <ErrorMessage>{I18n.t('Invalid login.')}</ErrorMessage>
+        )}
+
+        {false && (<label>
           <Checkbox
             type="checkbox"
             checked={this.state.userWantsToSaveToken}
@@ -76,9 +75,9 @@ const Login = React.createClass({
           />
 
           {I18n.t('Remember credentials')}
-        </label>
+        </label>)}
 
-        <Button type="submit" onClick={this.submit}>
+        <Button hint="danger" type="submit" onClick={this.submit}>
           {I18n.t('Sign in')}
         </Button>
       </form>

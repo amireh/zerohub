@@ -9,6 +9,7 @@ const classSet = require('classnames');
 const PageRouteHandler = require('screens/Page');
 const SpaceSettings = require('screens/SpaceSettings');
 const UserMenu = require('components/UserMenu');
+const ErrorMessage = require('components/ErrorMessage');
 const generatePasswordKey = require('utils/generatePasswordKey');
 
 const { actions, applyOntoComponent } = require('actions');
@@ -89,17 +90,17 @@ const Space = React.createClass({
 
   render() {
     return (
-      <div>
-        {this.state.loadingSpace && <p>Loading space data...</p>}
+      <MemberLayout withDrawer={this.props.query.drawer === '1'}>
+        {this.state.loadingSpace && <p>Loading...</p>}
 
         {this.state.spaceLoadError && (
-          <p className="error-notification">
-            Error loading space data!
-          </p>
+          <ErrorMessage>
+            {I18n.t('Oops! There was an error loading space data.')}
+          </ErrorMessage>
         )}
 
         {this.state.space && this.renderSpace(this.state.space)}
-      </div>
+      </MemberLayout>
     );
   },
 
@@ -107,85 +108,83 @@ const Space = React.createClass({
     const origin = `${this.props.location.pathname}${this.props.location.search}`;
 
     return (
-      <MemberLayout withDrawer={this.props.query.drawer === '1'}>
-        <div
-          className={classSet("pure-g space", {
-            'space--with-drawer': this.props.query.drawer === '1'
-          })}
-        >
-          {this.state.showingGeneratedPassPhrase && (
-            <PassPhraseModal passPhrase={this.state.passPhrase} />
-          )}
+      <div
+        className={classSet("pure-g space", {
+          'space--with-drawer': this.props.query.drawer === '1'
+        })}
+      >
+        {this.state.showingGeneratedPassPhrase && (
+          <PassPhraseModal passPhrase={this.state.passPhrase} />
+        )}
 
-          <OutletOccupant name="MEMBER_SIDEBAR">
-            <div>
-              <UserMenu
-                user={this.props.user}
-                title={space.title}
-                links={[
-                  {
-                    to: `${this.props.match.url}/settings?origin=${origin}`,
-                    label: I18n.t('Space settings')
-                  },
-                  { to: '/spaces', label: I18n.t('Switch space') },
-                ]}
-              />
+        <OutletOccupant name="MEMBER_MENU">
+          <UserMenu
+            user={this.props.user}
+            title={space.title}
+            links={[
+              {
+                to: `${this.props.match.url}/settings?origin=${origin}`,
+                label: I18n.t('Space settings')
+              },
+              { to: '/spaces', label: I18n.t('Switch space') },
+            ]}
+          />
+        </OutletOccupant>
 
-              <PageBrowser
-                space={space}
-                folders={this.state.folders}
-                pages={this.state.pages}
-                match={this.props.match}
-              />
-            </div>
-          </OutletOccupant>
+        <OutletOccupant name="MEMBER_SIDEBAR">
+          <PageBrowser
+            space={space}
+            folders={this.state.folders}
+            pages={this.state.pages}
+            match={this.props.match}
+          />
+        </OutletOccupant>
 
-          <div className="pure-u-1-1 space__content-container">
-            <Switch>
-              <Route
-                exact
-                path={`${this.props.match.url}/pages/:id`}
-                render={withQuery(({ match, query }) => {
-                  const pageId = match.params.id;
+        <div className="pure-u-1-1 space__content-container">
+          <Switch>
+            <Route
+              exact
+              path={`${this.props.match.url}/pages/:id`}
+              render={withQuery(({ match, query }) => {
+                const pageId = match.params.id;
 
-                  return (
-                    <PageRouteHandler
-                      location={this.props.location}
-                      space={space}
-                      params={{ pageId }}
-                      query={query}
-                      pageTitle={this.state.pages.filter(x => x.id === pageId)[0].title}
-                      passPhrase={this.state.passPhrase && this.state.passPhrase.value}
-                      isRetrievingPassPhrase={this.state.retrievingPassPhrase}
-                      onUpdateQuery={this.props.onUpdateQuery}
-                      onChangeOfPage={this.trackUpdatedPage}
-                    />
-                  );
-                })}
-              />
+                return (
+                  <PageRouteHandler
+                    location={this.props.location}
+                    space={space}
+                    params={{ pageId }}
+                    query={query}
+                    pageTitle={this.state.pages.filter(x => x.id === pageId)[0].title}
+                    passPhrase={this.state.passPhrase && this.state.passPhrase.value}
+                    isRetrievingPassPhrase={this.state.retrievingPassPhrase}
+                    onUpdateQuery={this.props.onUpdateQuery}
+                    onChangeOfPage={this.trackUpdatedPage}
+                  />
+                );
+              })}
+            />
 
-              <Route
-                exact
-                path={`${this.props.match.url}/settings`}
-                render={withQuery(({ query }) => {
-                  return (
-                    <SpaceSettings
-                      space={space}
-                      user={this.props.user}
-                      query={query}
-                      pages={this.state.pages}
-                      passPhrase={this.state.passPhrase && this.state.passPhrase.value}
-                      isRetrievingPassPhrase={this.state.retrievingPassPhrase}
-                      onClose={() => this.props.onTransition(query.origin || this.props.match.url)}
-                      onChangeOfPassPhrase={this.trackUpdatedPassPhrase}
-                    />
-                  );
-                })}
-              />
-            </Switch>
-          </div>
+            <Route
+              exact
+              path={`${this.props.match.url}/settings`}
+              render={withQuery(({ query }) => {
+                return (
+                  <SpaceSettings
+                    space={space}
+                    user={this.props.user}
+                    query={query}
+                    pages={this.state.pages}
+                    passPhrase={this.state.passPhrase && this.state.passPhrase.value}
+                    isRetrievingPassPhrase={this.state.retrievingPassPhrase}
+                    onClose={() => this.props.onTransition(query.origin || this.props.match.url)}
+                    onChangeOfPassPhrase={this.trackUpdatedPassPhrase}
+                  />
+                );
+              })}
+            />
+          </Switch>
         </div>
-      </MemberLayout>
+      </div>
     )
   },
 
