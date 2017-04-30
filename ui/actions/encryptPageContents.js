@@ -1,6 +1,6 @@
 const { calculateDigest, encrypt } = require('services/CoreDelegate');
 
-module.exports = async function encryptPageContents(_, { passPhrase, page }) {
+module.exports = async function encryptPageContents({ passPhrase, page }) {
   const encryptedText = await encrypt({
     passPhrase,
     plainText: page.content

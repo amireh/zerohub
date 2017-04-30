@@ -28,7 +28,7 @@ you've authored and encrypted using this password will also be compromised.
 0Hub has stored this password in your keyring under the service and account\r
 names "0Hub" and "${passPhrase.key}" for local access in the future.
 
-Should you lose this password (e.g., it is removed from your keyring), you will\r
+Should you lose this password (e.g. it gets removed from your keyring) you will\r
 also lose the ability to modify any content encrypted using it.
 
 Your chosen password is:
@@ -52,5 +52,5 @@ ${passPhrase.value}`)
 module.exports = PassPhraseConfirmationDialog;
 
 function discardCarriage(string) {
-  return string.replace(/\r\n/g, '');
+  return string.replace(/\r\n/g, ' ');
 }

@@ -64,6 +64,8 @@ const PageRouteHandler = React.createClass({
         pageId: nextProps.params.pageId,
         passPhrase: nextProps.passPhrase,
       });
+
+      this.setState({ loadError: null, saveError: null });
     }
   },
 

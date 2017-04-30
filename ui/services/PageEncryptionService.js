@@ -23,7 +23,7 @@ exports.encryptPage = async function({ passPhrase, page }) {
   // encrypt page contents
   // calculated encrypted contents digest
   const plainDigest = await calculateDigest({ text: page.content });
-  const { content: encryptedText } = await encryptPageContents(null, {
+  const { content: encryptedText } = await encryptPageContents({
     passPhrase,
     page,
   });

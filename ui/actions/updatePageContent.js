@@ -1,7 +1,7 @@
 const { either, partial } = require('ramda');
 const { request } = require('services/PageHub');
-const PageEncryptionService = require('services/PageEncryptionService');
 const { rethrow } = require('./asyncUtils');
+const encryptPageContents = require('actions/encryptPageContents');
 
 module.exports = function updatePageContent({ setState }, { pageId, passPhrase, encrypted, content }) {
   const passIfNotEncrypted = () => !encrypted && { content };
@@ -22,7 +22,12 @@ module.exports = function updatePageContent({ setState }, { pageId, passPhrase, 
     Promise.resolve().then(
       either(
         passIfNotEncrypted,
-        partial(PageEncryptionService.encryptPage, [{ passPhrase, page: { content } }])
+        partial(encryptPageContents, [{
+          passPhrase,
+          page: {
+            content
+          }
+        }])
       )
     )
     .then(savePage)
