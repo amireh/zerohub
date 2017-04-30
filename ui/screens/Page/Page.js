@@ -9,6 +9,7 @@ const ErrorCodes = require('ErrorCodes');
 const LoadingIndicator = require('./LoadingIndicator');
 const ErrorMessage = require('components/ErrorMessage');
 const EditableText = require('components/EditableText');
+const AutosizingInput = require('components/AutosizingInput');
 const debounce = require('utils/debounce');
 const unescapeHTML = require('utils/unescapeHTML');
 
@@ -72,6 +73,7 @@ const Page = React.createClass({
         <div className="space-page__header">
           <h1 className="space-page__title">
             <EditableText
+              wrapper={component => <AutosizingInput>{component}</AutosizingInput>}
               value={unescapeHTML(pageTitle || I18n.t('Untitled Page'))}
               onChange={this.props.onUpdateTitle}
             />

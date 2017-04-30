@@ -42,12 +42,14 @@ const EditableText = React.createClass({
   },
 
   renderSingleLineEditor() {
+    const wrapper = this.props.wrapper || identity;
+
     return (
       <KeyMapper
         onKCReturn={this.emitChange}
         onKCEscape={this.discardChange}
       >
-        <TextInput
+        {wrapper(<TextInput
           className={classSet(this.props.className, 'editable-text')}
           value={this.state.value}
           placeholder={this.props.placeholder}
@@ -55,18 +57,20 @@ const EditableText = React.createClass({
           autoFocus={this.props.autoFocus}
           onBlur={this.emitChange}
           onChange={this.trackChange}
-        />
+        />)}
       </KeyMapper>
     );
   },
 
   renderMultiLineEditor() {
+    const wrapper = this.props.wrapper || identity;
+
     return (
       <KeyMapper
         onKCReturn={KeyMapper.ModifierCommand(this.emitChange, KeyMapper.Modifiers.Control)}
         onKCEscape={this.discardChange}
       >
-        <TextArea
+        {wrapper(<TextArea
           className={classSet(this.props.className, 'editable-text')}
           value={this.state.value}
           placeholder={this.props.placeholder}
@@ -74,7 +78,7 @@ const EditableText = React.createClass({
           autoFocus={this.props.autoFocus}
           onBlur={this.emitChange}
           onChange={this.trackChange}
-        />
+        />)}
       </KeyMapper>
     );
   },
@@ -138,3 +142,7 @@ const NativeEventEmitter = React.createClass({
 })
 
 module.exports.NativeEventEmitter = NativeEventEmitter;
+
+function identity(x) {
+  return x;
+}

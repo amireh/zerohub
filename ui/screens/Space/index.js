@@ -97,7 +97,7 @@ const Space = React.createClass({
 
   renderSpace(space) {
     return (
-      <MemberLayout>
+      <MemberLayout withDrawer={this.props.query.drawer === '1'}>
         <div
           className={classSet("pure-g space", {
             'space--with-drawer': this.props.query.drawer === '1'

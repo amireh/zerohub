@@ -1,7 +1,4 @@
 .member-layout {
-  &--with-drawer &__content {
-    margin-right: @member-sidebar-width;
-  }
 
   &__sidebar {
     position: fixed;
@@ -19,17 +16,28 @@
   }
 
   &__content {
+    transition: margin-right 0.15s ease-in;
     margin-left: @member-sidebar-width;
+  }
+
+  &--with-drawer &__content {
+    margin-right: @member-sidebar-width;
   }
 
   &__drawer {
     width: @member-drawer-width;
     position: fixed;
-    right: 0;
+    // background: @base4;
+    right: -@member-drawer-width;
     top: 0;
     bottom: 0;
-    // padding: 1em;
     overflow: auto;
     border-left: 1px solid #ccc;
+    transition: right 0.15s ease-in;
+  }
+
+  &--with-drawer &__drawer {
+    right: 0;
+    // transform: translate3d(0px, 0, 0);
   }
 }
