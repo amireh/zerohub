@@ -1,7 +1,6 @@
 const React = require('react');
 const { request, setApiToken } = require('services/PageHub');
 const { Redirect } = require('react-router-dom');
-const ErrorMessage = require('components/ErrorMessage');
 const { actions } = require('actions');
 const { TextInput, Checkbox, Button } = require('components/Native');
 
@@ -49,6 +48,7 @@ const Login = React.createClass({
             type="text"
             name="username"
             value={this.state.username || ''}
+            className={this.state.credentialError ? 'text-input--invalid' : undefined}
             onChange={this.trackUsername}
           />
         </label>
@@ -59,13 +59,10 @@ const Login = React.createClass({
             type="password"
             name="password"
             value={this.state.password || ''}
+            className={this.state.credentialError ? 'text-input--invalid' : undefined}
             onChange={this.trackPassword}
           />
         </label>
-
-        {this.state.credentialError && (
-          <ErrorMessage>{I18n.t('Invalid login.')}</ErrorMessage>
-        )}
 
         {false && (<label>
           <Checkbox

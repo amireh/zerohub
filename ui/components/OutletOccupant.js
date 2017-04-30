@@ -26,6 +26,10 @@ const OutletOccupant = React.createClass({
 
   render() {
     return null;
+  },
+
+  isPopulated() {
+    return React.Children.toArray(this.props.children).some(x => !!x);
   }
 });
 

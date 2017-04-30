@@ -90,7 +90,7 @@ const Space = React.createClass({
 
   render() {
     return (
-      <MemberLayout withDrawer={this.props.query.drawer === '1'}>
+      <MemberLayout>
         {this.state.loadingSpace && <p>Loading...</p>}
 
         {this.state.spaceLoadError && (

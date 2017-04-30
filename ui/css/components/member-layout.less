@@ -12,7 +12,7 @@
   }
 
   &__menu {
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     width: @member-sidebar-width;
@@ -27,7 +27,6 @@
     top: @member-menu-height;
     width: @member-sidebar-width;
     overflow: auto;
-    margin-top: 1rem;
     z-index: 0;
     bottom: 0;
 
@@ -40,16 +39,29 @@
   }
 
   &__content {
-    transition: margin-right 0.15s ease-in;
-    margin-left: @member-sidebar-width;
+    transition: right 0.15s ease-in;
+    overflow: auto;
+    position: absolute;
+    left: @member-sidebar-width;
+    right: 0;
+    top: 0;
+    bottom: 0;
   }
 
   &__banner {
-    margin-left: @member-sidebar-width;
+    position: absolute;
+    top: 0;
+    left: @member-sidebar-width;
+    right: 0;
+    height: @member-menu-height;
   }
 
-  &--with-drawer &__content {
-    margin-right: @member-sidebar-width;
+  &--with-drawer &__content, &--with-drawer &__banner {
+    right: @member-sidebar-width;
+  }
+
+  &--with-banner &__content {
+    top: @member-menu-height;
   }
 
   &__drawer {

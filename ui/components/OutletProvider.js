@@ -11,6 +11,7 @@ const OutletProvider = React.createClass({
     addOutletChangeListener: PropTypes.func,
     addOutletOccupant: PropTypes.func,
     getOutletOccupant: PropTypes.func,
+    hasOutletOccupant: PropTypes.func,
     emitOutletChange: PropTypes.func,
     removeOutletChangeListener: PropTypes.func,
     removeOutletOccupant: PropTypes.func,
@@ -28,11 +29,12 @@ const OutletProvider = React.createClass({
 
   getChildContext() {
     return {
-      addOutletOccupant: this.addOccupant,
+      addOutletOccupant: this.addOutletOccupant,
       addOutletChangeListener: this.addOutletChangeListener,
-      getOutletOccupant: this.getOccupant,
+      getOutletOccupant: this.getOutletOccupant,
+      hasOutletOccupant: this.hasOutletOccupant,
       emitOutletChange: this.emitChangeOfOutletState,
-      removeOutletOccupant: this.removeOccupant,
+      removeOutletOccupant: this.removeOutletOccupant,
       removeOutletChangeListener: this.removeOutletChangeListener,
     }
   },
@@ -41,7 +43,7 @@ const OutletProvider = React.createClass({
     return React.Children.only(this.props.children);
   },
 
-  addOccupant(key, instance) {
+  addOutletOccupant(key, instance) {
     if (!this.occupants) {
       console.warn('no occupants !!!')
       return;
@@ -52,7 +54,7 @@ const OutletProvider = React.createClass({
     this.forceUpdate();
   },
 
-  removeOccupant(key, instance) {
+  removeOutletOccupant(key, instance) {
     if (!this.occupants) {
       console.warn('no occupants !!!')
       return;
@@ -64,7 +66,7 @@ const OutletProvider = React.createClass({
     this.forceUpdate();
   },
 
-  getOccupant(key) {
+  getOutletOccupant(key) {
     if (!this.occupants) {
       console.warn('no occupants !!!')
       return;
@@ -76,6 +78,10 @@ const OutletProvider = React.createClass({
     const mostRecentOccupant = occupants[occupants.length-1];
 
     return mostRecentOccupant && mostRecentOccupant.instance || null;
+  },
+
+  hasOutletOccupant(key) {
+    return this.occupants && this.occupants.some(x => x.key === key && x.instance.isPopulated());
   },
 
   assertNameIsKnown(key) {
