@@ -16,18 +16,8 @@ const OutletProvider = React.createClass({
     removeOutletOccupant: PropTypes.func,
   },
 
-  getInitialState() {
-    return {
-      occupants: this.props.names.reduce((map, key) => {
-        map[key] = null;
-
-        return map;
-      }, {})
-    };
-  },
-
   componentWillMount() {
-    this.occupants = {};
+    this.occupants = [];
     this.changeListeners = [];
   },
 
@@ -52,36 +42,40 @@ const OutletProvider = React.createClass({
   },
 
   addOccupant(key, instance) {
-    this.assertNameIsKnown(key);
+    if (!this.occupants) {
+      console.warn('no occupants !!!')
+      return;
+    }
 
-    this.setState({
-      occupants: Object.assign({}, this.state.occupants, {
-        [key]: instance
-      })
-    });
+    this.assertNameIsKnown(key);
+    this.occupants = this.occupants.concat({ key, instance });
+    this.forceUpdate();
   },
 
   removeOccupant(key, instance) {
+    if (!this.occupants) {
+      console.warn('no occupants !!!')
+      return;
+    }
+
     this.assertNameIsKnown(key);
 
-    if (this.state.occupants[key] === instance) {
-      this.setState({
-        occupants: Object.assign({}, this.state.occupants, {
-          [key]: null
-        })
-      });
-    }
+    this.occupants = this.occupants.filter(x => x.key !== key && x.instance !== instance);
+    this.forceUpdate();
   },
 
   getOccupant(key) {
+    if (!this.occupants) {
+      console.warn('no occupants !!!')
+      return;
+    }
+
     this.assertNameIsKnown(key);
 
-    if (this.state.occupants[key]) {
-      return (this.state.occupants[key]);
-    }
-    else {
-      return null;
-    }
+    const occupants = this.occupants.filter(x => x.key === key);
+    const mostRecentOccupant = occupants[occupants.length-1];
+
+    return mostRecentOccupant && mostRecentOccupant.instance || null;
   },
 
   assertNameIsKnown(key) {

@@ -6,10 +6,20 @@ const classSet = require('classnames');
 const MemberLayout = React.createClass({
   render() {
     return (
-      <OutletProvider names={[ 'MEMBER_SIDEBAR', 'MEMBER_CONTENT', 'MEMBER_DRAWER' ]}>
+      <OutletProvider names={[
+        'MEMBER_BANNER',
+        'MEMBER_SIDEBAR',
+        'MEMBER_CONTENT',
+        'MEMBER_DRAWER'
+        ]}
+      >
         <div className={classSet("member-layout", {
           'member-layout--with-drawer': this.props.withDrawer
         })}>
+          <div className="member-layout__banner">
+            <Outlet name="MEMBER_BANNER" />
+          </div>
+
           <div className="member-layout__sidebar">
             <Outlet name="MEMBER_SIDEBAR" />
           </div>

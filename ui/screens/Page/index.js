@@ -15,7 +15,6 @@ const PageRouteHandler = React.createClass({
     }).isRequired,
 
     onUpdateQuery: PropTypes.func.isRequired,
-    onGeneratePassPhrase: PropTypes.func.isRequired,
 
     passPhrase: PropTypes.string,
     params: PropTypes.shape({
@@ -83,7 +82,6 @@ const PageRouteHandler = React.createClass({
         canEdit={this.state.locks.indexOf(this.props.params.pageId) > -1}
         onUpdateContent={this.updateContent}
         onUpdatePageEncryptionStatus={this.updatePageEncryptionStatus}
-        onGeneratePassPhrase={this.props.onGeneratePassPhrase}
         onUpdateQuery={this.props.onUpdateQuery}
         onUpdateTitle={this.updateTitle}
       />
@@ -104,6 +102,8 @@ const PageRouteHandler = React.createClass({
       page: this.state.page,
       encrypted: nextStatus,
       passPhrase: this.props.passPhrase,
+    }).then(() => {
+      this.props.onChangeOfPage(this.state.page);
     })
   },
 

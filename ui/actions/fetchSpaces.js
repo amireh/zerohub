@@ -8,6 +8,8 @@ module.exports = function fetchSpaces(container, {}) {
       loadingSpaces: false,
       spaces: payload.spaces
     })
+
+    return payload.spaces;
   }).catch(() => {
     container.setState({
       loadingSpaces: false,

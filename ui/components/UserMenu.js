@@ -5,13 +5,23 @@ const Icon = require('components/Icon');
 const { PropTypes } = React;
 
 const Menu = React.createClass({
+  contextTypes: {
+    router: PropTypes.object,
+  },
+
+  propTypes: {
+    onClose: PropTypes.func.isRequired,
+  },
+
   render() {
+    const ClosableLink = props => <Link onClick={this.props.onClose} {...props} />;
+
     return (
       <div className="user-menu__menu">
         {this.props.links.map(link => {
           return (
             <div key={link.to} className="user-menu__menu-item">
-              <Link to={link.to}>{link.label}</Link>
+              <ClosableLink to={link.to}>{link.label}</ClosableLink>
             </div>
           );
         })}
@@ -21,17 +31,13 @@ const Menu = React.createClass({
         )}
 
         <div className="user-menu__menu-item">
-          <Link to="/settings">{I18n.t('Settings')}</Link>
-        </div>
-
-        <div className="user-menu__menu-item">
-          <Link to="/vault">{I18n.t('Vault')}</Link>
+          <ClosableLink disabled to="/preferences">{I18n.t('Preferences')}</ClosableLink>
         </div>
 
         <div className="user-menu__menu-separator" />
 
         <div className="user-menu__menu-item">
-          <Link to="/logout">{I18n.t('Sign out')}</Link>
+          <ClosableLink to="/logout">{I18n.t('Sign out')}</ClosableLink>
         </div>
       </div>
     )
@@ -79,13 +85,22 @@ const UserMenu = React.createClass({
           </Button>
         </div>
 
-        {this.state.menuOpen && (<Menu links={this.props.links || []} />)}
+        {this.state.menuOpen && (
+          <Menu
+            links={this.props.links || []}
+            onClose={this.closeMenu}
+          />
+        )}
       </div>
     );
   },
 
   toggleMenu() {
     this.setState({ menuOpen: !this.state.menuOpen })
+  },
+
+  closeMenu() {
+    this.setState({ menuOpen: false })
   }
 });
 

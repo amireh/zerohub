@@ -46,3 +46,83 @@
   //   border-left: 1px solid #ccc;
   // }
 }
+
+.space-settings {
+  padding: 1rem;
+
+  .react-toggle {
+    vertical-align: middle;
+  }
+
+  label {
+    display: block;
+  }
+
+  &__control-label {
+    input[type="radio"], input[type="checkbox"] {
+      width: 1rem;
+      margin-right: 0.25rem;
+    }
+  }
+
+  &__section {
+    padding-left: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+
+  &__banner {
+    border-bottom: 1px solid @base4;
+    padding: 1rem;
+    // height: 4rem;
+    font-size: 1.25rem;
+
+    h1 {
+      margin: 0;
+      font-size: inherit;
+    }
+
+    .icon-button {
+      // float: right;
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      font-size: inherit;
+      // font-size: 2rem;
+    }
+  }
+
+  h2 {
+    font-size: 1rem;
+    text-transform: uppercase;
+  }
+}
+
+.pass-phrase-confirmation-dialog {
+  position: fixed;
+  top: 25vh;
+  bottom: 25vh;
+  width: 50vw;
+  left: 25vw;
+  background: white;
+  border: solid 1px @base4;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.5);
+  padding: 0 1rem;
+
+  pre {
+    white-space: normal;
+    word-break: break-all;
+    background: @base4;
+    padding: 1rem;
+    max-width: 15rem;
+  }
+}
+
+.password-box {
+  white-space: normal;
+  word-break: break-all;
+  background: @base4;
+  padding: 1rem;
+  max-width: 30rem;
+  font-size: 0.85rem;
+}

@@ -38,7 +38,6 @@ const Page = React.createClass({
     onUpdateContent: PropTypes.func.isRequired,
     onUpdateQuery: PropTypes.func.isRequired,
     onUpdatePageEncryptionStatus: PropTypes.func.isRequired,
-    onGeneratePassPhrase: PropTypes.func.isRequired,
 
     saving: PropTypes.bool,
     isDecrypting: PropTypes.bool,
@@ -111,10 +110,10 @@ const Page = React.createClass({
             <PageDrawer
               space={this.props.space}
               page={this.props.page}
+              location={this.props.location}
               passPhrase={this.props.passPhrase}
               isRetrievingPassPhrase={this.props.isRetrievingPassPhrase}
               onChangeOfEncryptionStatus={this.props.onUpdatePageEncryptionStatus}
-              onGeneratePassPhrase={this.props.onGeneratePassPhrase}
             />
           </OutletOccupant>
         )}

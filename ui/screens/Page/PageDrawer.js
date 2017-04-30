@@ -1,12 +1,16 @@
 const React = require('react');
 const Toggle = require('components/Toggle');
-const { Button } = require('components/Native');
+const Text = require('components/Text');
+const Link = require('components/Link');
 const { PropTypes } = React;
 
 const PageDrawer = React.createClass({
   propTypes: {
     onChangeOfEncryptionStatus: PropTypes.func.isRequired,
-    onGeneratePassPhrase: PropTypes.func.isRequired,
+    location: PropTypes.shape({
+      pathname: PropTypes.string.isRequired,
+      search: PropTypes.string.isRequired,
+    }).isRequired,
   },
 
   render() {
@@ -36,23 +40,21 @@ const PageDrawer = React.createClass({
   },
 
   renderEncryptionSettings() {
-    // if (this.props.isRetrievingPassPhrase) {
-    //   return (
-    //     <p>Loading existing pass-phrase...</p>
-    //   );
-    // }
+    const { space } = this.props;
+    const origin = `${this.props.location.pathname}${this.props.location.search}`
 
     return (
       <div>
         {!this.props.passPhrase && (
           <div>
             <p>
-              You must register an encryption pass-phrase for this space in order
-              to encrypt its pages.
-            </p>
-            <p>
-              <Button onClick={this.importPassPhrase}>Import pass-phrase from file</Button>
-              <Button onClick={this.generatePassPhrase}>Generate a new pass-phrase</Button>
+              <Text>
+                You must first {(
+                  <Link to={`/spaces/${space.id}/settings?origin=${origin}`}>
+                    set up encryption for this space
+                  </Link>
+                )} in order to encrypt its pages.
+              </Text>
             </p>
           </div>
         )}
@@ -70,14 +72,6 @@ const PageDrawer = React.createClass({
   setPageEncryptionStatus(e) {
     this.props.onChangeOfEncryptionStatus(e.target.checked);
   },
-
-  importPassPhrase() {
-
-  },
-
-  generatePassPhrase() {
-    this.props.onGeneratePassPhrase({ spaceId: this.props.space.id })
-  }
 });
 
 module.exports = PageDrawer;

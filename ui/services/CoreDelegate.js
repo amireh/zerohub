@@ -1,25 +1,27 @@
 const invariant = require('invariant');
 const { ipcRenderer } = electronRequire('electron')
 
-exports.retrievePassPhrase = function({ spaceId }) {
-  invariant(typeof spaceId === 'string' && spaceId.length, '"spaceId" must be a string');
+// exports.retrievePassPhrase = function({ userId, spaceId }) {
+//   invariant(typeof spaceId === 'string' && spaceId.length, '"spaceId" must be a string');
 
-  return send('RETRIEVE_PASS_PHRASE', {
-    key: spaceId
-  }).then(payload => {
-    return payload.passPhrase;
-  });
-}
+//   return send('RETRIEVE_PASS_PHRASE', {
+//     userId,
+//     spaceId
+//   }).then(payload => {
+//     return payload.passPhrase;
+//   });
+// }
 
-exports.generatePassPhrase = function({ spaceId }) {
-  invariant(typeof spaceId === 'string' && spaceId.length, '"spaceId" must be a string');
+// exports.generatePassPhrase = function({ userId, spaceId }) {
+//   invariant(typeof spaceId === 'string' && spaceId.length, '"spaceId" must be a string');
 
-  return send('GENERATE_PASS_PHRASE', {
-    key: spaceId
-  }).then(payload => {
-    return payload.passPhrase;
-  });
-}
+//   return send('GENERATE_PASS_PHRASE', {
+//     userId,
+//     spaceId
+//   }).then(payload => {
+//     return payload.passPhrase;
+//   });
+// }
 
 exports.encrypt = function({ passPhrase, plainText }) {
   return send('ENCRYPT_TEXT', {

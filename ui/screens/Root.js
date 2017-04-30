@@ -82,6 +82,7 @@ const RootWithRoutes = React.createClass({
             path="/splash"
             render={withQueryFor(withRoutingShingles(Splash))}
           />
+
           <Route
             exact
             path="/not-found"

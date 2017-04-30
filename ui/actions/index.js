@@ -9,9 +9,12 @@ exports.actions = {
   login: require('./login'),
   logout: require('./logout'),
   releaseLock: require('./releaseLock'),
+  removePassPhrase: require('./removePassPhrase'),
   replaceQuery: require('./replaceQuery'),
   retrieveCredentials: require('./retrieveCredentials'),
+  retrieveAllPassPhrases: require('./retrieveAllPassPhrases'),
   retrievePassPhrase: require('./retrievePassPhrase'),
+  savePassPhrase: require('./savePassPhrase'),
   setPageEncryptionStatus: require('./setPageEncryptionStatus'),
   storeCredentials: require('./storeCredentials'),
   transition: require('./transition'),
@@ -21,12 +24,29 @@ exports.actions = {
 };
 
 exports.applyOntoComponent = function(component, action, payload) {
-  return action({
-    state: component.state,
-    setState: function(nextState) {
-      if (this.isMounted()) {
-        this.setState(nextState)
-      }
-    }.bind(component)
-  }, payload);
+  if (action.length === 1) {
+    return action(payload);
+  }
+  else if (action.length === 2) {
+    return action({
+      state: component.state,
+      setState: function(nextState) {
+        if (this.isMounted()) {
+          this.setState(nextState)
+        }
+      }.bind(component)
+    }, payload);
+  }
+};
+
+exports.applyOntoNull = function(action, payload) {
+  if (action.length === 1) {
+    return action(payload);
+  }
+  else if (action.length === 2) {
+    return action({
+      state: {},
+      setState: Function.prototype
+    }, payload);
+  }
 };

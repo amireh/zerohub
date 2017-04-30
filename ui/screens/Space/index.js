@@ -1,5 +1,5 @@
 const React = require('react');
-const { Route } = require('react-router-dom');
+const { Route, Switch } = require('react-router-dom');
 const PageBrowser = require('./PageBrowser');
 const PassPhraseModal = require('./PassPhraseModal');
 const OutletOccupant = require('components/OutletOccupant');
@@ -7,7 +7,9 @@ const MemberLayout = require('components/MemberLayout');
 const { withQuery } = require('utils/routing');
 const classSet = require('classnames');
 const PageRouteHandler = require('screens/Page');
+const SpaceSettings = require('screens/SpaceSettings');
 const UserMenu = require('components/UserMenu');
+const generatePasswordKey = require('utils/generatePasswordKey');
 
 const { actions, applyOntoComponent } = require('actions');
 const { PropTypes } = React;
@@ -31,6 +33,10 @@ const Space = React.createClass({
     query: PropTypes.shape({
       drawer: PropTypes.oneOf([ '1', null ])
     }).isRequired,
+
+    user: PropTypes.shape({
+      id: PropTypes.string,
+    }).isRequired,
   },
 
   getInitialState() {
@@ -48,33 +54,35 @@ const Space = React.createClass({
   },
 
   componentDidMount() {
-    const { config } = this.context;
+    const userId = this.props.user.id;
+    const spaceId = this.props.params.id;
 
     applyOntoComponent(this, actions.fetchSpaces, {
-      userId: config.userId,
+      userId,
     });
 
     applyOntoComponent(this, actions.fetchSpace, {
-      userId: config.userId,
-      spaceId: this.props.params.id
+      userId,
+      spaceId
     });
 
     applyOntoComponent(this, actions.retrievePassPhrase, {
-      spaceId: this.props.params.id
+      key: generatePasswordKey({ userId, spaceId }),
     });
   },
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.params.id !== this.props.params.id) {
-      const { config } = this.context;
+      const userId = nextProps.user.id;
+      const spaceId = nextProps.params.id;
 
       applyOntoComponent(this, actions.fetchSpace, {
-        userId: config.userId,
-        spaceId: nextProps.params.id
+        userId,
+        spaceId
       });
 
       applyOntoComponent(this, actions.retrievePassPhrase, {
-        spaceId: nextProps.params.id
+        key: generatePasswordKey({ userId, spaceId }),
       });
     }
   },
@@ -96,6 +104,8 @@ const Space = React.createClass({
   },
 
   renderSpace(space) {
+    const origin = `${this.props.location.pathname}${this.props.location.search}`;
+
     return (
       <MemberLayout withDrawer={this.props.query.drawer === '1'}>
         <div
@@ -113,7 +123,11 @@ const Space = React.createClass({
                 user={this.props.user}
                 title={space.title}
                 links={[
-                  { to: '/spaces', label: I18n.t('Switch space') }
+                  {
+                    to: `${this.props.match.url}/settings?origin=${origin}`,
+                    label: I18n.t('Space settings')
+                  },
+                  { to: '/spaces', label: I18n.t('Switch space') },
                 ]}
               />
 
@@ -127,37 +141,52 @@ const Space = React.createClass({
           </OutletOccupant>
 
           <div className="pure-u-1-1 space__content-container">
-            <Route
-              exact
-              path={`${this.props.match.url}/pages/:id`}
-              render={withQuery(({ match, query }) => {
-                const pageId = match.params.id;
+            <Switch>
+              <Route
+                exact
+                path={`${this.props.match.url}/pages/:id`}
+                render={withQuery(({ match, query }) => {
+                  const pageId = match.params.id;
 
-                return (
-                  <PageRouteHandler
-                    space={space}
-                    params={{ pageId }}
-                    query={query}
-                    pageTitle={this.state.pages.filter(x => x.id === pageId)[0].title}
-                    passPhrase={this.state.passPhrase && this.state.passPhrase.value}
-                    isRetrievingPassPhrase={this.state.retrievingPassPhrase}
-                    onUpdateQuery={this.props.onUpdateQuery}
-                    onGeneratePassPhrase={this.generatePassPhrase.bind(null, space.id)}
-                    onChangeOfPage={this.trackUpdatedPage}
-                  />
-                );
-              })}
-            />
+                  return (
+                    <PageRouteHandler
+                      location={this.props.location}
+                      space={space}
+                      params={{ pageId }}
+                      query={query}
+                      pageTitle={this.state.pages.filter(x => x.id === pageId)[0].title}
+                      passPhrase={this.state.passPhrase && this.state.passPhrase.value}
+                      isRetrievingPassPhrase={this.state.retrievingPassPhrase}
+                      onUpdateQuery={this.props.onUpdateQuery}
+                      onChangeOfPage={this.trackUpdatedPage}
+                    />
+                  );
+                })}
+              />
+
+              <Route
+                exact
+                path={`${this.props.match.url}/settings`}
+                render={withQuery(({ query }) => {
+                  return (
+                    <SpaceSettings
+                      space={space}
+                      user={this.props.user}
+                      query={query}
+                      pages={this.state.pages}
+                      passPhrase={this.state.passPhrase && this.state.passPhrase.value}
+                      isRetrievingPassPhrase={this.state.retrievingPassPhrase}
+                      onClose={() => this.props.onTransition(query.origin || this.props.match.url)}
+                      onChangeOfPassPhrase={this.trackUpdatedPassPhrase}
+                    />
+                  );
+                })}
+              />
+            </Switch>
           </div>
         </div>
       </MemberLayout>
     )
-  },
-
-  generatePassPhrase(spaceId) {
-    applyOntoComponent(this, actions.generatePassPhrase, {
-      spaceId
-    });
   },
 
   trackUpdatedPage(nextPage) {
@@ -171,7 +200,12 @@ const Space = React.createClass({
         }
       })
     })
+  },
 
+  trackUpdatedPassPhrase(nextPassPhrase) {
+    this.setState({
+      passPhrase: nextPassPhrase
+    });
   }
 });
 

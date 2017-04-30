@@ -42,9 +42,6 @@ exports.encryptPage = async function({ passPhrase, page }) {
     }
   });
 
-  // release page lock
-  await LockingService.releaseLock(lockingContext);
-
   return withEncryptedContent.pages[0];
 }
 
@@ -86,8 +83,6 @@ exports.decryptPage = async function({ passPhrase, page }) {
     });
   }).then(withDecryptedContent => {
     // release page lock
-    return LockingService.releaseLock(lockingContext).then(() => {
-      return withDecryptedContent.pages[0];
-    });
+    return withDecryptedContent.pages[0];
   });
 }

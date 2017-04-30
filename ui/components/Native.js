@@ -93,3 +93,31 @@ exports.Checkbox = React.createClass({
   },
 });
 
+
+exports.Radio = React.createClass({
+  propTypes: {
+    className: string,
+    type: string,
+    checked: bool,
+    onChange: func
+  },
+
+  getDefaultProps() {
+    return {
+      checked: false,
+      className: ''
+    };
+  },
+
+  render() {
+    return (
+      <input
+        {...this.props}
+        checked={this.props.checked || false}
+        type="radio"
+        className={classSet("radio", this.props.className)}
+      />
+    );
+  },
+});
+

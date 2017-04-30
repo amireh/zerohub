@@ -1,7 +1,8 @@
 const keytar = require('keytar');
 const crypto = require('crypto');
-const { ipcMain } = require('electron');
+const { ipcMain, dialog } = require('electron');
 const discardUndefinedValues = require('./discardUndefinedValues');
+const mainWindow = require('./mainWindow');
 
 let rendererMessageId = 0;
 
@@ -11,32 +12,79 @@ const Handlers = {
   },
 
   RETRIEVE_PASS_PHRASE(event, message) {
-    const descriptor = keytar.getPassword('0hub', message.data.key);
+    const { key } = message.data;
+    const descriptor = keytar.getPassword('0hub', key);
 
     event.sender.send('RETRIEVE_PASS_PHRASE_RC', {
       id: message.id,
       data: {
         passPhrase: descriptor ? {
-          key: message.data.key,
+          key: key,
           value: descriptor
         } : null
       }
     });
   },
 
+  RETRIEVE_ALL_PASS_PHRASES(event, message) {
+    const { userId, spaceIds } = message.data;
+    const passPhrases = spaceIds.map(spaceId => {
+      const key = `${userId}:${spaceId}`;
+
+      return { key, value: keytar.getPassword('0hub', key) };
+    }).filter(x => !!x.value);
+
+    event.sender.send('RETRIEVE_ALL_PASS_PHRASES_RC', {
+      id: message.id,
+      data: {
+        passPhrases
+      }
+    });
+  },
+
   // TODO: reject if password exists
   GENERATE_PASS_PHRASE(event, message) {
-    const phrase = crypto.randomBytes(64).toString('hex');
+    const phrase = crypto.randomBytes(32).toString('hex');
+    const { userId, spaceId, save } = message.data;
+    const key = `${userId}:${spaceId}`;
 
-    keytar.replacePassword('0hub', message.data.key, phrase);
+    if (save !== false) {
+      keytar.replacePassword('0hub', key, phrase);
+    }
 
     event.sender.send('GENERATE_PASS_PHRASE_RC', {
       id: message.id,
       data: {
         passPhrase: {
-          key: message.data.key,
+          key,
           value: phrase
         }
+      }
+    });
+  },
+
+  SAVE_PASS_PHRASE(event, message) {
+    const { key, value } = message.data;
+
+    keytar.replacePassword('0hub', key, value);
+
+    event.sender.send('SAVE_PASS_PHRASE_RC', {
+      id: message.id,
+      data: {
+        success: true
+      }
+    });
+  },
+
+  REMOVE_PASS_PHRASE(event, message) {
+    const { key } = message.data;
+
+    keytar.deletePassword('0hub', key);
+
+    event.sender.send('REMOVE_PASS_PHRASE_RC', {
+      id: message.id,
+      data: {
+        success: true
       }
     });
   },
@@ -126,6 +174,20 @@ const Handlers = {
       id: message.id,
       data: settings
     });
+  },
+
+  OPEN_MODAL(event, message) {
+    const win = mainWindow.getWindow();
+
+    dialog.showMessageBox(win, message.data, (response, checkboxChecked) => {
+      event.sender.send('OPEN_MODAL_RC', {
+        id: message.id,
+        data: {
+          response,
+          checkboxChecked
+        }
+      })
+    })
   }
 };
 
