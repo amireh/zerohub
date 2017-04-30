@@ -1,51 +1,19 @@
-.splash-container {
-  &:before {
-    content: '';
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: #222;
-    z-index: -1;
-  }
+@import (reference) "../partials/_header-logo";
+@import (reference) "../partials/_splash-container";
 
-  &:after {
-    content: '';
-    position: fixed;
-    top: 0;
-    right: 25%;
-    bottom: 0;
-    left: 25%;
-    background: white;
-    box-shadow: 0 0 0 5px @red, 0 0 0 10px #333;
-    z-index: -1;
-  }
+.splash-container {
+  ._splash-container();
 }
 
 .splash {
   margin: 0 auto;
-  max-width: 720px;
   height: 100vh;
   text-align: center;
-  background: white;
-  // height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 
   &__logo {
-    h1 {
-      font-family: 'akashiregular';
-      font-size: 5rem;
-      margin-top: 0;
-      letter-spacing: 0.25rem;
-      -webkit-text-stroke: 0;
-
-      &::first-letter, em {
-        color: @red;
-        font-style: normal;;
-      }
-    }
+    ._header-logo();
   }
 }

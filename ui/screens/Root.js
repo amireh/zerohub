@@ -6,6 +6,7 @@ const Spaces = require('./Spaces');
 const Space = require('./Space');
 const Login = require('./Login');
 const Logout = require('./Logout');
+const Splash = require('components/Splash');
 const { withQueryFor } = require('utils/routing');
 const { partial } = require('ramda');
 const { actions } = require('actions');
@@ -76,6 +77,11 @@ const RootWithRoutes = React.createClass({
             render={withQueryFor(withRoutingShingles(createAuthenticatedRoute(Space)))}
           />
 
+          <Route
+            exact
+            path="/splash"
+            render={withQueryFor(withRoutingShingles(Splash))}
+          />
           <Route
             exact
             path="/not-found"

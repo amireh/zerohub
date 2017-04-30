@@ -16,6 +16,10 @@ const Menu = React.createClass({
           );
         })}
 
+        {this.props.links.length > 0 && (
+          <div className="user-menu__menu-separator" />
+        )}
+
         <div className="user-menu__menu-item">
           <Link to="/settings">{I18n.t('Settings')}</Link>
         </div>

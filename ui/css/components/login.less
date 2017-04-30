@@ -1,29 +1,8 @@
-.login-container {
-  &:before {
-    content: '';
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: #222;
-    z-index: -2;
-  }
+@import (reference) "../partials/_header-logo";
+@import (reference) "../partials/_splash-container";
 
-  &:after {
-    content: '';
-    position: fixed;
-    top: 0;
-    right: 25%;
-    bottom: 0;
-    left: 25%;
-    // margin: 1rem;
-    box-shadow: 0 0 0 5px @red, 0 0 0 10px #333;
-    // box-shadow: 0 1px 3px 0 rgba(0,0,0,0.5);
-    // border: solid 1rem @red;
-    background: white;
-    z-index: -2;
-  }
+.login-container {
+  ._splash-container();
 }
 
 .login-center {
@@ -39,19 +18,10 @@
   text-align: center;
 
   &__logo {
-    display: block;
+    ._header-logo();
 
     h1 {
-      font-family: 'akashiregular';
-      font-size: 5rem;
-      letter-spacing: 0.25rem;
       margin-bottom: 0;
-      -webkit-text-stroke: 0;
-
-      em {
-        color: @red;
-        font-style: normal;
-      }
     }
   }
 
