@@ -51,6 +51,7 @@
     "css-loader": "0.28.0",
     "electron": "1.6.2",
     "electron-devtools-installer": "2.1.0",
+    "electron-icon-maker": "0.0.3",
     "electron-rebuild": "1.5.7",
     "eslint": "3.18.0",
     "eslint-plugin-react": "6.10.3",

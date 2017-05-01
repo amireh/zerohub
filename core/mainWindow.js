@@ -11,6 +11,7 @@ function createWindow () {
   win = new BrowserWindow({
     width: 800,
     height: 600,
+    icon: path.resolve(__dirname, '../www/icons/png/64x64.png'),
     webPreferences: {
       disableBlinkFeatures: 'CSSOMSmoothScroll'
     }
@@ -19,8 +20,8 @@ function createWindow () {
   // and load the index.html of the app.
   win.loadURL(url.format({
     pathname: process.env.NODE_ENV === 'development' ?
-      path.join(__dirname, '../www/index.development.html') :
-      path.join(__dirname, '../www/index.html')
+      path.resolve(__dirname, '../www/index.development.html') :
+      path.resolve(__dirname, '../www/index.html')
     ,
     protocol: 'file:',
     slashes: true
