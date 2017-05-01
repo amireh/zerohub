@@ -16,10 +16,6 @@ const { actions, applyOntoComponent } = require('actions');
 const { PropTypes } = React;
 
 const Space = React.createClass({
-  contextTypes: {
-    config: PropTypes.object,
-  },
-
   propTypes: {
     match: PropTypes.shape({
       url: PropTypes.string.isRequired,

@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+[ -f package.json ] || {
+  echo "$0: must be run from zerohub root"
+  exit 1
+}
+
+[ -z "$API_HOST" ] && {
+  echo "$0: API_HOST must be set"
+  exit 1
+}
+
+which electron-installer-dmg &> /dev/null
+
+[ $? -eq 1 ] && {
+  echo "$0: electron-installer-dmg is missing; install it using npm then try again"
+  exit 1
+}
+
+set -e
+
+. "bin/generate-config"
+
+PKG_NAME=$(node -e 'console.log(require("./package").name)')
+PKG_VERSION=$(node -e 'console.log(require("./package").version)')
+SRC_DIR="tmp/staging"
+APP_DIR="$(pwd)/build/${PKG_NAME}-darwin-x64/0hub.app"
+
+function stage {
+  rm -rf $SRC_DIR
+  mkdir -p $SRC_DIR
+
+  cp -rf \
+    package.json \
+    node_modules \
+    core \
+    www \
+    $SRC_DIR/
+}
+
+function build {
+  ./node_modules/.bin/electron-packager $SRC_DIR \
+    --app-bundle-id="0Hub" \
+    --out="build/" \
+    --icon="www/icons/mac/icon.ics" \
+    --platform="darwin" \
+    --overwrite
+}
+
+function compress {
+  electron-installer-dmg \
+    --out build/ \
+    --icon www/icons/mac/icon.icns \
+    $APP_DIR \
+    $PKG_NAME
+
+  mv build/$PKG_NAME.dmg build/$PKG_NAME-${PKG_VERSION}.dmg
+}
+
+echo "Staging files into ${SRC_DIR}..."
+stage
+echo "Packaging application..."
+build
+echo "Overriding config..."
+generate_config "${APP_DIR}/Contents/Resources/app/core/config.js"
+echo "Creating .dmg ..."
+compress
+echo "Ok."

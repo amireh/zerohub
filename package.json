@@ -1,9 +1,10 @@
 {
-  "name": "crypthub",
-  "version": "1.0.0",
+  "name": "0hub",
+  "version": "1.0.0-beta.1",
   "description": "",
-  "main": "src/index.js",
+  "main": "core/index.js",
   "scripts": {
+    "build": "NODE_ENV=production webpack --config webpack/production.js",
     "start": "node -r dotenv/config webpack/server.js",
     "start:electron": "NODE_ENV=development node -r dotenv/config ./node_modules/.bin/electron core/index",
     "test": "NODE_ENV=test ELECTRON_ENABLE_LOGGING=true karma start",
@@ -11,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/amireh/crypthub.git"
+    "url": "git+ssh://git@github.com/amireh/zerohub.git"
   },
   "author": "Ahmad Amireh",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/amireh/crypthub/issues"
+    "url": "https://github.com/amireh/zerohub/issues"
   },
-  "homepage": "https://github.com/amireh/crypthub#readme",
+  "homepage": "https://github.com/amireh/zerohub#readme",
   "dependencies": {
     "classnames": "2.2.5",
     "codemirror": "5.25.0",
@@ -51,10 +52,11 @@
     "css-loader": "0.28.0",
     "electron": "1.6.2",
     "electron-devtools-installer": "2.1.0",
-    "electron-icon-maker": "0.0.3",
+    "electron-packager": "8.6.0",
     "electron-rebuild": "1.5.7",
     "eslint": "3.18.0",
     "eslint-plugin-react": "6.10.3",
+    "extract-text-webpack-plugin": "2.1.0",
     "file-loader": "0.11.0",
     "inject-loader": "3.0.0",
     "karma": "1.6.0",

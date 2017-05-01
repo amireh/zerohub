@@ -2,16 +2,13 @@ require('dotenv').config();
 
 const { app } = require('electron')
 const mainWindow = require('./mainWindow');
+const config = require('./config');
 
 app.commandLine.appendSwitch('disable-smooth-scrolling');
 
 let setup;
 
-global.APP_ENV = {
-  API_HOST: process.env.API_HOST || 'http://localhost:3000',
-  API_TOKEN: process.env.API_TOKEN,
-  API_USER_ID: process.env.API_USER_ID || '1'
-};
+global.APP_ENV = config;
 
 if (process.env.NODE_ENV === 'development') {
   const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');

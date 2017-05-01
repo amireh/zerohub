@@ -6,3 +6,6 @@ npm-debug.log
 /zerohub.sublime-workspace
 /ui/css/fonts/*.zip
 /.local
+/build
+/tmp
+.DS_Store

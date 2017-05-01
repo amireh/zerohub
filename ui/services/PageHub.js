@@ -1,7 +1,7 @@
 const createStubbableFunction = require('utils/createStubbableFunction');
 const fetch = require('utils/fetch');
-
 const APP_ENV = electronRequire('electron').remote.getGlobal('APP_ENV');
+
 const API_HOST = APP_ENV.API_HOST || 'http://localhost:3000';
 let apiToken = APP_ENV.API_TOKEN;
 

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+function generate_config {
+  code="""
+console.log(\`
+module.exports = \${JSON.stringify(require('./core/config'), null, 4)};
+\`)
+"""
+
+  node -e "${code}" > $1
+}

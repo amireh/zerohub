@@ -22,20 +22,10 @@ const RootWithRoutes = React.createClass({
     }),
   },
 
-  childContextTypes: {
-    config: PropTypes.object,
-  },
-
   getInitialState() {
     return {
       user: this.props.applicationData.user,
     };
-  },
-
-  getChildContext() {
-    return {
-      config: this.getConfig()
-    }
   },
 
   render() {
@@ -93,16 +83,6 @@ const RootWithRoutes = React.createClass({
         </Switch>
       </HashRouter>
     )
-  },
-
-  getConfig() {
-    const APP_ENV = electronRequire('electron').remote.getGlobal('APP_ENV');
-
-    return {
-      apiHost: APP_ENV.API_HOST,
-      apiToken: APP_ENV.API_TOKEN,
-      userId: APP_ENV.API_USER_ID,
-    };
   },
 
   withRoutingShingles(Component) {

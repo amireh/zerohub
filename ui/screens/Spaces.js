@@ -8,8 +8,8 @@ const UserMenu = require('components/UserMenu');
 const { PropTypes } = React;
 
 const Spaces = React.createClass({
-  contextTypes: {
-    config: PropTypes.object,
+  propTypes: {
+    user: PropTypes.object.isRequired,
   },
 
   getInitialState() {
@@ -21,9 +21,7 @@ const Spaces = React.createClass({
   },
 
   componentDidMount() {
-    const { config } = this.context;
-
-    applyOntoComponent(this, actions.fetchSpaces, { userId: config.userId });
+    applyOntoComponent(this, actions.fetchSpaces, { userId: this.props.user.id });
   },
 
   render() {

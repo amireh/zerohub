@@ -4,10 +4,6 @@ const { actions, applyOntoComponent } = require('actions');
 const { PropTypes } = React;
 
 const PageRouteHandler = React.createClass({
-  contextTypes: {
-    config: PropTypes.object,
-  },
-
   propTypes: {
     space: PropTypes.shape({
       id: PropTypes.string.isRequired,
