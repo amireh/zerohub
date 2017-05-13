@@ -146,8 +146,13 @@ const Space = React.createClass({
               },
               {
                 onClick: this.exportAsJSON,
-                to: '',
-                label: I18n.t('Export as JSON')
+                to: `/spaces/${this.props.params.id}/export?format=json`,
+                label: I18n.t('Save as JSON')
+              },
+              {
+                onClick: this.exportAsZIP,
+                to: `/spaces/${this.props.params.id}/export?format=zip`,
+                label: I18n.t('Save as ZIP')
               },
             ]}
             secondaryLinks={[
@@ -374,7 +379,19 @@ const Space = React.createClass({
       spaceId: this.props.params.id,
       tickFn() {},
     })
-    // this.setState({ exportingAsJSON: true });
+  },
+
+  exportAsZIP(e) {
+    if (e) {
+      e.preventDefault();
+    }
+
+    actions.exportSpace({
+      format: actions.exportSpace.FORMAT_ZIP,
+      userId: this.props.user.id,
+      spaceId: this.props.params.id,
+      tickFn() {},
+    })
   }
 });
 

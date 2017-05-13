@@ -41,11 +41,9 @@ const Menu = React.createClass({
           );
         })}
 
-        <div className="user-menu__menu-item">
-          <ClosableLink disabled to="/preferences">{I18n.t('Preferences')}</ClosableLink>
-        </div>
-
-        <div className="user-menu__menu-separator" />
+        {secondaryLinks.length > 0 && (
+          <div className="user-menu__menu-separator" />
+        )}
 
         <div className="user-menu__menu-item">
           <ClosableLink to="/logout">{I18n.t('Sign out')}</ClosableLink>
