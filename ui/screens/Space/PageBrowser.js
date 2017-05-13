@@ -1,10 +1,34 @@
 const React = require('react');
+const { findDOMNode } = require('react-dom');
 const classSet = require('classnames');
 const Link = require('components/Link');
 const Icon = require('components/Icon');
 const unescapeHTML = require('utils/unescapeHTML');
 const { Button } = require('components/Native');
 const { PropTypes } = React;
+
+const ScrollIntoView = React.createClass({
+  propTypes: {
+    children: PropTypes.node.isRequired,
+    focused: PropTypes.bool,
+  },
+
+  componentDidMount() {
+    if (this.props.focused) {
+      findDOMNode(this).scrollIntoViewIfNeeded();
+    }
+  },
+
+  componentDidUpdate(prevProps) {
+    if (this.props.focused !== prevProps.focused && this.props.focused) {
+      findDOMNode(this).scrollIntoViewIfNeeded();
+    }
+  },
+
+  render() {
+    return React.Children.only(this.props.children);
+  }
+})
 
 const PageBrowser = React.createClass({
   propTypes: {
@@ -14,6 +38,8 @@ const PageBrowser = React.createClass({
 
     folders: PropTypes.array,
     pages: PropTypes.array,
+
+    currentPageId: PropTypes.string,
   },
 
   getInitialState() {
@@ -84,13 +110,15 @@ const PageBrowser = React.createClass({
   renderPage(page) {
     return (
       <li key={page.id}>
-        <Link
-          activeClassName="page-browser__page--active"
-          className="page-browser__page"
-          to={`/spaces/${this.props.space.id}/pages/${page.id}`}
-        >
-          {unescapeHTML(page.title)}
-        </Link>
+        <ScrollIntoView focused={this.props.currentPageId === page.id}>
+          <Link
+            activeClassName="page-browser__page--active"
+            className="page-browser__page"
+            to={`/spaces/${this.props.space.id}/pages/${page.id}`}
+          >
+            {unescapeHTML(page.title)}
+          </Link>
+        </ScrollIntoView>
       </li>
     )
   },

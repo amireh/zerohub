@@ -1,7 +1,6 @@
 const React = require('react');
 const CodeMirror = require('CodeMirror');
-const { Button } = require('components/Native');
-const Icon = require('components/Icon');
+const { Button, Icon, Link } = require('components');
 const WarningMessage = require('components/WarningMessage');
 const OutletOccupant = require('components/OutletOccupant');
 const PageDrawer = require('./PageDrawer');
@@ -12,6 +11,7 @@ const EditableText = require('components/EditableText');
 const AutosizingInput = require('components/AutosizingInput');
 const debounce = require('utils/debounce');
 const unescapeHTML = require('utils/unescapeHTML');
+const { partial } = require('lodash');
 
 const { PropTypes } = React;
 const Page = React.createClass({
@@ -66,7 +66,8 @@ const Page = React.createClass({
   },
 
   render() {
-    const pageTitle = this.props.page && this.props.page.title || this.props.pageTitle || I18n.t('Untitled Page');
+    const { page } = this.props;
+    const pageTitle = page && page.title || this.props.pageTitle || I18n.t('Untitled Page');
 
     return (
       <div className="space-page">
@@ -78,7 +79,7 @@ const Page = React.createClass({
               onChange={this.props.onUpdateTitle}
             />
 
-            {this.props.page && this.props.page.encrypted && (
+            {page && page.encrypted && (
               <Icon
                 sizeHint="display"
                 className="icon-lock_outline"
@@ -95,11 +96,23 @@ const Page = React.createClass({
             )}
           </h1>
 
-          <div className="space-page__header-actions">
-            <Button hint="icon" onClick={this.toggleDrawer}>
-              <Icon sizeHint="display" className="icon-more_vert" />
-            </Button>
-          </div>
+          {page && (
+            <div className="space-page__header-actions">
+              <Button
+                hint="icon"
+                onClick={partial(this.props.onRemovePage, { pageId: page.id })}
+              >
+                <Icon
+                  sizeHint="display"
+                  className="icon-delete"
+                />
+              </Button>
+
+              <Button hint="icon" onClick={this.toggleDrawer}>
+                <Icon sizeHint="display" className="icon-more_vert" />
+              </Button>
+            </div>
+          )}
         </div>
 
         <div className="space-page__content">

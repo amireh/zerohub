@@ -65,17 +65,6 @@ const PageRouteHandler = React.createClass({
     }
   },
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.page !== this.state.page) {
-      const page = this.state.page || { id: null, folder_id: null };
-
-      this.props.onEnter({
-        pageId: page.id,
-        folderId: page.folder_id,
-      })
-    }
-  },
-
   componentWillUnmount() {
     applyOntoComponent(this, actions.releaseLock, {
       lockableType: 'Page',

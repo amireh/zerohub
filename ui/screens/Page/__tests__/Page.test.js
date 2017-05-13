@@ -24,6 +24,7 @@ describe('Screens::Page::Component', function() {
     onUpdateQuery: sinon.stub(),
     onUpdatePageEncryptionStatus: sinon.stub(),
     onUpdateTitle: sinon.stub(),
+    onRemovePage: sinon.stub(),
   }));
 
   it('renders', function() {

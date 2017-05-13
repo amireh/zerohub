@@ -1,5 +1,5 @@
 const React = require('react');
-const { Route, Switch } = require('react-router-dom');
+const { Route, Switch, Redirect } = require('react-router-dom');
 const PageBrowser = require('./PageBrowser');
 const PassPhraseModal = require('./PassPhraseModal');
 const OutletOccupant = require('components/OutletOccupant');
@@ -18,6 +18,11 @@ const { PropTypes } = React;
 
 const Space = React.createClass({
   propTypes: {
+    location: PropTypes.shape({
+      pathname: PropTypes.string.isRequired,
+      search: PropTypes.string.isRequired,
+    }).isRequired,
+
     match: PropTypes.shape({
       url: PropTypes.string.isRequired,
     }).isRequired,
@@ -35,6 +40,8 @@ const Space = React.createClass({
     user: PropTypes.shape({
       id: PropTypes.string,
     }).isRequired,
+
+    onTransition: PropTypes.func,
   },
 
   getInitialState() {
@@ -103,6 +110,7 @@ const Space = React.createClass({
 
   renderSpace(space) {
     const origin = `${this.props.location.pathname}${this.props.location.search}`;
+    const scope = this.getScopeFromPathname();
 
     return (
       <div
@@ -134,14 +142,14 @@ const Space = React.createClass({
             folders={this.state.folders}
             pages={this.state.pages}
             match={this.props.match}
+            {...scope}
           />
         </OutletOccupant>
 
         <OutletOccupant name="MEMBER_SIDE_STATUS_BAR">
           <SpaceActions
             space={space}
-            currentPageId={this.state.currentPageId}
-            currentFolderId={this.state.currentFolderId}
+            {...scope}
             onAddPage={this.addPage}
             onAddFolder={this.addFolder}
           />
@@ -154,6 +162,11 @@ const Space = React.createClass({
               path={`${this.props.match.url}/pages/:id`}
               render={withQuery(({ match, query }) => {
                 const pageId = match.params.id;
+                const [ page ] = this.state.pages.filter(x => x.id === pageId);
+
+                if (!page) {
+                  return <Redirect to={this.props.match.url} />
+                }
 
                 return (
                   <PageRouteHandler
@@ -161,12 +174,12 @@ const Space = React.createClass({
                     space={space}
                     params={{ pageId }}
                     query={query}
-                    pageTitle={this.state.pages.filter(x => x.id === pageId)[0].title}
+                    pageTitle={page.title}
                     passPhrase={this.state.passPhrase && this.state.passPhrase.value}
                     isRetrievingPassPhrase={this.state.retrievingPassPhrase}
                     onUpdateQuery={this.props.onUpdateQuery}
                     onChangeOfPage={this.trackUpdatedPage}
-                    onEnter={this.trackPageAndFolder}
+                    onRemovePage={this.removePage}
                   />
                 );
               })}
@@ -215,13 +228,6 @@ const Space = React.createClass({
     });
   },
 
-  trackPageAndFolder({ pageId, folderId }) {
-    this.setState({
-      currentPageId: pageId,
-      currentFolderId: folderId,
-    })
-  },
-
   addPage() {
     const [ rootFolder ] = this.state.folders.filter(x => !x.folder_id);
     const folderId = this.state.currentFolderId || rootFolder && rootFolder.id;
@@ -243,8 +249,32 @@ const Space = React.createClass({
     })
   },
 
+  removePage({ pageId }) {
+    actions.promptForPageRemoval().then(() => {
+      actions.removePage({ pageId }).then(() => {
+        this.setState({
+          pages: this.state.pages.filter(x => x.id !== pageId)
+        })
+      })
+
+    })
+  },
+
   addFolder() {
 
+  },
+
+  getScopeFromPathname() {
+    if (this.props.location.pathname.match(new RegExp(`${this.props.match.url}/pages/(\\d+)`))) {
+      const currentPageId = RegExp.$1;
+      const currentFolderId = this.state.pages
+        .filter(x => x.id === currentPageId)
+        .map(x => x.folder_id)
+        [0]
+      ;
+
+      return { currentPageId, currentFolderId };
+    }
   }
 });
 
