@@ -18,9 +18,11 @@ const AddMenu = React.createClass({
           <Icon className="icon-insert_drive_file" /> {I18n.t('New Page')}
         </ClosableLink>
 
-        <ClosableLink onClick={this.props.onAddFolder}>
-          <Icon className="icon-create_new_folder" /> {I18n.t('New Folder')}
-        </ClosableLink>
+        {false && (
+          <ClosableLink onClick={this.props.onAddFolder}>
+            <Icon className="icon-create_new_folder" /> {I18n.t('New Folder')}
+          </ClosableLink>
+        )}
       </div>
     )
   }

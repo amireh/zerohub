@@ -1,28 +1,6 @@
 const invariant = require('invariant');
 const { ipcRenderer } = electronRequire('electron')
 
-// exports.retrievePassPhrase = function({ userId, spaceId }) {
-//   invariant(typeof spaceId === 'string' && spaceId.length, '"spaceId" must be a string');
-
-//   return send('RETRIEVE_PASS_PHRASE', {
-//     userId,
-//     spaceId
-//   }).then(payload => {
-//     return payload.passPhrase;
-//   });
-// }
-
-// exports.generatePassPhrase = function({ userId, spaceId }) {
-//   invariant(typeof spaceId === 'string' && spaceId.length, '"spaceId" must be a string');
-
-//   return send('GENERATE_PASS_PHRASE', {
-//     userId,
-//     spaceId
-//   }).then(payload => {
-//     return payload.passPhrase;
-//   });
-// }
-
 exports.encrypt = function({ passPhrase, plainText }) {
   return send('ENCRYPT_TEXT', {
     plainText,
@@ -38,9 +16,7 @@ exports.decrypt = function({ passPhrase, encryptedText }) {
 }
 
 exports.calculateDigest = function({ text }) {
-  invariant(typeof text === 'string' && text.length,
-    '"text" must be a string'
-  );
+  invariant(typeof text === 'string', '"text" must be a string');
 
   return send('CALCULATE_DIGEST', { text });
 }
@@ -50,9 +26,7 @@ exports.calculateSecretDigest = function({ passPhrase, text }) {
     '"passPhrase" must be a string'
   );
 
-  invariant(typeof text === 'string' && text.length,
-    '"text" must be a string'
-  );
+  invariant(typeof text === 'string', '"text" must be a string');
 
   return send('CALCULATE_SECRET_DIGEST', { text, passPhrase });
 }

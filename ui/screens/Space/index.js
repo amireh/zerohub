@@ -55,6 +55,11 @@ const Space = React.createClass({
       spaceLoadError: null,
       retrievingPassPhrase: false,
       passPhraseRetrievalError: false,
+
+      cancelBulkEncryption: Function.prototype,
+      bulkEncryptionType: null,
+      bulkEncryptionProgress: null,
+      bulkEncryptionFailed: false,
     };
   },
 
@@ -199,6 +204,12 @@ const Space = React.createClass({
                     isRetrievingPassPhrase={this.state.retrievingPassPhrase}
                     onClose={() => this.props.onTransition(query.origin || this.props.match.url)}
                     onChangeOfPassPhrase={this.trackUpdatedPassPhrase}
+                    onEncryptAllPages={this.applyBulkEncryption.bind(null, { encrypted: true })}
+                    onDecryptAllPages={this.applyBulkEncryption.bind(null, { encrypted: false })}
+                    bulkEncryptionType={this.state.bulkEncryptionType}
+                    bulkEncryptionProgress={this.state.bulkEncryptionProgress}
+                    bulkEncryptionFailed={this.state.bulkEncryptionFailed}
+                    onCancelBulkEncryption={this.state.cancelBulkEncryption}
                   />
                 );
               })}
@@ -275,6 +286,66 @@ const Space = React.createClass({
 
       return { currentPageId, currentFolderId };
     }
+  },
+
+  applyBulkEncryption({ encrypted }) {
+    if (!this.state.passPhrase) {
+      return;
+    }
+
+    const { promise, cancel } = actions.bulkSetPageEncryptionStatus({
+      pages: this.state.pages.filter(x => x.encrypted !== encrypted),
+      encrypted,
+      passPhrase: this.state.passPhrase.value,
+      tickFn: ({ page, progress }) => {
+        if (!this.isMounted()) {
+          return;
+        }
+
+        this.setState({
+          bulkEncryptionProgress: progress,
+          pages: this.state.pages.map(x => x.id === page.id ? page : x)
+        })
+      }
+    })
+
+    this.setState({
+      bulkEncryptionType: encrypted ? 'ENCRYPT' : 'DECRYPT',
+      bulkEncryptionProgress: 0,
+      bulkEncryptionFailed: false,
+      cancelBulkEncryption: cancel,
+    });
+
+    promise.then(adjustedPages => {
+      if (!this.isMounted()) {
+        return;
+      }
+
+      const adjustedPageIds = adjustedPages.map(x => x.id);
+
+      this.setState({
+        bulkEncryptionProgress: null,
+        bulkEncryptionFailed: false,
+        bulkEncryptionType: null,
+        cancelBulkEncryption: Function.prototype,
+        pages: this.state.pages
+          .filter(x => adjustedPageIds.indexOf(x.id) === -1)
+          .concat(adjustedPages)
+      })
+    }).catch(error => {
+      if (!this.isMounted()) {
+        return;
+      }
+
+      console.error(error);
+
+      this.setState({
+        bulkEncryptionFailed: error !== actions.bulkSetPageEncryptionStatus.CANCELED,
+        bulkEncryptionProgress: null,
+        bulkEncryptionType: null,
+        cancelBulkEncryption: Function.prototype,
+      })
+    });
   }
 });
 

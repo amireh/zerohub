@@ -103,20 +103,10 @@ const Handlers = {
   DECRYPT_TEXT(event, message) {
     const { passPhrase, encryptedText } = message.data;
     const cipher = crypto.createDecipher('aes192', passPhrase);
-
-    let plainText;
-    let error;
-
-    try {
-      plainText = cipher.update(encryptedText, 'hex', 'utf8') + cipher.final('utf8');
-    }
-    catch (e) {
-      error = e.message;
-    }
+    const plainText = cipher.update(encryptedText, 'hex', 'utf8') + cipher.final('utf8');
 
     event.sender.send('DECRYPT_TEXT_RC', {
       id: message.id,
-      error,
       data: plainText
     });
   },
@@ -192,7 +182,17 @@ const Handlers = {
 };
 
 Object.keys(Handlers).forEach(messageName => {
-  ipcMain.on(messageName, Handlers[messageName]);
+  ipcMain.on(messageName, function(event, message) {
+    try {
+      Handlers[messageName](event, message);
+    }
+    catch (e) {
+      event.sender.send(`${messageName}_RC`, {
+        id: message.id,
+        error: e && e.message || true,
+      });
+    }
+  });
 });
 
 function getUserSettings() {

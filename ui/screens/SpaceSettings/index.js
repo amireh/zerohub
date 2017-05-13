@@ -1,8 +1,7 @@
 const React = require('react');
 const OutletOccupant = require('components/OutletOccupant');
-const Icon = require('components/Icon');
 const Text = require('components/Text');
-const { Button } = require('components/Native');
+const { Button, Icon } = require('components');
 const { PropTypes } = React;
 const EncryptionForm = require('./EncryptionForm');
 const PasswordInspector = require('./PasswordInspector');
@@ -13,9 +12,17 @@ const { shell } = electronRequire('electron').remote;
 
 const SpaceSettings = React.createClass({
   propTypes: {
+    bulkEncryptionProgress: PropTypes.number,
+    bulkEncryptionFailed: PropTypes.bool,
+    bulkEncryptionType: PropTypes.oneOf([ 'ENCRYPT', 'DECRYPT' ]),
     onChangeOfPassPhrase: PropTypes.func.isRequired,
+    onEncryptAllPages: PropTypes.func.isRequired,
+    onDecryptAllPages: PropTypes.func.isRequired,
+    onCancelBulkEncryption: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
     passPhrase: PropTypes.string,
     space: PropTypes.shape({ id: PropTypes.string }).isRequired,
+    pages: PropTypes.array.isRequired,
     user: PropTypes.shape({ id: PropTypes.string }).isRequired,
   },
 
@@ -67,6 +74,13 @@ const SpaceSettings = React.createClass({
           user={this.props.user}
           space={this.props.space}
           onDisable={this.maybeDisableEncryption}
+          onEncryptAllPages={this.props.onEncryptAllPages}
+          onDecryptAllPages={this.props.onDecryptAllPages}
+          onCancelBulkEncryption={this.props.onCancelBulkEncryption}
+          pages={this.props.pages}
+          bulkEncryptionType={this.props.bulkEncryptionType}
+          bulkEncryptionProgress={this.props.bulkEncryptionProgress}
+          bulkEncryptionFailed={this.props.bulkEncryptionFailed}
         />
       )
     }
@@ -150,7 +164,8 @@ const SpaceSettings = React.createClass({
     return () => {
       shell.openExternal(url);
     }
-  }
+  },
+
 });
 
 module.exports = SpaceSettings;

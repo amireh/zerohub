@@ -1,5 +1,6 @@
 exports.actions = {
   acquireLock: require('./acquireLock'),
+  bulkSetPageEncryptionStatus: require('./bulkSetPageEncryptionStatus'),
   createPage: require('./createPage'),
   decryptPageContents: require('./decryptPageContents'),
   encryptPageContents: require('./encryptPageContents'),
@@ -42,14 +43,4 @@ exports.applyOntoComponent = function(component, action, payload) {
   }
 };
 
-exports.applyOntoNull = function(action, payload) {
-  if (action.length === 1) {
-    return action(payload);
-  }
-  else if (action.length === 2) {
-    return action({
-      state: {},
-      setState: Function.prototype
-    }, payload);
-  }
-};
+exports.applyOntoNull = require('./applyOntoNull')
