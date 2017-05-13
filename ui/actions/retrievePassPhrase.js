@@ -7,11 +7,15 @@ module.exports = function retrievePassPhrase(container, { key }) {
   container.setState({ retrievingPassPhrase: true, passPhraseRetrievalError: false });
 
   return send('RETRIEVE_PASS_PHRASE', { key }).then(payload => {
-    container.setState({
+    const value = {
       passPhrase: payload.passPhrase || null,
       retrievingPassPhrase: false,
       passPhraseRetrievalError: false,
-    });
+    }
+
+    container.setState(value);
+
+    return value;
   }, error => {
     console.error('unable to retrieve pass phrase', error);
 

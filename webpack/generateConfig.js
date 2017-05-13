@@ -35,6 +35,14 @@ module.exports = function generateConfig({
     }
   }
 
+  config.node = {
+    process: false,
+    Buffer: false,
+    global: false,
+    __filename: false,
+    __dirname: false,
+  }
+
   config.output = {
     path: path.join(root, 'www/dist'),
     filename: '[name].js',

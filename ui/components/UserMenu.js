@@ -11,24 +11,35 @@ const Menu = React.createClass({
 
   propTypes: {
     onClose: PropTypes.func.isRequired,
+    links: PropTypes.array,
+    secondaryLinks: PropTypes.array,
   },
 
   render() {
     const ClosableLink = props => <Link onClick={this.props.onClose} {...props} />;
+    const { links, secondaryLinks } = this.props;
 
     return (
       <div className="user-menu__menu">
-        {this.props.links.map(link => {
+        {links.map(link => {
           return (
             <div key={link.to} className="user-menu__menu-item">
-              <ClosableLink to={link.to}>{link.label}</ClosableLink>
+              <ClosableLink to={link.to} onClick={link.onClick}>{link.label}</ClosableLink>
             </div>
           );
         })}
 
-        {this.props.links.length > 0 && (
+        {links.length > 0 && (
           <div className="user-menu__menu-separator" />
         )}
+
+        {secondaryLinks.map(link => {
+          return (
+            <div key={link.to} className="user-menu__menu-item">
+              <ClosableLink to={link.to} onClick={link.onClick}>{link.label}</ClosableLink>
+            </div>
+          );
+        })}
 
         <div className="user-menu__menu-item">
           <ClosableLink disabled to="/preferences">{I18n.t('Preferences')}</ClosableLink>
@@ -41,7 +52,7 @@ const Menu = React.createClass({
         </div>
       </div>
     )
-  }
+  },
 })
 
 const UserMenu = React.createClass({
@@ -88,6 +99,7 @@ const UserMenu = React.createClass({
         {this.state.menuOpen && (
           <Menu
             links={this.props.links || []}
+            secondaryLinks={this.props.secondaryLinks || []}
             onClose={this.closeMenu}
           />
         )}

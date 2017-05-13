@@ -11,6 +11,7 @@ const SpaceSettings = require('screens/SpaceSettings');
 const SpaceActions = require('./SpaceActions');
 const UserMenu = require('components/UserMenu');
 const ErrorMessage = require('components/ErrorMessage');
+const Modal = require('components/Modal');
 const generatePasswordKey = require('utils/generatePasswordKey');
 
 const { actions, applyOntoComponent } = require('actions');
@@ -60,16 +61,14 @@ const Space = React.createClass({
       bulkEncryptionType: null,
       bulkEncryptionProgress: null,
       bulkEncryptionFailed: false,
+
+      exportingAsJSON: false,
     };
   },
 
   componentDidMount() {
     const userId = this.props.user.id;
     const spaceId = this.props.params.id;
-
-    applyOntoComponent(this, actions.fetchSpaces, {
-      userId,
-    });
 
     applyOntoComponent(this, actions.fetchSpace, {
       userId,
@@ -101,6 +100,15 @@ const Space = React.createClass({
     return (
       <MemberLayout>
         {this.state.loadingSpace && <p>Loading...</p>}
+        {this.state.exportingAsJSON && (
+          <Modal
+            width={600}
+            height={300}
+            center
+            url={`/spaces/${this.props.params.id}/export?type=json`}
+            onClose={() => this.setState({ exportingAsJSON: false })}
+          />
+        )}
 
         {this.state.spaceLoadError && (
           <ErrorMessage>
@@ -136,6 +144,13 @@ const Space = React.createClass({
                 to: `${this.props.match.url}/settings?origin=${origin}`,
                 label: I18n.t('Space settings')
               },
+              {
+                onClick: this.exportAsJSON,
+                to: '',
+                label: I18n.t('Export as JSON')
+              },
+            ]}
+            secondaryLinks={[
               { to: '/spaces', label: I18n.t('Switch space') },
             ]}
           />
@@ -346,6 +361,20 @@ const Space = React.createClass({
         cancelBulkEncryption: Function.prototype,
       })
     });
+  },
+
+  exportAsJSON(e) {
+    if (e) {
+      e.preventDefault();
+    }
+
+    actions.exportSpace({
+      format: actions.exportSpace.FORMAT_JSON,
+      userId: this.props.user.id,
+      spaceId: this.props.params.id,
+      tickFn() {},
+    })
+    // this.setState({ exportingAsJSON: true });
   }
 });
 

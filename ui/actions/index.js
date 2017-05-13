@@ -4,6 +4,7 @@ exports.actions = {
   createPage: require('./createPage'),
   decryptPageContents: require('./decryptPageContents'),
   encryptPageContents: require('./encryptPageContents'),
+  exportSpace: require('./exportSpace'),
   fetchPage: require('./fetchPage'),
   fetchSpace: require('./fetchSpace'),
   fetchSpaces: require('./fetchSpaces'),

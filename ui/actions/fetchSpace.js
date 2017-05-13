@@ -8,12 +8,16 @@ module.exports = function fetchSpace(container, { spaceId }) {
     request({ url: `/api/spaces/${spaceId}/folders` }),
     request({ url: `/api/v2/pages?space_id=${spaceId}` }),
   ]).then(payloads => {
-    container.setState({
+    const value = {
       loadingSpace: false,
       space: payloads[0].spaces[0],
       folders: payloads[1].folders,
       pages: payloads[2].pages,
-    })
+    }
+
+    container.setState(value)
+
+    return value;
   }).catch(error => {
     container.setState({ loadingSpace: false, spaceLoadError: true })
 

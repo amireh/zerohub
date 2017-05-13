@@ -6,6 +6,7 @@ const Spaces = require('./Spaces');
 const Space = require('./Space');
 const Login = require('./Login');
 const Logout = require('./Logout');
+const SpaceExport = require('./SpaceExport');
 const Splash = require('components/Splash');
 const { withQueryFor } = require('utils/routing');
 const { partial } = require('lodash');
@@ -60,6 +61,12 @@ const RootWithRoutes = React.createClass({
             exact
             path="/spaces"
             render={withQueryFor(withRoutingShingles(createAuthenticatedRoute(Spaces)))}
+          />
+
+          <Route
+            path="/spaces/:id/export"
+            exact
+            render={withQueryFor(withRoutingShingles(createAuthenticatedRoute(SpaceExport)))}
           />
 
           <Route
