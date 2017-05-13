@@ -8,6 +8,7 @@ const { withQuery } = require('utils/routing');
 const classSet = require('classnames');
 const PageRouteHandler = require('screens/Page');
 const SpaceSettings = require('screens/SpaceSettings');
+const SpaceActions = require('./SpaceActions');
 const UserMenu = require('components/UserMenu');
 const ErrorMessage = require('components/ErrorMessage');
 const generatePasswordKey = require('utils/generatePasswordKey');
@@ -136,6 +137,16 @@ const Space = React.createClass({
           />
         </OutletOccupant>
 
+        <OutletOccupant name="MEMBER_SIDE_STATUS_BAR">
+          <SpaceActions
+            space={space}
+            currentPageId={this.state.currentPageId}
+            currentFolderId={this.state.currentFolderId}
+            onAddPage={this.addPage}
+            onAddFolder={this.addFolder}
+          />
+        </OutletOccupant>
+
         <div className="pure-u-1-1 space__content-container">
           <Switch>
             <Route
@@ -155,6 +166,7 @@ const Space = React.createClass({
                     isRetrievingPassPhrase={this.state.retrievingPassPhrase}
                     onUpdateQuery={this.props.onUpdateQuery}
                     onChangeOfPage={this.trackUpdatedPage}
+                    onEnter={this.trackPageAndFolder}
                   />
                 );
               })}
@@ -201,6 +213,38 @@ const Space = React.createClass({
     this.setState({
       passPhrase: nextPassPhrase
     });
+  },
+
+  trackPageAndFolder({ pageId, folderId }) {
+    this.setState({
+      currentPageId: pageId,
+      currentFolderId: folderId,
+    })
+  },
+
+  addPage() {
+    const [ rootFolder ] = this.state.folders.filter(x => !x.folder_id);
+    const folderId = this.state.currentFolderId || rootFolder && rootFolder.id;
+
+    if (!folderId) {
+      console.warn('Can not create a page with no folder!')
+      return;
+    }
+
+    actions.createPage({
+      folderId,
+      spaceId: this.state.space.id,
+    }).then(page => {
+      this.setState({
+        pages: this.state.pages.concat(page)
+      });
+
+      this.props.onTransition(`${this.props.match.url}/pages/${page.id}`)
+    })
+  },
+
+  addFolder() {
+
   }
 });
 

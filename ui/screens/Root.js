@@ -8,7 +8,7 @@ const Login = require('./Login');
 const Logout = require('./Logout');
 const Splash = require('components/Splash');
 const { withQueryFor } = require('utils/routing');
-const { partial } = require('ramda');
+const { partial } = require('lodash');
 const { actions } = require('actions');
 const createAuthenticatedRoute = require('components/createAuthenticatedRoute');
 const ApplicationLoader = require('components/ApplicationLoader');
@@ -88,9 +88,9 @@ const RootWithRoutes = React.createClass({
   withRoutingShingles(Component) {
     return props => (
       <Component
-        onUpdateQuery={partial(actions.updateQuery, [this])}
-        onReplaceQuery={partial(actions.replaceQuery, [this])}
-        onTransition={partial(actions.transition, [this])}
+        onUpdateQuery={partial(actions.updateQuery, this)}
+        onReplaceQuery={partial(actions.replaceQuery, this)}
+        onTransition={partial(actions.transition, this)}
         user={this.state.user}
         {...props}
       />

@@ -9,6 +9,11 @@ const MemberLayout = React.createClass({
     hasOutletOccupant: PropTypes.func,
   },
 
+  propTypes: {
+    children: PropTypes.node,
+    withDrawer: PropTypes.bool,
+  },
+
   getDefaultProps() {
     return {
       withUserMenu: true,
@@ -22,6 +27,7 @@ const MemberLayout = React.createClass({
         'member-layout--with-drawer': this.props.withDrawer || this.context.hasOutletOccupant('MEMBER_DRAWER'),
         'member-layout--with-banner': this.context.hasOutletOccupant('MEMBER_BANNER'),
         'member-layout--with-user-menu': this.context.hasOutletOccupant('MEMBER_MENU'),
+        'member-layout--with-side-status-bar': this.context.hasOutletOccupant('MEMBER_SIDE_STATUS_BAR'),
       })}>
         <div className="member-layout__banner">
           <Outlet name="MEMBER_BANNER" />
@@ -33,6 +39,10 @@ const MemberLayout = React.createClass({
 
         <div className="member-layout__sidebar">
           <Outlet name="MEMBER_SIDEBAR" />
+        </div>
+
+        <div className="member-layout__side-status-bar">
+          <Outlet name="MEMBER_SIDE_STATUS_BAR" />
         </div>
 
         <div className="member-layout__content">
@@ -51,6 +61,7 @@ module.exports = props => (
   <OutletProvider names={[
     'MEMBER_BANNER',
     'MEMBER_SIDEBAR',
+    'MEMBER_SIDE_STATUS_BAR',
     'MEMBER_MENU',
     'MEMBER_CONTENT',
     'MEMBER_DRAWER'

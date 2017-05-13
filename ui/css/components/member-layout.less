@@ -33,6 +33,23 @@
     color: @base1;
   }
 
+  &--with-side-status-bar &__sidebar {
+    bottom: @member-side-status-bar-height;
+  }
+
+  &__side-status-bar {
+    height: @member-side-status-bar-height;
+    line-height: @member-side-status-bar-height;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: @member-sidebar-width;
+    padding: 0 1rem;
+
+    .chrome();
+    border-top: 1px solid #ddd;
+  }
+
   &__menu, &__sidebar {
     padding-left: 1rem;
     padding-right: 1rem;

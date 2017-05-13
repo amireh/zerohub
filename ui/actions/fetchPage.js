@@ -1,5 +1,4 @@
 const Promise = require('Promise');
-const { either } = require('ramda');
 const { request } = require('services/PageHub');
 const ErrorCodes = require('ErrorCodes');
 const { rethrow, pass } = require('./asyncUtils');
@@ -18,12 +17,9 @@ module.exports = function fetchPage({ setState }, { passPhrase, pageId }) {
       parsePage,
       emitError(ErrorCodes.PAGE_FETCH_ERROR)
     )
-    .then(
-      either(
-        passIfNotEncrypted,
-        page => tryToDecryptPage({ passPhrase, page })
-      )
-    )
+    .then(page => (
+      passIfNotEncrypted(page) || tryToDecryptPage({ passPhrase, page })
+    ))
     .then(
       pass(page =>
         setState({ loading: false, loadError: null, page })

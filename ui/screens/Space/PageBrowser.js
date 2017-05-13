@@ -35,11 +35,18 @@ const PageBrowser = React.createClass({
   },
 
   renderFolder(folder) {
-    const pages = this.props.pages.filter(x => x.folder_id === folder.id);
     const isRoot = !folder.folder_id;
     const isExpanded = this.isFolderExpanded(folder.id);
     const shouldDisplayTitle = !isRoot && this.props.folders.length > 1;
-    const subFolders = this.props.folders.filter(x => x.folder_id === folder.id);
+    const subFolders = this.props.folders
+      .filter(x => x.folder_id === folder.id)
+      .sort((a, b) => a.title > b.title ? 1 : -1)
+    ;
+
+    const pages = this.props.pages
+      .filter(x => x.folder_id === folder.id)
+      .sort((a, b) => a.title > b.title ? 1 : -1)
+    ;
 
     return (
       <div
@@ -91,8 +98,6 @@ const PageBrowser = React.createClass({
   toggleExpansionState(folderId) {
     return () => {
       const isExpanded = this.isFolderExpanded(folderId);
-
-      console.debug('toggling folder expansion state from', isExpanded, 'to', !isExpanded);
 
       this.setState({
         collapsedFolders: Object.assign({}, this.state.collapsedFolders, {

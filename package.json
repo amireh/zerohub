@@ -27,6 +27,7 @@
     "invariant": "2.2.2",
     "isomorphic-fetch": "2.2.1",
     "keytar": "3.0.2",
+    "lodash": "4.17.4",
     "normalize.css": "6.0.0",
     "purecss": "0.6.2",
     "query-string": "4.3.2",
