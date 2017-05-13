@@ -29,11 +29,11 @@ module.exports = function updatePageContent({ setState }, { pageId, passPhrase, 
     ))
     .then(savePage)
     .then(
-      partial(setState, [{ saving: false, saveError: null, }])
+      partial(setState, { saving: false, saveError: null, })
     )
     .catch(
       rethrow(
-        partial(setState, [{ saving: false, saveError: true, }])
+        partial(setState, { saving: false, saveError: true, })
       )
     )
   );

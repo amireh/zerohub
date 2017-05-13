@@ -55,12 +55,12 @@ exports.Button = React.createClass({
       <button
         type={this.props.type}
         {...omit(this.props, 'hint')}
-        className={classSet(this.props.className, {
+        className={classSet({
           'button': !this.props.hint || this.props.hint === 'default',
           'icon-button': this.props.hint === 'icon',
           'link-button': this.props.hint === 'link',
           'danger-button': this.props.hint === 'danger',
-        })}
+        }, this.props.className)}
       />
     );
   }

@@ -33,14 +33,19 @@ exports.applyOntoComponent = function(component, action, payload) {
     return action(payload);
   }
   else {
-    return action({
-      state: component.state,
-      setState: function(nextState) {
-        if (this.isMounted()) {
-          this.setState(nextState)
+    const accessor = {
+      setState(nextState) {
+        if (component.isMounted()) {
+          component.setState(nextState)
         }
-      }.bind(component)
-    }, payload);
+      }
+    };
+
+    Object.defineProperty(accessor, 'state', {
+      get() { return component.state; }
+    });
+
+    return action(accessor, payload);
   }
 };
 

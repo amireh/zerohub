@@ -5,6 +5,7 @@ module.exports = function releaseLock(container, { lockableType, lockableId }) {
     lockableType,
     lockableId
   }).then(() => {
+    console.debug('hoi?')
     container.setState({
       locks: container.state.locks.filter(x => x !== lockableId)
     });

@@ -45,7 +45,7 @@ const SpaceActions = React.createClass({
           />
         )}
 
-        <Button hint="icon" onClick={this.toggleAddMenu}>
+        <Button hint="icon" onClick={this.toggleAddMenu} className="padding-trbl-0 margin-trbl-0">
           <Icon className="icon-add" />
         </Button>
       </div>

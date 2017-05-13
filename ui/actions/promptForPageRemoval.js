@@ -1,5 +1,4 @@
 const { send } = require('services/CoreDelegate');
-const discardCarriage = require('utils/discardCarriage');
 const Promise = require('Promise');
 
 module.exports = function promptForPageRemoval() {
@@ -11,9 +10,7 @@ module.exports = function promptForPageRemoval() {
     ],
     defaultId: 1,
     cancelId: 0,
-    message: discardCarriage(`
-Removing a page is currently undoable, you will not have access to this page\r
-again! Are you sure you want to do this?`)
+    message: `There's no going back to this page once you remove it! Are you sure you want to do this?`
   }).then(({ response }) => {
     return response === 1 ? Promise.resolve() : Promise.reject();
   })

@@ -28,6 +28,7 @@ const PageRouteHandler = React.createClass({
       loading: false,
       loadError: null,
       page: null,
+      acquiringLock: false,
       locks: [],
     };
   },
@@ -78,10 +79,12 @@ const PageRouteHandler = React.createClass({
         {...this.state}
         {...this.props}
         canEdit={this.state.locks.indexOf(this.props.params.pageId) > -1}
+        acquiringLock={this.state.acquiringLock}
         onUpdateContent={this.updateContent}
         onUpdatePageEncryptionStatus={this.updatePageEncryptionStatus}
         onUpdateQuery={this.props.onUpdateQuery}
         onUpdateTitle={this.updateTitle}
+        onReacquireLock={this.reacquireLock}
       />
     );
   },
@@ -127,6 +130,13 @@ const PageRouteHandler = React.createClass({
       this.props.onChangeOfPage(this.state.page);
     })
   },
+
+  reacquireLock() {
+    applyOntoComponent(this, actions.acquireLock, {
+      lockableType: 'Page',
+      lockableId: this.props.params.pageId,
+    });
+  }
 });
 
 module.exports = PageRouteHandler;

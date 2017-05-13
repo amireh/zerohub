@@ -28,6 +28,8 @@ const MemberLayout = React.createClass({
         'member-layout--with-banner': this.context.hasOutletOccupant('MEMBER_BANNER'),
         'member-layout--with-user-menu': this.context.hasOutletOccupant('MEMBER_MENU'),
         'member-layout--with-side-status-bar': this.context.hasOutletOccupant('MEMBER_SIDE_STATUS_BAR'),
+        'member-layout--with-status-bar': this.context.hasOutletOccupant('MEMBER_STATUS_BAR'),
+        'member-layout--with-sticky-notice': this.context.hasOutletOccupant('MEMBER_STICKY_NOTICE'),
       })}>
         <div className="member-layout__banner">
           <Outlet name="MEMBER_BANNER" />
@@ -49,6 +51,14 @@ const MemberLayout = React.createClass({
           {this.props.children}
         </div>
 
+        <div className="member-layout__status-bar">
+          <Outlet name="MEMBER_STATUS_BAR" />
+        </div>
+
+        <Outlet name="MEMBER_STICKY_NOTICE">
+          <div className="member-layout__sticky-notice" />
+        </Outlet>
+
         <div className="member-layout__drawer">
           <Outlet name="MEMBER_DRAWER" />
         </div>
@@ -62,6 +72,8 @@ module.exports = props => (
     'MEMBER_BANNER',
     'MEMBER_SIDEBAR',
     'MEMBER_SIDE_STATUS_BAR',
+    'MEMBER_STATUS_BAR',
+    'MEMBER_STICKY_NOTICE',
     'MEMBER_MENU',
     'MEMBER_CONTENT',
     'MEMBER_DRAWER'

@@ -39,6 +39,7 @@ const Page = React.createClass({
     onUpdateQuery: PropTypes.func.isRequired,
     onUpdatePageEncryptionStatus: PropTypes.func.isRequired,
     onUpdateTitle: PropTypes.func.isRequired,
+    onReacquireLock: PropTypes.func,
 
     saving: PropTypes.bool,
     isDecrypting: PropTypes.bool,
@@ -101,14 +102,17 @@ const Page = React.createClass({
               <Button
                 hint="icon"
                 onClick={partial(this.props.onRemovePage, { pageId: page.id })}
+                className="padding-rl-m"
+                title={I18n.t('Send this page to the abyss')}
               >
                 <Icon
                   sizeHint="display"
                   className="icon-delete"
+                  styleHint="secondary"
                 />
               </Button>
 
-              <Button hint="icon" onClick={this.toggleDrawer}>
+              <Button hint="icon" onClick={this.toggleDrawer} className="padding-r-0">
                 <Icon sizeHint="display" className="icon-more_vert" />
               </Button>
             </div>
@@ -119,6 +123,20 @@ const Page = React.createClass({
           {this.renderBody()}
         </div>
 
+        {this.props.page && !this.props.canEdit && !this.props.acquiringLock && (
+          <OutletOccupant name="MEMBER_STICKY_NOTICE">
+            <p>
+              {I18n.t('Sorry! Someone else seems to be editing this page so you may only read it.')}
+              {' '}
+              <Button
+                onClick={this.props.onReacquireLock}
+                hint="link"
+              >
+                {I18n.t('Attempt to acquire the lock?')}
+              </Button>
+            </p>
+          </OutletOccupant>
+        )}
         {this.props.page && this.props.query.drawer === '1' && (
           <OutletOccupant name="MEMBER_DRAWER" page={this.props.page}>
             <PageDrawer

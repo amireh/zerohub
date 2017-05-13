@@ -37,17 +37,64 @@
     bottom: @member-side-status-bar-height;
   }
 
-  &__side-status-bar {
+  &--with-status-bar &__content {
+    margin-bottom: @member-side-status-bar-height;
+  }
+
+  &--with-sticky-notice &__content,
+  &--with-sticky-notice &__drawer {
+    margin-top: @member-menu-height;
+  }
+
+  &__side-status-bar, &__status-bar {
     height: @member-side-status-bar-height;
     line-height: @member-side-status-bar-height;
     position: fixed;
     bottom: 0;
-    left: 0;
-    width: @member-sidebar-width;
     padding: 0 1rem;
 
     .chrome();
-    border-top: 1px solid #ddd;
+
+    box-shadow: 0 -1px 0 0 #ddd;
+  }
+
+  &__side-status-bar {
+    left: 0;
+    width: @member-sidebar-width;
+  }
+
+  &__status-bar {
+    display:f none;
+    left: @member-sidebar-width;
+    right: 0;
+    font-size: 0.75rem;
+  }
+
+  &--with-status-bar {
+    display: block;
+  }
+
+  &__sticky-notice {
+    position: fixed;
+    overflow: auto;
+    top: 0;
+    right: 0;
+    left: @member-sidebar-width;
+    font-size: 0.85rem;
+    background: @blue;
+    right: 0;
+    color: white;
+
+    .link, .link-button {
+      color: white;
+      text-decoration: underline;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    padding: 1.5rem 1rem;
   }
 
   &__menu, &__sidebar {
