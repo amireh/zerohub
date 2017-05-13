@@ -22,7 +22,8 @@ describe('Screens::Page::PageRouteHandler', function() {
       params: {
         pageId: 'page1',
       },
-      query: {}
+      query: {},
+      onUpdateQuery: sinon.stub(),
     }
   });
 

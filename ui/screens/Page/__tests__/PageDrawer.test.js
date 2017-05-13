@@ -18,7 +18,11 @@ describe('Screens::Page::PageDrawer', function() {
       id: 'space1',
       encrypted: false,
     },
-    query: {}
+    query: {},
+    location: {
+      pathname: '',
+      search: ''
+    }
   }));
 
   it('renders', function() {

@@ -37,8 +37,8 @@ app.use(require('serve-static')(contentBase));
 app.listen(host.match(/:(\d+)/)[1]);
 
 function monkeyPatchWebpackConfig(config) {
-  config.entry.unshift('react-hot-loader/patch');
-  config.entry.unshift('webpack-hot-middleware/client?path=' + host + '/__webpack_hmr');
+  config.entry['zerohub-ui'].unshift('react-hot-loader/patch');
+  config.entry['zerohub-ui'].unshift('webpack-hot-middleware/client?path=' + host + '/__webpack_hmr');
 
   config.output.publicPath = `${host}/dist/`;
 

@@ -38,6 +38,7 @@ const Page = React.createClass({
     onUpdateContent: PropTypes.func.isRequired,
     onUpdateQuery: PropTypes.func.isRequired,
     onUpdatePageEncryptionStatus: PropTypes.func.isRequired,
+    onUpdateTitle: PropTypes.func.isRequired,
 
     saving: PropTypes.bool,
     isDecrypting: PropTypes.bool,

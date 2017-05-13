@@ -1,11 +1,23 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 const { drill } = require('react-drill');
+const { MemoryRouter } = require('react-router-dom');
+
+const WithMemoryRouter = Component => React.createClass({
+  render() {
+    return (
+      <MemoryRouter location={{ pathname: '/', search: '' }}>
+        <Component ref="component" {...this.props} />
+      </MemoryRouter>
+    )
+  }
+})
 
 module.exports = reactSuite;
 
 function reactSuite(mochaSuite, Type, initialProps) {
   const rs = {};
+  const TypeInRouter = WithMemoryRouter(Type);
 
   rs.setProps = function(props) {
     rs.subject = render(Object.assign({}, rs.subject.props, props));
@@ -49,7 +61,11 @@ function reactSuite(mochaSuite, Type, initialProps) {
   });
 
   function render(props) {
-    return ReactDOM.render(<Type {...props} />, container);
+    return ref(ReactDOM.render(<TypeInRouter {...props} />, container));
+  }
+
+  function ref(component) {
+    return component.refs.component;
   }
 
   return rs;

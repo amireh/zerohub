@@ -14,9 +14,21 @@
 @base1: #4a4a4a;
 @base0: #2d2d29;
 
+.chrome() {
+  background: #eee;
+  color: @base1;
+}
+
+.chrome-frame() {
+  .chrome();
+
+  box-shadow: 0 2px 7px 0 rgba(0,0,0,0.3);
+  background: linear-gradient(to bottom, @base5, darken(@base5, 5%) 25%);
+}
+
 // MODIFIER COLORS
 @placeholder-color: darken(@base3, 10%);
-@low-contrast-color: #fbeecb;
+@low-contrast-color: lighten(#fbeecb, 7%);
 
 @button-font-size: 0.75em;
 
@@ -35,6 +47,7 @@
 @import "./fonts/akashi-webfont/stylesheet";
 @import "./utils/margin";
 @import "./utils/padding";
+@import "./z-index";
 
 /** Regular */
 @font-face {

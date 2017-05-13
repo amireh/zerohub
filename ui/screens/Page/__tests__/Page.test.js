@@ -19,7 +19,11 @@ describe('Screens::Page::Component', function() {
       id: 'space1',
       encrypted: false,
     },
-    query: {}
+    query: {},
+    onUpdateContent: sinon.stub(),
+    onUpdateQuery: sinon.stub(),
+    onUpdatePageEncryptionStatus: sinon.stub(),
+    onUpdateTitle: sinon.stub(),
   }));
 
   it('renders', function() {

@@ -5,9 +5,10 @@
     position: relative;
     margin: -1rem;
     height: @member-menu-height;
+    box-shadow: 0 -1px 0 0 #ddd inset;
 
     &:hover {
-      background: rgba(0,0,0,0.2);
+      background: @low-contrast-color;
     }
   }
 
@@ -16,7 +17,7 @@
     width: 100%;
     text-align: left;
     font-size: 1rem;
-    color: white;
+    color: @base1;
     font-weight: bold;
     padding: 0;
     padding: 1rem;
@@ -53,6 +54,8 @@
     font-size: 0.75rem;
     line-height: 1;
     margin-top: 0.5rem;
+
+    .chrome-frame();
   }
 
   &__menu-item {

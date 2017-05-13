@@ -1,8 +1,25 @@
 @import (reference) "../partials/_header-logo";
-@import (reference) "../partials/_splash-container";
 
 .login-container {
-  ._splash-container();
+  &:before {
+    content: '';
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+  &:after {
+    content: '';
+    position: fixed;
+    top: 20vh;
+    right: 25%;
+    bottom: 20vh;
+    left: 25%;
+    border-radius: 4px;
+    background: white;
+  }
 }
 
 .login-center {
