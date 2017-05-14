@@ -43,17 +43,17 @@ const MemberLayout = React.createClass({
           <Outlet name="MEMBER_SIDEBAR" />
         </div>
 
-        <div className="member-layout__side-status-bar">
-          <Outlet name="MEMBER_SIDE_STATUS_BAR" />
-        </div>
+        <Outlet name="MEMBER_SIDE_STATUS_BAR">
+          <div className="member-layout__side-status-bar" />
+        </Outlet>
 
         <div className="member-layout__content">
           {this.props.children}
         </div>
 
-        <div className="member-layout__status-bar">
-          <Outlet name="MEMBER_STATUS_BAR" />
-        </div>
+        <Outlet name="MEMBER_STATUS_BAR">
+          <div className="member-layout__status-bar" />
+        </Outlet>
 
         <Outlet name="MEMBER_STICKY_NOTICE">
           <div className="member-layout__sticky-notice" />
