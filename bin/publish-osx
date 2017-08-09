@@ -5,11 +5,6 @@
   exit 1
 }
 
-[ -z "$API_HOST" ] && {
-  echo "$0: API_HOST must be set"
-  exit 1
-}
-
 which electron-installer-dmg &> /dev/null
 
 [ $? -eq 1 ] && {
@@ -25,7 +20,11 @@ PKG_NAME=$(node -e 'console.log(require("./package").name)')
 PKG_VERSION=$(node -e 'console.log(require("./package").version)')
 SRC_DIR="tmp/staging"
 APP_DIR="$(pwd)/build/${PKG_NAME}-darwin-x64/0hub.app"
+API_HOST=${API_HOST:-"https://www.pagehub.org"}
 
+export API_HOST=$API_HOST
+
+echo "Building package connected to API host: ${API_HOST}"
 function stage {
   rm -rf $SRC_DIR
   mkdir -p $SRC_DIR
@@ -48,13 +47,17 @@ function build {
 }
 
 function compress {
+  dest="$(pwd)/build/$PKG_NAME-${PKG_VERSION}.dmg"
+
   electron-installer-dmg \
     --out build/ \
     --icon www/icons/mac/icon.icns \
     $APP_DIR \
     $PKG_NAME
 
-  mv build/$PKG_NAME.dmg build/$PKG_NAME-${PKG_VERSION}.dmg
+  mv build/$PKG_NAME.dmg "${dest}"
+
+  echo "Staged .dmg to ${dest}"
 }
 
 echo "Staging files into ${SRC_DIR}..."

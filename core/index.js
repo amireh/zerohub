@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const { app } = require('electron')
 const mainWindow = require('./mainWindow');
+const createMainMenu = require('./createMainMenu');
 const config = require('./config');
 
 app.commandLine.appendSwitch('disable-smooth-scrolling');
@@ -24,7 +25,10 @@ else {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', function() {
-  setup().then(mainWindow.createWindow);
+  setup().then(function() {
+    createMainMenu();
+    mainWindow.createWindow();
+  });
 })
 
 // Quit when all windows are closed.
