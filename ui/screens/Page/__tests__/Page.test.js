@@ -45,7 +45,7 @@ describe('Screens::Page::Component', function() {
 
     {
       code: ErrorCodes.PAGE_CIPHER_ERROR,
-      message: `It seems this page was encrypted using a different pass-phrase`,
+      message: `It seems this page was encrypted using a different password`,
     },
 
     {
