@@ -1,12 +1,13 @@
 const React = require('react');
 const OutletOccupant = require('components/OutletOccupant');
 const Text = require('components/Text');
-const { Button, Icon } = require('components');
+const { Button, ErrorMessage, Icon } = require('components');
 const { PropTypes } = React;
 const EncryptionForm = require('./EncryptionForm');
 const PasswordInspector = require('./PasswordInspector');
 const PasswordEditor = require('./PasswordEditor');
 const DecryptionForm = require('./DecryptionForm');
+const gatherFacts = require('./gatherFacts');
 const { actions } = require('actions');
 const generatePasswordKey = require('utils/generatePasswordKey');
 const { shell } = electronRequire('electron').remote;
@@ -21,7 +22,7 @@ const SpaceSettings = React.createClass({
     onDecryptAllPages: PropTypes.func.isRequired,
     onCancelBulkEncryption: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
-    passPhrase: PropTypes.string,
+    password: PropTypes.string,
     space: PropTypes.shape({ id: PropTypes.string }).isRequired,
     pages: PropTypes.array.isRequired,
     user: PropTypes.shape({ id: PropTypes.string }).isRequired,
@@ -29,9 +30,21 @@ const SpaceSettings = React.createClass({
 
   getInitialState() {
     return {
+      facts: null,
+      gatheringFacts: false,
       wantsToEnableEncryption: false,
       wantsToDisableEncryption: false,
     };
+  },
+
+  componentDidMount() {
+    this.gatherFactsAndUpdate(this.props);
+  },
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.password !== this.props.password) {
+      this.gatherFactsAndUpdate(nextProps)
+    }
   },
 
   render() {
@@ -47,17 +60,23 @@ const SpaceSettings = React.createClass({
           </div>
         </OutletOccupant>
 
+        {this.state.gatheringFacts && (
+          <p>{I18n.t('Gathering facts about this space... one moment please.')}</p>
+        )}
+
         <div>
           <h2>{I18n.t('Encryption')}</h2>
 
           {this.renderPassPhraseContent()}
         </div>
 
-        {this.props.passPhrase && (
+        {this.props.password && (
           <div>
             <h2>{I18n.t('Encryption Password')}</h2>
+
             <PasswordEditor
-              passPhrase={this.props.passPhrase}
+              facts={this.state.facts}
+              passPhrase={this.props.password}
               onChange={this.props.onChangeOfPassPhrase}
               user={this.props.user}
               space={this.props.space}
@@ -69,7 +88,7 @@ const SpaceSettings = React.createClass({
   },
 
   renderPassPhraseContent() {
-    if (this.props.passPhrase && this.state.wantsToDisableEncryption) {
+    if (this.props.password && this.state.wantsToDisableEncryption) {
       return (
         <DecryptionForm
           space={this.props.space}
@@ -79,10 +98,10 @@ const SpaceSettings = React.createClass({
         />
       )
     }
-    else if (this.props.passPhrase) {
+    else if (this.props.password) {
       return (
         <PasswordInspector
-          passPhrase={this.props.passPhrase}
+          passPhrase={this.props.password}
           pages={this.props.pages}
           user={this.props.user}
           space={this.props.space}
@@ -132,10 +151,10 @@ const SpaceSettings = React.createClass({
   },
 
   toggleSpaceEncryption(e) {
-    if (e.target.checked && !this.props.passPhrase) {
+    if (e.target.checked && !this.props.password) {
       this.setState({ wantsToEnableEncryption: e.target.checked });
     }
-    else if (!e.target.checked && this.props.passPhrase) {
+    else if (!e.target.checked && this.props.password) {
       this.setState({ wantsToDisableEncryption: true });
     }
   },
@@ -178,6 +197,31 @@ const SpaceSettings = React.createClass({
       shell.openExternal(url);
     }
   },
+
+  gatherFactsAndUpdate(input) {
+    this.setState({
+      gatheringFacts: true,
+    })
+
+    gatherFacts({
+      password: input.password,
+      pages: input.pages,
+    }).then(facts => {
+      if (this.isMounted()) {
+        this.setState({
+          facts,
+          gatheringFacts: false
+        })
+      }
+    }, () => {
+      if (this.isMounted()) {
+        this.setState({
+          facts: null,
+          gatheringFacts: false,
+        })
+      }
+    })
+  }
 
 });
 

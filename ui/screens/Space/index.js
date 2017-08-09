@@ -219,7 +219,7 @@ const Space = React.createClass({
                     user={this.props.user}
                     query={query}
                     pages={this.state.pages}
-                    passPhrase={this.state.passPhrase && this.state.passPhrase.value}
+                    password={this.state.passPhrase && this.state.passPhrase.value}
                     isRetrievingPassPhrase={this.state.retrievingPassPhrase}
                     onClose={() => this.props.onTransition(query.origin || this.props.match.url)}
                     onChangeOfPassPhrase={this.trackUpdatedPassPhrase}

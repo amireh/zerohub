@@ -46,7 +46,6 @@ const Page = React.createClass({
     isRetrievingPassPhrase: PropTypes.bool,
 
     hasSavingError: PropTypes.bool,
-    hasDecryptionError: PropTypes.bool,
 
     loadError: PropTypes.oneOf([
       ErrorCodes.MISSING_PASS_PHRASE_ERROR,
@@ -177,14 +176,6 @@ const Page = React.createClass({
             )}
           </WarningMessage>
         )}
-        {this.props.hasDecryptionError && (
-          <WarningMessage>
-            Page content is marked as encrypted but failed to be decrypted using
-            the pass-phrase assigned to this space. This could either mean that
-            the page encrypted using a different pass-phrase, or that there is
-            an internal error.
-          </WarningMessage>
-        )}
 
         <textarea ref={this.createEditor} readOnly value={this.props.page.content} />
       </div>
@@ -194,19 +185,24 @@ const Page = React.createClass({
   renderLoadError(error) {
     switch (error) {
       case ErrorCodes.PAGE_FETCH_ERROR:
-        return <p>{I18n.t('Sorry! We were unable to load the page.')}</p>
+        return (
+          <p>{I18n.t(
+            'Sorry! We were unable to load the page. ' +
+            'This is most likely an internal error.')}
+          </p>
+        )
       break;
 
       case ErrorCodes.PAGE_CIPHER_ERROR:
         return <p>{I18n.t(
-          `Dang! It seems this page was encrypted using a different pass-phrase ` +
+          `Oh snap! It seems this page was encrypted using a different password ` +
           `than the one you've supplied.`
         )}</p>
       break;
 
       case ErrorCodes.PAGE_DIGEST_MISMATCH_ERROR:
         return <p>{I18n.t(
-          `Whoop! We've encountered a likely internal error while decrypting ` +
+          `Oops! We've encountered a likely internal error while decrypting ` +
           `this page's contents.`
         )}</p>
       break;
@@ -214,7 +210,7 @@ const Page = React.createClass({
       case ErrorCodes.MISSING_PASS_PHRASE_ERROR:
         return <p>{I18n.t(
           `Sorry! This page is encrypted but you have not supplied any ` +
-          `pass-phrase to decrypt it with.`
+          `password to decrypt it with.`
         )}</p>
       break;
     }

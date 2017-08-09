@@ -1,15 +1,11 @@
-const { calculateDigest, decrypt } = require('services/CoreDelegate');
+const { calculateDigest, send } = require('services/CoreDelegate');
 
-async function decryptPageContents(_, { passPhrase, page }) {
-  const plainText = await decrypt({
-    passPhrase,
-    encryptedText: page.content
-  });
-
-  return {
-    content: plainText,
-    digest: await calculateDigest({ text: plainText }),
-  };
+function decryptPageContents(_, { passPhrase, page }) {
+  return send('DECRYPT_TEXT', { encryptedText: page.content, passPhrase, }).then(plainText => {
+    return calculateDigest({ text: plainText }).then(digest => {
+      return { content: plainText, digest, };
+    })
+  })
 }
 
 module.exports = decryptPageContents;

@@ -1,5 +1,5 @@
 const React = require('react');
-const { Button, Text, TextInput, } = require('components');
+const { Button, ErrorMessage, Text, TextInput, } = require('components');
 const isPasswordValid = require('./isPasswordValid');
 const buildPassPhrase = require('./buildPassPhrase');
 const { savePassPhrase } = require('actions')
@@ -32,23 +32,32 @@ const PasswordEditor = React.createClass({
 
   render() {
     const { mode } = this.state;
+    const { facts } = this.props;
 
     return (
       <div>
-        {mode === Modes.Initial && (
-          <ul>
-            <li>
-              <Text>
-                <Button hint="link" onClick={this.showPassword}>Show password</Button>
-              </Text>
-            </li>
+        {facts && facts.hasPassPhrase && !facts.hasUsablePassPhrase && (
+          <ErrorMessage className="margin-b-m">
+            <Text>
+              <p>
+                Heads up! Some pages in this space could not be decrypted with the
+                password you provided, so it is most likely incorrect.
+              </p>
 
-            <li>
-              <Text>
-                <Button hint="link" onClick={this.changePassword}>Change password</Button>
-              </Text>
-            </li>
-          </ul>
+              <p>Please verify your password with other space members and change it.</p>
+            </Text>
+          </ErrorMessage>
+        )}
+
+        {mode === Modes.Initial && (
+          <p>
+            <Text>
+              <Button hint="link" onClick={this.showPassword}>Show password</Button>
+              {' '}or{' '}
+              <Button hint="link" onClick={this.changePassword}>change it</Button>
+              .
+            </Text>
+          </p>
         )}
 
         {mode === Modes.Editing && (

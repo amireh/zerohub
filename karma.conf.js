@@ -16,7 +16,7 @@ module.exports = function (config) {
       terminal: true,
     },
     browserDisconnectTolerance: 0,
-    browserNoActivityTimeout: 1000,
+    browserNoActivityTimeout: 30000,
     concurrency: 1,
     customLaunchers: {
       VisibleElectron: {

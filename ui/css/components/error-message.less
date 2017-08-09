@@ -1,5 +1,31 @@
 .error-message {
-  padding: 1rem;
-  background: @red;
-  color: white;
+  position: relative;
+  padding: 1rem 0 1rem 3rem;
+  font-size: 0.85rem;
+  border-bottom: 0.25rem solid @red;
+  border-left: 0.25rem solid @red;
+  min-height: 3.5rem;
+
+  p:first-child {
+    margin-top: 0;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+  &__emblem {
+    width: 3rem;
+    text-align: center;
+    font-size: 2rem;
+    display: inline-block;
+    position: absolute;
+    color: @red;
+    left: 0;
+  }
+
+  &__emblem, &__content {
+    vertical-align: top;
+    line-height: 1rem;
+  }
 }
