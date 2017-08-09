@@ -1,13 +1,13 @@
 const React = require('react');
 const ErrorMessage = require('components/ErrorMessage');
 const Text = require('components/Text');
-const generatePasswordKey = require('utils/generatePasswordKey');
 const { Button, Radio, TextInput, } = require('components/Native');
 const { applyOntoNull, actions } = require('actions');
 const { PropTypes } = React;
 const PassPhraseConfirmationDialog = require('./PassPhraseConfirmationDialog');
-const MIN_PASSWORD_LENGTH = 8;
-const MAX_PASSWORD_LENGTH = 128;
+const { MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH } = require('./constants');
+const isPasswordValid = require('./isPasswordValid');
+const buildPassPhrase = require('./buildPassPhrase');
 
 const PasswordForm = React.createClass({
   propTypes: {
@@ -32,11 +32,7 @@ const PasswordForm = React.createClass({
 
   render() {
     const inputPassword = this.getInputPassword();
-    const canUsePassPhrase = (
-      inputPassword &&
-      inputPassword.length >= MIN_PASSWORD_LENGTH &&
-      inputPassword.length <= MAX_PASSWORD_LENGTH
-    );
+    const canUsePassPhrase = isPasswordValid(inputPassword);
 
     return (
       <div>
@@ -148,14 +144,11 @@ const PasswordForm = React.createClass({
   },
 
   renderConfirmationDialog() {
-    const passPhrase = {
-      key: generatePasswordKey({
-        userId: this.props.user.id,
-        spaceId: this.props.space.id,
-      }),
-
-      value: this.getInputPassword()
-    };
+    const passPhrase = buildPassPhrase({
+      user: this.props.user,
+      space: this.props.space,
+      secret: this.getInputPassword()
+    });
 
     return (
       <PassPhraseConfirmationDialog

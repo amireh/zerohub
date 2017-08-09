@@ -99,7 +99,6 @@ const Space = React.createClass({
   render() {
     return (
       <MemberLayout>
-        {this.state.loadingSpace && <p>Loading...</p>}
         {this.state.exportingAsJSON && (
           <Modal
             width={600}

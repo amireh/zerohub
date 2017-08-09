@@ -1,0 +1,2 @@
+exports.MIN_PASSWORD_LENGTH = 8;
+exports.MAX_PASSWORD_LENGTH = 128;

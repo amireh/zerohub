@@ -5,6 +5,7 @@ const { Button, Icon } = require('components');
 const { PropTypes } = React;
 const EncryptionForm = require('./EncryptionForm');
 const PasswordInspector = require('./PasswordInspector');
+const PasswordEditor = require('./PasswordEditor');
 const DecryptionForm = require('./DecryptionForm');
 const { actions } = require('actions');
 const generatePasswordKey = require('utils/generatePasswordKey');
@@ -51,6 +52,18 @@ const SpaceSettings = React.createClass({
 
           {this.renderPassPhraseContent()}
         </div>
+
+        {this.props.passPhrase && (
+          <div>
+            <h2>{I18n.t('Encryption Password')}</h2>
+            <PasswordEditor
+              passPhrase={this.props.passPhrase}
+              onChange={this.props.onChangeOfPassPhrase}
+              user={this.props.user}
+              space={this.props.space}
+            />
+          </div>
+        )}
       </div>
     );
   },

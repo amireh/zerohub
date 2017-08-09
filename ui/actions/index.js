@@ -28,6 +28,8 @@ exports.actions = {
   updatePageContent: require('./updatePageContent'),
 };
 
+Object.assign(exports, exports.actions);
+
 exports.applyOntoComponent = function(component, action, payload) {
   if (action.length < 2) {
     return action(payload);
