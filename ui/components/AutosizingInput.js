@@ -33,6 +33,11 @@ const AutosizingInput = React.createClass({
   },
 
   componentWillUnmount() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+      this.timeout = null;
+    }
+
     this.getTextWidth = null;
   },
 
@@ -44,7 +49,7 @@ const AutosizingInput = React.createClass({
   },
 
   adjustSizeToFitContent() {
-    setTimeout(() => {
+    this.timeout = setTimeout(() => {
       if (this.isMounted()) {
         const node = findDOMNode(this.refs.node);
         const width = Math.max(this.props.minWidth, this.getTextWidth(node.value));

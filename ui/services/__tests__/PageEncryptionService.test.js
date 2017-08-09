@@ -1,5 +1,4 @@
 const PageEncryptionService = require('../PageEncryptionService');
-const propagateAsyncErrors = require('utils/propagateAsyncErrors');
 const { request } = require('services/PageHub');
 
 describe('Services::PageEncryptionService', function() {
@@ -10,7 +9,7 @@ describe('Services::PageEncryptionService', function() {
       request.restore();
     });
 
-    it('works', propagateAsyncErrors(async function() {
+    it('works', function() {
       const page = {
         id: 'page1',
         folder_id: 'folder1',
@@ -23,8 +22,8 @@ describe('Services::PageEncryptionService', function() {
         return { pages: [ page ] };
       })
 
-      await PageEncryptionService.encryptPage({ passPhrase, page });
+      return PageEncryptionService.encryptPage({ passPhrase, page });
       // TODO: what now :D
-    }))
+    })
   })
 })

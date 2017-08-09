@@ -45,7 +45,6 @@ const OutletProvider = React.createClass({
 
   addOutletOccupant(key, instance) {
     if (!this.occupants) {
-      console.warn('no occupants !!!')
       return;
     }
 
@@ -56,7 +55,6 @@ const OutletProvider = React.createClass({
 
   removeOutletOccupant(key, instance) {
     if (!this.occupants) {
-      console.warn('no occupants !!!')
       return;
     }
 
@@ -68,7 +66,6 @@ const OutletProvider = React.createClass({
 
   getOutletOccupant(key) {
     if (!this.occupants) {
-      console.warn('no occupants !!!')
       return;
     }
 

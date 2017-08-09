@@ -5,6 +5,7 @@ const { assert, DummyContainer, sinonSuite } = require('test_utils');
 describe('actions.acquireLock', function() {
   const sinon = sinonSuite(this);
   const createContainer = DummyContainer({
+    acquiringLock: false,
     locks: []
   });
 
